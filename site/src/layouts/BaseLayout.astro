@@ -1,0 +1,29 @@
+---
+import "../styles/global.css";
+import PublicationMotion from "../components/PublicationMotion.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "FirePA — A remote-sensing research pilot",
+  description = "A reproducible remote-sensing pilot for detecting, grouping and analyzing provisional thermal events in Coclé, Panamá."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f3eee4" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <PublicationMotion />
+  </body>
+</html>

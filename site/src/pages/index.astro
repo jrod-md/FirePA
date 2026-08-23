@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BoundaryArtwork from "../components/BoundaryArtwork.astro";
+import ConceptField from "../components/ConceptField.astro";
+import EventExplorer from "../components/EventExplorer.astro";
+import GuacamayaSection from "../components/GuacamayaSection.astro";
+import InspectSection from "../components/InspectSection.astro";
+import LimitsSection from "../components/LimitsSection.astro";
+import OpticalSection from "../components/OpticalSection.astro";
+import PicachosSection from "../components/PicachosSection.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { counts, formatCount, period, projectSummary } from "../data/public";
+
+const periodLabel = `${period.start} → ${period.end}`;
+const title = "FirePA — Can thermal signals tell us what happened on the ground?";
+---
+
+<BaseLayout title={title} description={projectSummary.definition}>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <SiteHeader />
+
+  <main id="main-content" class="opening-system">
+    <section id="research" class="hero-section opening-hero" aria-labelledby="hero-question">
+          <div class="site-frame opening-hero__copy">
+            <p class="opening-hero__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span> A REMOTE-SENSING RESEARCH PILOT</p>
+            <p class="opening-hero__wordmark" aria-label="FirePA">FirePA</p>
+            <h1 id="hero-question" class="opening-hero__question">
+              <span>Can thermal signals</span>
+              <span>tell us what happened</span>
+              <span>on <em>the ground?</em></span>
+            </h1>
+
+            <div class="hero-meta opening-hero__meta" aria-label="Study frame">
+              <span class="hero-meta__item"><span class="hero-meta__mark" aria-hidden="true"></span>{projectSummary.study_area}</span>
+              <span class="hero-meta__divider" aria-hidden="true"></span>
+              <span class="hero-meta__item"><span class="hero-meta__calendar" aria-hidden="true"></span><time datetime={period.start}>{period.start}</time><span aria-hidden="true">→</span><time datetime={period.end}>{period.end}</time></span>
+            </div>
+
+            <p class="hero-definition opening-hero__definition">A static analysis of provisional thermal events in Coclé using FIRMS and Sentinel-2 evidence.</p>
+            <p class="hero-boundary opening-hero__boundary">NOT REAL-TIME. NOT OPERATIONAL.</p>
+          </div>
+
+          <div class="hero-cartography opening-hero__territory">
+            <BoundaryArtwork />
+          </div>
+    </section>
+
+    <section id="evidence-chain" class="chapter-section opening-chapter" aria-labelledby="chapter-title">
+          <div class="site-frame opening-chapter__head">
+            <div>
+              <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 01</p>
+              <h2 id="chapter-title" class="chapter-title opening-chapter__title">From <em>signal</em><br />to <em>event</em></h2>
+            </div>
+            <aside class="opening-chapter__context" aria-label="Pipeline context">
+              <p class="chapter-aside__label">THE PIPELINE</p>
+              <p>A three-step reduction from audited FIRMS records to provisional thermal events, using the frozen processing and spatio-temporal clustering configuration <code>{counts.configuration_id}</code>.</p>
+            </aside>
+          </div>
+
+          <div class="site-frame opening-chapter__exhibit" aria-describedby="pipeline-field-disclosure">
+            <div class="opening-chapter__connectors" aria-hidden="true">
+              <span class="opening-chapter__connector opening-chapter__connector--one"></span>
+              <span class="opening-chapter__connector opening-chapter__connector--two"></span>
+            </div>
+            <div class="opening-chapter__stages">
+              <article class="opening-stage opening-stage--one" aria-labelledby="stage-one-title">
+                <p class="stage-index">STEP 01</p>
+                <p class="pipeline-number">{formatCount(counts.firms_raw_detections)}</p>
+                <h3 id="stage-one-title" class="stage-label">AUDITED FIRMS<br />RAW DETECTIONS</h3>
+              </article>
+
+              <article class="opening-stage opening-stage--two" aria-labelledby="stage-two-title">
+                <p class="stage-index">STEP 02</p>
+                <p class="pipeline-number">{formatCount(counts.firms_processed_detections)}</p>
+                <h3 id="stage-two-title" class="stage-label">PROCESSED<br />DETECTIONS</h3>
+              </article>
+
+              <article class="opening-stage opening-stage--three" aria-labelledby="stage-three-title">
+                <p class="stage-index">STEP 03</p>
+                <p class="pipeline-number">{formatCount(counts.provisional_thermal_events)}</p>
+                <h3 id="stage-three-title" class="stage-label">PROVISIONAL<br />THERMAL EVENTS</h3>
+              </article>
+            </div>
+            <div class="opening-chapter__field"><ConceptField /></div>
+          </div>
+
+          <div class="site-frame chapter-note opening-chapter__footer">
+            <p class="chapter-note__asterisk" aria-hidden="true">*</p>
+            <p>Counts reflect this study area and time window only: {projectSummary.study_area} · {periodLabel}</p>
+            <p class="chapter-note__method">CLUSTERING: <code>{counts.configuration_id}</code></p>
+            <p id="pipeline-field-disclosure" class="chapter-note__explanation">
+              Conceptual explanatory visualization, non-geographic.
+              <span class="sr-only">Density and grouping marks are authored to communicate reduction; they are not one mark per actual observation.</span>
+            </p>
+          </div>
+    </section>
+
+    <EventExplorer />
+
+    <OpticalSection />
+    <GuacamayaSection />
+    <PicachosSection />
+    <LimitsSection />
+    <InspectSection />
+
+  </main>
+
+  <SiteFooter />
+</BaseLayout>

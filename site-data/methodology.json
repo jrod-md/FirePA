@@ -1,0 +1,81 @@
+{
+  "definition": "FirePA is a reproducible remote-sensing pilot for detecting, grouping and analyzing provisional thermal events in Coclé, Panamá using NASA FIRMS and Sentinel-2 optical evidence.",
+  "formal_review": {
+    "execution_authorized": false,
+    "formal_human_observations": 0,
+    "reason": "QUALIFIED_REVIEWER_UNAVAILABLE",
+    "status": "deferred"
+  },
+  "limitations": [
+    "FirePA does not provide confirmed wildfire classification.",
+    "FirePA does not provide ground truth or institutional validation.",
+    "FirePA does not provide supervised prediction or severity estimation.",
+    "FirePA does not provide operational monitoring, realtime alerts or an emergency dashboard.",
+    "Unobserved optical cases are not negative cases.",
+    "External references are relational evidence, not ground truth."
+  ],
+  "package_version": "firepa-public-release-v1",
+  "scientific_freeze_commit": "7694da7df5808911de48de84016759c5fd22f176",
+  "scientific_unit": "provisional thermal event",
+  "source_artifacts": [
+    "docs/FIREPA_PILOT_V1_FREEZE.md",
+    "docs/FIREPA_PILOT_SCIENTIFIC_REPORT.md",
+    "docs/FIREPA_PILOT_FINAL_CHECKPOINT.md"
+  ],
+  "study_period": {
+    "end": "2025-04-30",
+    "inclusive": true,
+    "start": "2025-01-01",
+    "timezone": "UTC"
+  },
+  "supervised_modeling": {
+    "model_trained": false,
+    "reason": "NO_DEFENSIBLE_TARGET_WITH_CURRENT_EVIDENCE",
+    "status": "deferred"
+  },
+  "workflow": [
+    {
+      "result": "1,532 raw detections and 1,185 processed detections.",
+      "source_artifacts": [
+        "data/raw/*.csv",
+        "data/processed/firms_cocle_2025_detections.csv"
+      ],
+      "stage": "firms_acquisition_and_audit",
+      "status": "frozen_descriptive"
+    },
+    {
+      "algorithm": "connected_components",
+      "configuration_id": "r1500_t06",
+      "metric_projection": "EPSG:32617",
+      "radius_m": 1500,
+      "result": "611 provisional thermal events; clusters remain provisional.",
+      "stage": "provisional_clustering",
+      "status": "frozen",
+      "time_window_hours": 6
+    },
+    {
+      "cohort_events": 30,
+      "evidence_modes": [
+        "selected_pair",
+        "window_median"
+      ],
+      "observable_events": 28,
+      "result": "Optical evidence is descriptive and does not create labels.",
+      "stage": "sentinel2_optical_followup",
+      "status": "frozen_descriptive",
+      "unobserved_events": 2
+    },
+    {
+      "result": "NBR/dNBR metrics exist for the observable optical subset; no severity class is created.",
+      "stage": "nbr_dnbr",
+      "status": "frozen_descriptive"
+    },
+    {
+      "matching_rule": "inclusive temporal overlap and distance <= 5,000 m",
+      "reclustered": false,
+      "result": "0 official Picachos matches and 6 official Guacamaya matches.",
+      "stage": "external_reference_check",
+      "status": "complete_exploratory"
+    }
+  ]
+}

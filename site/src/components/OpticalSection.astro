@@ -1,0 +1,55 @@
+---
+import FigurePlate from "./FigurePlate.astro";
+import { counts, methodology } from "../data/public";
+
+const opticalWorkflow = methodology.workflow.find((item) => item.stage === "sentinel2_optical_followup");
+---
+
+<section id="optical" class="research-section optical-section" aria-labelledby="optical-title">
+  <div class="site-frame">
+    <div class="optical-opening" data-reveal>
+      <div class="optical-opening__title">
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 03</p>
+        <h2 id="optical-title" class="optical-title">Looking from orbit,<br /><em>carefully.</em></h2>
+      </div>
+      <div class="optical-opening__note">
+        <p class="section-label">A SMALL OPTICAL FOLLOW-UP</p>
+        <p>Sentinel-2 evidence is a descriptive follow-up for a 30-event cohort. It does not create labels, severity classes or a raster viewer.</p>
+      </div>
+    </div>
+
+    <div class="optical-sequence" aria-label="Optical cohort reduction" data-reveal>
+      <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.provisional_thermal_events}</span><span class="optical-sequence__label">provisional<br />thermal events</span></div>
+      <span class="optical-sequence__arrow" aria-hidden="true">→</span>
+      <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.optical_cohort_events}</span><span class="optical-sequence__label">optical<br />cohort</span></div>
+      <span class="optical-sequence__arrow" aria-hidden="true">→</span>
+      <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.optically_observable_events}</span><span class="optical-sequence__label">observable<br />cases</span></div>
+      <span class="optical-sequence__plus" aria-hidden="true">+</span>
+      <div class="optical-sequence__stage optical-sequence__stage--quiet"><span class="optical-sequence__number">{counts.unobserved_events}</span><span class="optical-sequence__label">unobserved<br />cases</span></div>
+    </div>
+
+    <div class="optical-reading" data-reveal>
+      <div>
+        <p class="section-label">TWO EVIDENCE MODES</p>
+        <ul class="editorial-list">
+          {opticalWorkflow?.evidence_modes?.map((mode) => <li><code>{mode}</code><span>{mode === "selected_pair" ? "A selected Sentinel-2 pair for descriptive comparison." : "A window median for descriptive comparison across the available observation window."}</span></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="section-label">WHAT THE OPTICAL PASS CAN SAY</p>
+        <p>NBR and dNBR metrics exist for the observable subset. They remain descriptive measurements in this pilot. An unobserved case is not a negative case, and no event-level raster or severity interpretation is introduced here.</p>
+      </div>
+    </div>
+
+    <div class="optical-plate" data-reveal>
+      <FigurePlate
+        figureId="figure-02"
+        src="/figures/02_cluster_distribution.png"
+        alt="Four descriptive distributions for 611 provisional clusters: maximum FRP, mean FRP, detections per cluster, and duration."
+        title="What grouping leaves behind"
+        caption="Frozen descriptive distributions for the 611 provisional clusters. The distributions describe the public event table; they do not establish confirmed fires."
+        longDescription="The frozen figure contains four small distribution panels for the 611 provisional clusters: maximum FRP, mean FRP, detections per cluster, and duration. It is displayed at its original aspect ratio and is not a geographic or severity surface."
+      />
+    </div>
+  </div>
+</section>

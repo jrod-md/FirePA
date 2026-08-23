@@ -1,0 +1,230 @@
+---
+import {
+  events,
+  formatDecimal,
+  formatHours,
+  formatStatus,
+  formatUtc
+} from "../data/public";
+import { cocleEventMap, mappedEvents, mappedReferences } from "../data/event-map";
+import FigurePlate from "./FigurePlate.astro";
+
+const defaultEvent = mappedEvents[0];
+const serializedEvents = JSON.stringify(mappedEvents.map(({ properties, geometry }) => ({ ...properties, coordinates: geometry.coordinates })));
+const statusLabel = (status: string) => status === "not-in-cohort" ? "Not in optical cohort" : status === "observable" ? "Observable" : "Unobserved";
+---
+
+<section id="map" class="research-section map-section territory-section" aria-labelledby="map-title">
+  <div class="site-frame">
+    <div class="territory-heading" data-reveal>
+      <div class="territory-heading__title">
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 02</p>
+        <h2 id="map-title" class="territory-title">A cluster is a rule,<br /><em>not a flame.</em></h2>
+        <button class="territory-action" type="button" data-enter-explorer aria-expanded="false" aria-controls="event-explorer">
+          <span data-explorer-label>Enter event explorer</span><i class="territory-action__mark" aria-hidden="true">↗</i>
+        </button>
+      </div>
+      <div class="territory-heading__note">
+        <p class="section-label">THE PUBLIC EVENT FIELD</p>
+        <p>{events.features.length} provisional event centroids are shown in their real Coclé context. The map is a static reading surface for selection, not an operational map.</p>
+      </div>
+    </div>
+
+    <div id="event-explorer" class="event-explorer" data-explorer="false">
+      <div class="event-map-panel" data-reveal>
+        <div class="event-map-panel__head">
+          <p class="mono-note">611 WGS84 DISPLAY POINTS · FROZEN PUBLIC PACKAGE</p>
+          <p class="mono-note">EXTENT DERIVED FROM ALL POINTS + QUIET PADDING</p>
+        </div>
+        <svg class="event-map" viewBox={cocleEventMap.viewBox} role="img" aria-labelledby="event-map-title event-map-description">
+          <title id="event-map-title">Coclé provisional thermal event centroids</title>
+          <desc id="event-map-description">A static map of 611 public WGS84 event centroids and two approximate external reference anchors. The anchors show 5 kilometre matching-rule rings, not burn extents.</desc>
+          <path class="event-map__boundary" d={cocleEventMap.path} fill-rule="evenodd" />
+          <text class="event-map__boundary-label" x={cocleEventMap.labelPoint[0]} y={cocleEventMap.labelPoint[1]}>COCLÉ</text>
+
+          {mappedReferences.map((reference) => (
+            <g class="event-map__reference" data-reference-id={reference.properties.reference_id}>
+              <ellipse class="event-map__ring" cx={reference.x} cy={reference.y} rx={reference.radiusX} ry={reference.radiusY} />
+              <circle class="event-map__anchor" cx={reference.x} cy={reference.y} r="5" />
+              <text class="event-map__reference-label" x={reference.x + 12} y={reference.y - 10}>{reference.properties.reference_name}</text>
+              <text class="event-map__reference-note" x={reference.x + 12} y={reference.y + 8}>approx. anchor · 5 km rule</text>
+            </g>
+          ))}
+
+          {mappedEvents.map((event) => (
+            <circle
+              class={`event-map__point event-map__point--${event.statusClass}`}
+              cx={event.x}
+              cy={event.y}
+              r={event.properties.optical_cohort_status === "not_in_cohort" ? "2.2" : "3.2"}
+              role="button"
+              aria-label={`${event.properties.public_event_id}, ${formatStatus(event.properties.optical_cohort_status)}`}
+              data-event-id={event.properties.public_event_id}
+              data-event-select
+              tabindex="-1"
+            />
+          ))}
+        </svg>
+
+        <div class="event-map-key" aria-label="Map key">
+          <span><i class="event-map-key__symbol event-map-key__symbol--dense" aria-hidden="true"></i> Not in optical cohort</span>
+          <span><i class="event-map-key__symbol event-map-key__symbol--observable" aria-hidden="true"></i> Observable optical case</span>
+          <span><i class="event-map-key__symbol event-map-key__symbol--unobserved" aria-hidden="true"></i> Unobserved optical case</span>
+          <span><i class="event-map-key__ring" aria-hidden="true"></i> External matching rule, 5 km</span>
+        </div>
+
+        <p class="map-caption">Coclé boundary is a presentation-only derivative of the real study-area geometry. Event marks are public centroids, not burn perimeters, and the two rings express the inclusive spatial matching rule used for the external-reference check.</p>
+      </div>
+
+      <aside class="event-detail" data-event-detail aria-label="Public event detail" aria-live="polite">
+        <div class="event-detail__empty" data-event-empty>
+          <p class="section-label">PUBLIC EVENT EXPLORER</p>
+          <h3 id="event-detail-title" class="event-detail__empty-title">Select one centroid.</h3>
+          <p>Choose a point or a public ID to inspect the frozen record. Selection changes only the reading state; it does not recompute the event.</p>
+        </div>
+
+        <div data-event-record hidden>
+          <p class="section-label">SELECTED PUBLIC EVENT</p>
+          <p class="event-detail__status" data-event-field="status">{formatStatus(defaultEvent.properties.optical_cohort_status)}</p>
+          <h3 class="event-detail__id" data-event-field="public_event_id">{defaultEvent.properties.public_event_id}</h3>
+          <p class="event-detail__note">A provisional thermal event is a grouped, public-safe analytical unit. The fields below describe the record; they do not classify severity or confirm a fire.</p>
+
+          <dl class="event-detail__facts">
+            <div><dt>UTC interval</dt><dd data-event-field="interval">{formatUtc(defaultEvent.properties.start_time_utc)} → {formatUtc(defaultEvent.properties.end_time_utc)}</dd></div>
+            <div><dt>Grouped duration</dt><dd data-event-field="duration">{formatHours(defaultEvent.properties.duration_hours)}</dd></div>
+            <div><dt>FIRMS detections in group</dt><dd data-event-field="detection_count">{defaultEvent.properties.detection_count}</dd></div>
+            <div><dt>Optical status</dt><dd data-event-field="optical_detail">{formatStatus(defaultEvent.properties.optical_cohort_status)}</dd></div>
+            <div><dt>FRP, descriptive</dt><dd data-event-field="frp">Mean {formatDecimal(defaultEvent.properties.frp_mean_mw)} MW · max {formatDecimal(defaultEvent.properties.frp_max_mw)} MW</dd></div>
+            <div><dt>Satellite / source</dt><dd data-event-field="source">{defaultEvent.properties.satellites.join(" / ")} · {defaultEvent.properties.source_count} source{defaultEvent.properties.source_count === 1 ? "" : "s"}</dd></div>
+            <div><dt>Day / night</dt><dd data-event-field="daynight">{defaultEvent.properties.daynight_known_count} known detections · {defaultEvent.properties.day_fraction === null ? "not available" : `${formatDecimal(defaultEvent.properties.day_fraction * 100, 1)}% day`}</dd></div>
+            <div><dt>Advanced caveats</dt><dd data-event-field="caveats">{defaultEvent.properties.possible_chain_merge ? "Possible chain merge is flagged in the public record." : "No possible chain merge flag in the public record."}</dd></div>
+          </dl>
+          <p class="event-detail__footer">Public WGS84 centroid. Not a burn perimeter, severity class or confirmed fire.</p>
+        </div>
+      </aside>
+    </div>
+
+    <details class="event-index" data-explorer-only>
+      <summary>Browse all {events.features.length} public events</summary>
+      <div class="event-index__controls">
+        <label>Find public ID <input type="search" placeholder="evt-0001" data-event-search /></label>
+        <label>Optical status
+          <select data-event-status>
+            <option value="all">All public events</option>
+            <option value="not_in_cohort">Not in optical cohort</option>
+            <option value="observable">Observable</option>
+            <option value="unobserved">Unobserved</option>
+          </select>
+        </label>
+        <span class="event-index__count" data-event-count>{events.features.length} shown</span>
+      </div>
+      <div class="event-index__table-wrap">
+        <table class="event-index__table">
+          <caption class="sr-only">Public event selection index</caption>
+          <thead><tr><th scope="col">Public ID</th><th scope="col">Start UTC</th><th scope="col">Duration</th><th scope="col">Detections</th><th scope="col">Optical status</th></tr></thead>
+          <tbody>
+            {mappedEvents.map((event) => (
+              <tr data-event-row data-event-id={event.properties.public_event_id} data-event-status-row={event.properties.optical_cohort_status}>
+                <th scope="row"><button class="event-index__button" type="button" data-event-id={event.properties.public_event_id} data-event-select>{event.properties.public_event_id}</button></th>
+                <td>{formatUtc(event.properties.start_time_utc)}</td>
+                <td>{formatHours(event.properties.duration_hours)}</td>
+                <td>{event.properties.detection_count}</td>
+                <td>{statusLabel(event.statusClass)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details class="event-reference-plate" data-explorer-only>
+      <summary>Open frozen external-reference map</summary>
+      <FigurePlate
+        figureId="figure-03"
+        src="/figures/03_external_reference_map.png"
+        alt="Frozen external-reference map of the 611 Coclé event centroids and two approximate incident anchors with 5 kilometre matching rings."
+        title="The frozen relationship check"
+        caption="The two approximate reference anchors and their 5 km rings support the external-reference comparison. The rings are matching rules, not administrative boundaries or fire perimeters."
+        longDescription="The frozen figure locates all 611 public event centroids, the approximate Guacamaya and Los Picachos anchors and their inclusive 5 kilometre matching-rule rings. It is supporting evidence for the two external-reference cases."
+      />
+    </details>
+  </div>
+
+  <script type="application/json" data-event-data set:html={serializedEvents}></script>
+  <script>
+    const eventDataNode = document.querySelector("[data-event-data]");
+    const eventData = eventDataNode ? JSON.parse(eventDataNode.textContent ?? "[]") : [];
+    const explorer = document.querySelector("[data-explorer]");
+    const explorerToggle = document.querySelector("[data-enter-explorer]");
+    const explorerLabel = document.querySelector("[data-explorer-label]");
+    const eventDetail = document.querySelector("[data-event-detail]");
+    const eventEmpty = document.querySelector("[data-event-empty]");
+    const eventRecord = document.querySelector("[data-event-record]");
+    const eventPoints = [...document.querySelectorAll(".event-map__point")];
+    const eventRows = [...document.querySelectorAll("[data-event-row]")];
+    const eventButtons = [...document.querySelectorAll(".event-index__button[data-event-select]")];
+    const eventSearch = document.querySelector("[data-event-search]");
+    const eventStatus = document.querySelector("[data-event-status]");
+    const eventCount = document.querySelector("[data-event-count]");
+    const formatNumber = (value, digits = 3) => new Intl.NumberFormat("en-US", { maximumFractionDigits: digits, useGrouping: false }).format(value);
+    const formatUtcClient = (value) => value.replace("T", " ").replace("Z", " UTC");
+    const statusLabelClient = (value) => ({ not_in_cohort: "Not in optical cohort", observable: "Observable optical case", unobserved: "Unobserved optical case" })[value] ?? value;
+    const formatHoursClient = (value) => `${formatNumber(value)} h`;
+
+    const openExplorer = () => {
+      if (!explorer || !explorerToggle) return;
+      explorer.dataset.explorer = "true";
+      explorerToggle.setAttribute("aria-expanded", "true");
+      if (explorerLabel) explorerLabel.textContent = "Explorer open";
+      eventPoints.forEach((point) => point.setAttribute("tabindex", "0"));
+    };
+
+    const selectEvent = (eventId) => {
+      const record = eventData.find((event) => event.public_event_id === eventId);
+      if (!record || !eventDetail) return;
+      openExplorer();
+      eventEmpty?.setAttribute("hidden", "");
+      eventRecord?.removeAttribute("hidden");
+      eventDetail.querySelector('[data-event-field="status"]').textContent = statusLabelClient(record.optical_cohort_status);
+      eventDetail.querySelector('[data-event-field="public_event_id"]').textContent = record.public_event_id;
+      eventDetail.querySelector('[data-event-field="interval"]').textContent = `${formatUtcClient(record.start_time_utc)} → ${formatUtcClient(record.end_time_utc)}`;
+      eventDetail.querySelector('[data-event-field="duration"]').textContent = formatHoursClient(record.duration_hours);
+      eventDetail.querySelector('[data-event-field="detection_count"]').textContent = record.detection_count;
+      eventDetail.querySelector('[data-event-field="optical_detail"]').textContent = statusLabelClient(record.optical_cohort_status);
+      eventDetail.querySelector('[data-event-field="frp"]').textContent = `Mean ${formatNumber(record.frp_mean_mw)} MW · max ${formatNumber(record.frp_max_mw)} MW`;
+      eventDetail.querySelector('[data-event-field="source"]').textContent = `${record.satellites.join(" / ")} · ${record.source_count} source${record.source_count === 1 ? "" : "s"}`;
+      eventDetail.querySelector('[data-event-field="daynight"]').textContent = `${record.daynight_known_count} known detections · ${record.day_fraction === null ? "not available" : `${formatNumber(record.day_fraction * 100, 1)}% day`}`;
+      eventDetail.querySelector('[data-event-field="caveats"]').textContent = record.possible_chain_merge ? "Possible chain merge is flagged in the public record." : "No possible chain merge flag in the public record.";
+      eventPoints.forEach((point) => point.classList.toggle("is-selected", point.dataset.eventId === eventId));
+      eventRows.forEach((row) => row.classList.toggle("is-selected", row.dataset.eventId === eventId));
+    };
+
+    explorerToggle?.addEventListener("click", openExplorer);
+    eventButtons.forEach((button) => button.addEventListener("click", () => selectEvent(button.dataset.eventId)));
+    eventPoints.forEach((point) => {
+      point.addEventListener("click", () => selectEvent(point.dataset.eventId));
+      point.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          selectEvent(point.dataset.eventId);
+        }
+      });
+    });
+
+    const filterEvents = () => {
+      const query = (eventSearch?.value ?? "").toLowerCase().trim();
+      const status = eventStatus?.value ?? "all";
+      let visible = 0;
+      eventRows.forEach((row) => {
+        const matchesQuery = !query || row.dataset.eventId?.toLowerCase().includes(query);
+        const matchesStatus = status === "all" || row.dataset.eventStatusRow === status;
+        const shown = Boolean(matchesQuery && matchesStatus);
+        row.hidden = !shown;
+        if (shown) visible += 1;
+      });
+      if (eventCount) eventCount.textContent = `${visible} shown`;
+    };
+    eventSearch?.addEventListener("input", filterEvents);
+    eventStatus?.addEventListener("change", filterEvents);
+  </script>
+</section>

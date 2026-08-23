@@ -1,0 +1,18 @@
+---
+const pathname = Astro.url.pathname;
+const isHome = pathname === "/";
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="/" aria-label="FirePA research opening">FirePA</a>
+    <nav aria-label="Primary navigation">
+      <ul class="site-nav">
+        <li><a class="site-nav__link" href="/#research" aria-current={isHome ? "page" : undefined}>Research</a></li>
+        <li><a class="site-nav__link" href="/#map">Chapters</a></li>
+        <li><a class="site-nav__link" href="/methodology" aria-current={pathname === "/methodology" ? "page" : undefined}>Methodology</a></li>
+        <li><a class="site-nav__link" href="/sources" aria-current={pathname === "/sources" ? "page" : undefined}>Sources</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

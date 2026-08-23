@@ -1,0 +1,126 @@
+---
+interface VisualPoint {
+  x: number;
+  y: number;
+  radius: number;
+  opacity: number;
+}
+
+interface CloudBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface StageThreeGroup {
+  x: number;
+  y: number;
+  radius: number;
+  points: number;
+  dash: string;
+  rotation: number;
+  inner: boolean;
+  innerDash: string;
+  innerOpacity: number;
+}
+
+const viewBox = "0 0 1440 220";
+
+function pseudoRandom(index: number, seed: number): number {
+  const value = Math.sin((index + 1) * 12.9898 + seed * 78.233) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function organicCloud(count: number, bounds: CloudBounds, seed: number): VisualPoint[] {
+  const points: VisualPoint[] = [];
+  let sample = 0;
+
+  while (points.length < count && sample < count * 12) {
+    const nx = pseudoRandom(sample, seed);
+    const ny = pseudoRandom(sample + 17, seed + 2.7);
+    const wave = 0.88 + Math.sin(nx * 11.4 + seed) * 0.08 + Math.cos(ny * 8.6 - seed) * 0.06;
+    const distance = ((nx - 0.5) ** 2 * 1.18) + ((ny - 0.5) ** 2 * 0.92);
+
+    if (distance <= 0.27 * wave) {
+      const jitterX = (pseudoRandom(sample + 29, seed) - 0.5) * 2.4;
+      const jitterY = (pseudoRandom(sample + 43, seed) - 0.5) * 1.8;
+      points.push({
+        x: bounds.x + nx * bounds.width + jitterX,
+        y: bounds.y + ny * bounds.height + jitterY,
+        radius: 0.72 + pseudoRandom(sample + 61, seed) * 1.05,
+        opacity: 0.36 + pseudoRandom(sample + 79, seed) * 0.56
+      });
+    }
+
+    sample += 1;
+  }
+
+  return points;
+}
+
+const stageOnePoints = [
+  ...organicCloud(120, { x: 45, y: 28, width: 405, height: 165 }, 1.3),
+  ...organicCloud(250, { x: 68, y: 42, width: 365, height: 140 }, 3.1),
+  ...organicCloud(430, { x: 142, y: 65, width: 235, height: 102 }, 5.7)
+];
+
+const stageTwoPoints = [
+  ...organicCloud(72, { x: 560, y: 38, width: 340, height: 140 }, 9.2),
+  ...organicCloud(158, { x: 584, y: 53, width: 300, height: 116 }, 11.4),
+  ...organicCloud(220, { x: 658, y: 75, width: 190, height: 82 }, 13.6)
+];
+
+const stageThreeGroups: StageThreeGroup[] = [
+  { x: 1056, y: 55, radius: 26, points: 2, dash: "1 7", rotation: -12, inner: true, innerDash: "5 10", innerOpacity: 0.62 },
+  { x: 1169, y: 116, radius: 35, points: 3, dash: "4 9", rotation: 10, inner: false, innerDash: "", innerOpacity: 0 },
+  { x: 1267, y: 48, radius: 23, points: 1, dash: "1 12", rotation: 18, inner: true, innerDash: "2 13", innerOpacity: 0.54 },
+  { x: 1313, y: 151, radius: 19, points: 2, dash: "5 6", rotation: -24, inner: false, innerDash: "", innerOpacity: 0 },
+  { x: 1118, y: 173, radius: 22, points: 3, dash: "1 8", rotation: 29, inner: true, innerDash: "3 10", innerOpacity: 0.48 }
+];
+
+const stageThreeMarks: VisualPoint[] = [
+  { x: 1024, y: 29, radius: 1.25, opacity: 0.62 },
+  { x: 1208, y: 22, radius: 0.75, opacity: 0.46 },
+  { x: 1352, y: 36, radius: 1.15, opacity: 0.55 },
+  { x: 1012, y: 137, radius: 0.72, opacity: 0.42 },
+  { x: 1198, y: 190, radius: 1.05, opacity: 0.5 },
+  { x: 1371, y: 181, radius: 0.82, opacity: 0.4 },
+  { x: 1244, y: 203, radius: 1.18, opacity: 0.57 },
+  { x: 1087, y: 103, radius: 0.65, opacity: 0.37 }
+];
+---
+
+<figure class="concept-field concept-field--integrated">
+  <svg viewBox={viewBox} aria-hidden="true" focusable="false">
+    <g class="concept-field__stage concept-field__stage--one" data-motion-stage="1">
+      {stageOnePoints.map((point) => (
+        <circle class="concept-field__point" cx={point.x} cy={point.y} r={point.radius} opacity={point.opacity}></circle>
+      ))}
+    </g>
+
+    <g class="concept-field__stage concept-field__stage--two" data-motion-stage="2">
+      {stageTwoPoints.map((point) => (
+        <circle class="concept-field__point" cx={point.x} cy={point.y} r={point.radius} opacity={point.opacity}></circle>
+      ))}
+    </g>
+
+    <g class="concept-field__stage concept-field__stage--three" data-motion-stage="3">
+      {stageThreeGroups.map((group) => (
+        <g class="concept-field__group" transform={`rotate(${group.rotation} ${group.x} ${group.y})`}>
+          <circle class="concept-field__ring" cx={group.x} cy={group.y} r={group.radius} stroke-dasharray={group.dash}></circle>
+          {group.inner && <circle class="concept-field__ring concept-field__ring--inner" cx={group.x} cy={group.y} r={group.radius * 0.56} stroke-dasharray={group.innerDash} opacity={group.innerOpacity}></circle>}
+          {Array.from({ length: group.points }, (_, pointIndex) => {
+            const angle = pointIndex * 2.18 + group.rotation * 0.04;
+            const distance = group.radius * (0.14 + (pointIndex % 3) * 0.2);
+            return <circle class="concept-field__point concept-field__point--solid" cx={group.x + Math.cos(angle) * distance} cy={group.y + Math.sin(angle) * distance} r={1.35 + (pointIndex % 2) * 0.6}></circle>;
+          })}
+        </g>
+      ))}
+
+      {stageThreeMarks.map((point) => (
+        <circle class="concept-field__point concept-field__point--loose" cx={point.x} cy={point.y} r={point.radius} opacity={point.opacity}></circle>
+      ))}
+    </g>
+  </svg>
+</figure>

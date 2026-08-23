@@ -1,0 +1,106 @@
+---
+import FigurePlate from "./FigurePlate.astro";
+import { citations, externalReferences, formatDecimal, formatHours, formatUtc, guacamayaTimeline } from "../data/public";
+
+const reference = externalReferences.features.find((feature) => feature.properties.reference_id === "REFERENCE-002");
+const sources = citations.external_sources.filter((source) => source.incident_id === "REFERENCE-002");
+---
+
+<section id="guacamaya" class="research-section case-section case-section--dark" aria-labelledby="guacamaya-title">
+  <div class="site-frame">
+    <div class="case-opening" data-reveal>
+      <div class="case-opening__title">
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 04 · CASE 01</p>
+        <h2 id="guacamaya-title" class="case-title">Guacamaya reads as<br /><em>fragmentation.</em></h2>
+      </div>
+      <div class="case-opening__note">
+        <p class="section-label">REFERENCE-002 · {reference?.properties.reference_name}</p>
+        <p>{reference?.properties.official_match_count} official matches across {reference?.properties.source_document_count} public source documents. The result is relational evidence, not ground truth.</p>
+      </div>
+    </div>
+
+    <div class="fragmentation-field" aria-label="Six separate Guacamaya provisional clusters and the five gaps between them" data-reveal>
+      <ol>
+        {guacamayaTimeline.clusters.map((cluster, index) => (
+          <Fragment>
+            <li class:list={{ "fragmentation-field__cluster": true, "fragmentation-field__cluster--possible": cluster.possible_chain_merge }}>
+              <span class="fragmentation-field__order">0{cluster.order}</span>
+              <strong>{cluster.public_event_id}</strong>
+              <span>{cluster.detection_count} detection{cluster.detection_count === 1 ? "" : "s"}</span>
+              <span>{cluster.day_count > 0 ? "day" : "night"}</span>
+              {cluster.possible_chain_merge && <code>possible_chain_merge</code>}
+            </li>
+            {index < guacamayaTimeline.clusters.length - 1 && (
+              <li class="fragmentation-field__gap" aria-label={`${formatDecimal(guacamayaTimeline.clusters[index + 1].gap_from_previous_hours ?? 0)} hour gap`}>
+                <span>{formatDecimal(guacamayaTimeline.clusters[index + 1].gap_from_previous_hours ?? 0)} h</span>
+                <i aria-hidden="true"></i>
+              </li>
+            )}
+          </Fragment>
+        ))}
+      </ol>
+      <div class="fragmentation-field__reading">
+        <p class="section-label">READING THE GAPS</p>
+        <p>The six matches are not animated into one incident. Five intervals exceed the six-hour clustering window, so the public result keeps six provisional units and preserves the <code>fragmentation_possible</code> caveat.</p>
+      </div>
+    </div>
+
+    <div class="case-summary-line" data-reveal>
+      <span><strong>{reference?.properties.official_match_count}</strong> official matches</span>
+      <span><strong>{reference?.properties.matched_cluster_count}</strong> separate provisional clusters</span>
+      <span><strong>{formatHours(reference?.properties.temporal_span_hours ?? null)}</strong> observed span</span>
+      <span><strong>{reference?.properties.inter_cluster_gaps_gt_6h}</strong> gaps &gt; 6 h</span>
+    </div>
+
+    <details class="case-ledger" data-reveal>
+      <summary>Inspect the six-record timeline</summary>
+      <div class="timeline-reading">
+        <div>
+        <p class="section-label">FROZEN TIMELINE · 2025-01-23 → 2025-01-27 UTC</p>
+        <ol class="case-timeline">
+          {guacamayaTimeline.clusters.map((cluster) => (
+            <li class:list={{ "case-timeline__item": true, "case-timeline__item--possible": cluster.possible_chain_merge }}>
+              <div class="case-timeline__rail" aria-hidden="true"><span></span></div>
+              <div class="case-timeline__body">
+                <div class="case-timeline__topline"><span class="case-timeline__order">0{cluster.order}</span><span class="case-timeline__id">{cluster.public_event_id}</span><span class="case-timeline__daynight">{cluster.day_count > 0 ? "day" : "night"}</span></div>
+                <p>{formatUtc(cluster.cluster_start_utc)} → {formatUtc(cluster.cluster_end_utc)} · {cluster.detection_count} FIRMS detections · mean {formatDecimal(cluster.mean_frp_mw)} MW / max {formatDecimal(cluster.max_frp_mw)} MW</p>
+                {cluster.gap_from_previous_hours !== null && <p class="case-timeline__gap">{formatDecimal(cluster.gap_from_previous_hours)} h since previous cluster</p>}
+                {cluster.possible_chain_merge && <p class="case-timeline__caveat">possible_chain_merge = true</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+        </div>
+        <div class="timeline-reading__note">
+          <p class="section-label">SOURCE RECORD</p>
+          <p>Each cluster remains a separate provisional analytical unit. Day/night and FRP values are descriptive record fields, not an incident classification.</p>
+          <p class="case-source-note">Sources: {sources.map((source) => <a href={source.url} target="_blank" rel="noreferrer">{source.source_id}</a>).reduce((items, item, index) => index === 0 ? [item] : [...items, ", ", item], [])}</p>
+        </div>
+      </div>
+    </details>
+
+    <div class="case-evidence-heading" data-reveal>
+      <p class="section-label">SUPPORTING FROZEN EVIDENCE</p>
+      <p>Two preserved research plates document the timeline and descriptive FRP sequence without merging the records into a continuous event.</p>
+    </div>
+
+    <div class="case-figures" data-reveal>
+      <FigurePlate
+        figureId="figure-04"
+        src="/figures/04_guacamaya_timeline.png"
+        alt="Frozen timeline showing six Guacamaya matches, their gaps and day or night observations."
+        title="Six matches, kept separate"
+        caption="The primary case figure. It shows the six public event IDs, their temporal gaps, day or night observations and the fragmentation caveat."
+        longDescription="The frozen Guacamaya timeline spans 2025-01-23 through 2025-01-27 UTC. Six provisional clusters are shown as separate records, with five gaps above six hours and one possible chain-merge flag."
+      />
+      <FigurePlate
+        figureId="figure-05"
+        src="/figures/05_guacamaya_frp_distribution.png"
+        alt="Frozen descriptive FRP sequence for the six Guacamaya matches."
+        title="FRP as descriptive sequence"
+        caption="Maximum and mean FRP values for the six matched public events. The values are descriptive and are not a severity scale."
+        longDescription="The figure plots the six Guacamaya public event IDs in temporal order with maximum and mean FRP values. It does not infer cause, intensity class or continuity between observations."
+      />
+    </div>
+  </div>
+</section>

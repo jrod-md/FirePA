@@ -1,0 +1,30 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  title: string;
+  caption: string;
+  figureId: string;
+  longDescription: string;
+}
+
+const { src, alt, title, caption, figureId, longDescription } = Astro.props;
+---
+
+<figure class="figure-plate" id={figureId}>
+  <div class="figure-plate__image-wrap">
+    <img class="figure-plate__image" src={src} alt={alt} width="1600" height="900" loading="lazy" decoding="async" />
+  </div>
+  <figcaption class="figure-plate__caption">
+    <div>
+      <p class="figure-plate__label">{figureId.replace("figure-", "FIGURE ")}</p>
+      <h3>{title}</h3>
+      <p>{caption}</p>
+    </div>
+    <details class="figure-plate__details">
+      <summary>Long description / zoom</summary>
+      <p>{longDescription}</p>
+      <a href={src} target="_blank" rel="noreferrer">Open original PNG</a>
+    </details>
+  </figcaption>
+</figure>

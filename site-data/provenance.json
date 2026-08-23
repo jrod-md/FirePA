@@ -1,0 +1,247 @@
+{
+  "earth_engine_queries_made": false,
+  "figure_provenance": [
+    {
+      "derivative_path": "figures/01_pipeline_overview.png",
+      "derivative_sha256": "f818cc2f0ebe93a450c6dff5c505849a91c71bf013e597bdc6852a8cc7b94d1c",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 14151,
+      "source_path": "outputs/final_scientific_report/01_pipeline_overview.png",
+      "source_sha256": "f818cc2f0ebe93a450c6dff5c505849a91c71bf013e597bdc6852a8cc7b94d1c",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    },
+    {
+      "derivative_path": "figures/02_cluster_distribution.png",
+      "derivative_sha256": "5941c237f74a4ad95809aa7a0430a70269337560aa4cbabc62601d03edf2c2ea",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 12182,
+      "source_path": "outputs/final_scientific_report/02_cluster_distribution.png",
+      "source_sha256": "5941c237f74a4ad95809aa7a0430a70269337560aa4cbabc62601d03edf2c2ea",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    },
+    {
+      "derivative_path": "figures/03_external_reference_map.png",
+      "derivative_sha256": "3f0bcd569a0d762bb1c2435fe25158bf9ecbdedb1ada682c04c1a299a32916e7",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 22082,
+      "source_path": "outputs/final_scientific_report/03_external_reference_map.png",
+      "source_sha256": "3f0bcd569a0d762bb1c2435fe25158bf9ecbdedb1ada682c04c1a299a32916e7",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    },
+    {
+      "derivative_path": "figures/04_guacamaya_timeline.png",
+      "derivative_sha256": "d248bdda6b88eee52dc27f2567a29ec3bcf494a72b139ffc1340bed7db4566d0",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 15576,
+      "source_path": "outputs/final_scientific_report/04_guacamaya_timeline.png",
+      "source_sha256": "d248bdda6b88eee52dc27f2567a29ec3bcf494a72b139ffc1340bed7db4566d0",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    },
+    {
+      "derivative_path": "figures/05_guacamaya_frp_distribution.png",
+      "derivative_sha256": "973ef4f72e0f15873a11007359a6dba5aae419d4b83a78a855f428227a4c777b",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 15747,
+      "source_path": "outputs/final_scientific_report/05_guacamaya_frp_distribution.png",
+      "source_sha256": "973ef4f72e0f15873a11007359a6dba5aae419d4b83a78a855f428227a4c777b",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    },
+    {
+      "derivative_path": "figures/06_los_picachos_diagnostic.png",
+      "derivative_sha256": "8fa486e16e97063ad5f55b76165a3c671c2b1acd6b6c5c717a838ef56d4176a2",
+      "height": 900,
+      "scientific_content_recomputed": false,
+      "size_bytes": 14882,
+      "source_path": "outputs/final_scientific_report/06_los_picachos_diagnostic.png",
+      "source_sha256": "8fa486e16e97063ad5f55b76165a3c671c2b1acd6b6c5c717a838ef56d4176a2",
+      "transformation": "copy-byte-identical",
+      "width": 1600
+    }
+  ],
+  "generator": {
+    "command": "python scripts/build_public_release.py --output site-data",
+    "entry_point": "scripts/build_public_release.py",
+    "version": "firepa-public-release-generator-v1"
+  },
+  "network_access": false,
+  "output_hashes": [
+    {
+      "path": "citations.json",
+      "sha256": "0536018e05ab09c3e3f8d18b4e805c63ecf066d9a97cde183bb7dcf1c17f2804",
+      "size_bytes": 4877
+    },
+    {
+      "path": "events.geojson",
+      "sha256": "8b3a6ab835d0617ada766213b17d4f0c267aa720bf8a266d37fea7f1bf71bee0",
+      "size_bytes": 534769
+    },
+    {
+      "path": "external-references.geojson",
+      "sha256": "2a0f72ef60d453bce8d4f7c712468bb246d7faf3ddc30cd88ac147c71b1834e9",
+      "size_bytes": 2297
+    },
+    {
+      "path": "figures/01_pipeline_overview.png",
+      "sha256": "f818cc2f0ebe93a450c6dff5c505849a91c71bf013e597bdc6852a8cc7b94d1c",
+      "size_bytes": 14151
+    },
+    {
+      "path": "figures/02_cluster_distribution.png",
+      "sha256": "5941c237f74a4ad95809aa7a0430a70269337560aa4cbabc62601d03edf2c2ea",
+      "size_bytes": 12182
+    },
+    {
+      "path": "figures/03_external_reference_map.png",
+      "sha256": "3f0bcd569a0d762bb1c2435fe25158bf9ecbdedb1ada682c04c1a299a32916e7",
+      "size_bytes": 22082
+    },
+    {
+      "path": "figures/04_guacamaya_timeline.png",
+      "sha256": "d248bdda6b88eee52dc27f2567a29ec3bcf494a72b139ffc1340bed7db4566d0",
+      "size_bytes": 15576
+    },
+    {
+      "path": "figures/05_guacamaya_frp_distribution.png",
+      "sha256": "973ef4f72e0f15873a11007359a6dba5aae419d4b83a78a855f428227a4c777b",
+      "size_bytes": 15747
+    },
+    {
+      "path": "figures/06_los_picachos_diagnostic.png",
+      "sha256": "8fa486e16e97063ad5f55b76165a3c671c2b1acd6b6c5c717a838ef56d4176a2",
+      "size_bytes": 14882
+    },
+    {
+      "path": "guacamaya-timeline.json",
+      "sha256": "264b7ab19e5e86c61ee415eaf817d310ad37bf56ce73f8f77fc903a7adc84eca",
+      "size_bytes": 2865
+    },
+    {
+      "path": "methodology.json",
+      "sha256": "b073207d62b3f23ef72b093dc8736ce7899535980b3a58c43982189e010e6ed9",
+      "size_bytes": 2887
+    },
+    {
+      "path": "project-summary.json",
+      "sha256": "faad792c4619c18922816b93d977703acba7993506842c7a8f53a031f3b28abf",
+      "size_bytes": 2645
+    }
+  ],
+  "package_version": "firepa-public-release-v1",
+  "protected_artifacts": [
+    {
+      "path": "data/processed/firms_cocle_2025_detections.csv",
+      "sha256": "3f166e8c2417e9ea875105f313bb3048498688af4c477c356d689ce1a212aa6e"
+    },
+    {
+      "path": "outputs/clustering/r1500_t06/events.csv",
+      "sha256": "646c70358045c3f774ca3b0b85889c7f851a51559465d3e5ee470c33c7c8e844"
+    },
+    {
+      "path": "outputs/clustering/r1500_t06/summary.json",
+      "sha256": "1e36f363ffd5560d580c47b260c34e8758635d1f5b76ed1882e5153abbf13736"
+    },
+    {
+      "path": "data/processed/sentinel2_observability_pilot_events.csv",
+      "sha256": "a9d98281e1b39953d80c91fb61c9f10b5d936a330f1669341079f4da6026b302"
+    },
+    {
+      "path": "references/external_reference_sources_v1.json",
+      "sha256": "6fcd1830a994fda553bc1c1ae7733ffa22823c8360653479d6ed09358f9d9a49"
+    }
+  ],
+  "public_private_boundary": {
+    "absolute_paths_published": false,
+    "private_review_mappings_published": false,
+    "raw_detection_rows_published": false,
+    "reviewer_identities_published": false,
+    "secrets_published": false,
+    "sqlite_published": false
+  },
+  "scientific_freeze_commit": "7694da7df5808911de48de84016759c5fd22f176",
+  "source_artifacts": [
+    {
+      "path": "outputs/clustering/r1500_t06/events.csv",
+      "role": "canonical provisional-event table",
+      "sha256": "646c70358045c3f774ca3b0b85889c7f851a51559465d3e5ee470c33c7c8e844",
+      "size_bytes": 180406
+    },
+    {
+      "path": "outputs/clustering/r1500_t06/summary.json",
+      "role": "clustering summary",
+      "sha256": "1e36f363ffd5560d580c47b260c34e8758635d1f5b76ed1882e5153abbf13736",
+      "size_bytes": 1739
+    },
+    {
+      "path": "data/processed/firms_cocle_2025_detections.csv",
+      "role": "processed FIRMS count source",
+      "sha256": "3f166e8c2417e9ea875105f313bb3048498688af4c477c356d689ce1a212aa6e",
+      "size_bytes": 355001
+    },
+    {
+      "path": "data/processed/sentinel2_observability_pilot_events.csv",
+      "role": "optical cohort membership",
+      "sha256": "a9d98281e1b39953d80c91fb61c9f10b5d936a330f1669341079f4da6026b302",
+      "size_bytes": 6058
+    },
+    {
+      "path": "outputs/human_review/unobserved_events.csv",
+      "role": "unobserved cohort status",
+      "sha256": "313559568572734e6e83379c09adb0f8b723dc648ad4212873d7fbd9e5f8a9f0",
+      "size_bytes": 329
+    },
+    {
+      "path": "outputs/external_reference_check_v1/matches.csv",
+      "role": "external match rows",
+      "sha256": "3e295a4a884ec7bcadccbc0f76f56f7572881160634f6c36045db540d4e9c5ff",
+      "size_bytes": 6923
+    },
+    {
+      "path": "outputs/external_reference_check_v1/reference_summary.csv",
+      "role": "external reference summary",
+      "sha256": "650ca2012a742edadf127cde9c05596e2292c18e3aa04429ece389d9ec29686f",
+      "size_bytes": 2327
+    },
+    {
+      "path": "outputs/final_scientific_report/guacamaya_timeline.csv",
+      "role": "Guacamaya timeline source",
+      "sha256": "1dea9a1faeac9c021da83a44b6cde09087c62de783b3e7b9d25a9952f4c580e7",
+      "size_bytes": 906
+    },
+    {
+      "path": "outputs/final_scientific_report/picachos_temporal_top10.csv",
+      "role": "Los Picachos diagnostic source",
+      "sha256": "2d42040bd720bacbbdad899f8f68151960cd29172bb17f0731db9dd27770ed62",
+      "size_bytes": 739
+    },
+    {
+      "path": "references/external_reference_sources_v1.json",
+      "role": "canonical external source registry",
+      "sha256": "6fcd1830a994fda553bc1c1ae7733ffa22823c8360653479d6ed09358f9d9a49",
+      "size_bytes": 9856
+    },
+    {
+      "path": "outputs/final_scientific_report/manifest.json",
+      "role": "frozen final-report manifest",
+      "sha256": "b91fcd664b5db7f72f0f4d21969dc10f9b10169942dddcc4a4cdf6aeb63d37ac",
+      "size_bytes": 2425
+    }
+  ],
+  "transformations": [
+    "event rows sorted by frozen source event_id and mapped to public_event_id",
+    "frozen centroid fields projected to WGS84 GeoJSON Points",
+    "optical cohort status joined from frozen cohort and unobserved tables",
+    "external references projected from the canonical registry and frozen check outputs",
+    "numeric values rounded only for deterministic public serialization",
+    "six final scientific figures copied byte-for-byte"
+  ]
+}

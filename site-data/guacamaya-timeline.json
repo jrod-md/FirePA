@@ -1,0 +1,114 @@
+{
+  "clusters": [
+    {
+      "cluster_end_utc": "2025-01-24T06:33:00Z",
+      "cluster_start_utc": "2025-01-24T06:11:00Z",
+      "day_count": 0,
+      "detection_count": 2,
+      "gap_from_previous_hours": null,
+      "max_frp_mw": 7.69,
+      "mean_frp_mw": 5.85,
+      "night_count": 2,
+      "order": 1,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0557",
+      "satellites": [
+        "N",
+        "N20"
+      ]
+    },
+    {
+      "cluster_end_utc": "2025-01-24T19:19:00Z",
+      "cluster_start_utc": "2025-01-24T18:56:00Z",
+      "day_count": 4,
+      "detection_count": 4,
+      "gap_from_previous_hours": 12.383333,
+      "max_frp_mw": 5.05,
+      "mean_frp_mw": 4.885,
+      "night_count": 0,
+      "order": 2,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0230",
+      "satellites": [
+        "N",
+        "N20"
+      ]
+    },
+    {
+      "cluster_end_utc": "2025-01-25T19:00:00Z",
+      "cluster_start_utc": "2025-01-25T18:37:00Z",
+      "day_count": 3,
+      "detection_count": 3,
+      "gap_from_previous_hours": 23.3,
+      "max_frp_mw": 13.67,
+      "mean_frp_mw": 10.243333,
+      "night_count": 0,
+      "order": 3,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0078",
+      "satellites": [
+        "N",
+        "N20"
+      ]
+    },
+    {
+      "cluster_end_utc": "2025-01-26T07:13:00Z",
+      "cluster_start_utc": "2025-01-26T05:56:00Z",
+      "day_count": 0,
+      "detection_count": 5,
+      "gap_from_previous_hours": 10.933333,
+      "max_frp_mw": 7.92,
+      "mean_frp_mw": 4.334,
+      "night_count": 5,
+      "order": 4,
+      "possible_chain_merge": true,
+      "public_event_id": "evt-0383",
+      "satellites": [
+        "N",
+        "N20"
+      ]
+    },
+    {
+      "cluster_end_utc": "2025-01-26T18:18:00Z",
+      "cluster_start_utc": "2025-01-26T18:18:00Z",
+      "day_count": 1,
+      "detection_count": 1,
+      "gap_from_previous_hours": 11.083333,
+      "max_frp_mw": 4.49,
+      "mean_frp_mw": 4.49,
+      "night_count": 0,
+      "order": 5,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0320",
+      "satellites": [
+        "N"
+      ]
+    },
+    {
+      "cluster_end_utc": "2025-01-27T06:55:00Z",
+      "cluster_start_utc": "2025-01-27T06:55:00Z",
+      "day_count": 0,
+      "detection_count": 4,
+      "gap_from_previous_hours": 12.616667,
+      "max_frp_mw": 2.91,
+      "mean_frp_mw": 1.2625,
+      "night_count": 4,
+      "order": 6,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0284",
+      "satellites": [
+        "N"
+      ]
+    }
+  ],
+  "inter_cluster_gaps_gt_6h": 5,
+  "package_version": "firepa-public-release-v1",
+  "reference_id": "REFERENCE-002",
+  "temporal_span_hours": 72.733,
+  "timeline_window": {
+    "end": "2025-01-27",
+    "inclusive": true,
+    "start": "2025-01-23",
+    "timezone": "UTC"
+  }
+}

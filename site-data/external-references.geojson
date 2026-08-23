@@ -1,0 +1,81 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          -80.65114,
+          8.42097
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "anchor_status": "approximate",
+        "coordinate_claimed_by_source": false,
+        "diagnostic": "SPATIAL_THRESHOLD_MISS",
+        "fragmentation_possible": false,
+        "inter_cluster_gaps_gt_6h": 0,
+        "matched_cluster_count": 0,
+        "matched_public_event_ids": [],
+        "nearest_documented_contemporary_signal_m": 10400.826,
+        "official_match_count": 0,
+        "official_matching_radius_m": 5000,
+        "official_window_end": "2025-01-17",
+        "official_window_start": "2025-01-15",
+        "reference_id": "REFERENCE-001",
+        "reference_location": "Olá, Coclé, Panamá",
+        "reference_name": "Cerro Los Picachos",
+        "source_document_count": 1,
+        "source_ids": [
+          "SOURCE-001"
+        ],
+        "temporal_span_hours": null
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -80.433333,
+          8.516667
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "anchor_status": "approximate",
+        "coordinate_claimed_by_source": false,
+        "diagnostic": null,
+        "fragmentation_possible": true,
+        "inter_cluster_gaps_gt_6h": 5,
+        "matched_cluster_count": 6,
+        "matched_public_event_ids": [
+          "evt-0078",
+          "evt-0230",
+          "evt-0284",
+          "evt-0320",
+          "evt-0383",
+          "evt-0557"
+        ],
+        "nearest_documented_contemporary_signal_m": null,
+        "official_match_count": 6,
+        "official_matching_radius_m": 5000,
+        "official_window_end": "2025-01-27",
+        "official_window_start": "2025-01-23",
+        "reference_id": "REFERENCE-002",
+        "reference_location": "Cañaveral / Penonomé, Coclé, Panamá",
+        "reference_name": "Cerro Guacamaya",
+        "source_document_count": 6,
+        "source_ids": [
+          "SOURCE-002",
+          "SOURCE-003",
+          "SOURCE-004",
+          "SOURCE-005",
+          "SOURCE-006",
+          "SOURCE-007"
+        ],
+        "temporal_span_hours": 72.733
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

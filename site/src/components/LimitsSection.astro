@@ -1,0 +1,41 @@
+---
+import { counts, projectSummary } from "../data/public";
+---
+
+<section id="limits" class="research-section limits-section" aria-labelledby="limits-title">
+  <div class="site-frame">
+    <div class="limits-opening" data-reveal>
+      <div>
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 06</p>
+        <h2 id="limits-title" class="limits-title">The evidence stops <em>here.</em></h2>
+      </div>
+      <div class="limits-opening__note">
+        <p class="section-label">LIMITS ARE PART OF THE RESULT</p>
+        <p>This release is deliberately descriptive. What is absent is not a hidden layer waiting behind the interface.</p>
+      </div>
+    </div>
+
+    <div class="limits-statement" data-reveal>
+      <p class="limits-statement__rule"><span>No confirmed classification.</span><span>No ground truth.</span><span>No predictive severity.</span></p>
+      <p class="limits-statement__lead">{projectSummary.definition}</p>
+    </div>
+
+    <div class="limits-columns" data-reveal>
+      <div>
+        <p class="section-label">FORMAL STATUS</p>
+        <dl class="limits-facts">
+          <div><dt>Formal human observations</dt><dd>{counts.formal_human_observations}</dd></div>
+          <div><dt>Ground truth</dt><dd>None</dd></div>
+          <div><dt>Predictive model</dt><dd>None</dd></div>
+          <div><dt>Severity class</dt><dd>None</dd></div>
+        </dl>
+      </div>
+      <div>
+        <p class="section-label">DO NOT INFER</p>
+        <ul class="editorial-list editorial-list--limits">
+          {projectSummary.limitations.map((limitation) => <li><span aria-hidden="true">×</span><span>{limitation}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,118 @@
+{
+  "external_sources": [
+    {
+      "cause_status": null,
+      "incident_id": "REFERENCE-001",
+      "publication_date": "2025-01-17",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "reported_area_ha": null,
+      "reported_event_date": "2025-01-16",
+      "reported_location": "Cerro Los Picachos, Olá, Coclé",
+      "source_id": "SOURCE-001",
+      "url": "https://www.tvn-2.com/nacionales/incendio-picachos-ola-afecto-extensa-area-investigan-causas_1_2173253.html"
+    },
+    {
+      "cause_status": null,
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-01-26",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "reported_area_ha": 1035,
+      "reported_area_qualifier": "around",
+      "reported_event_date": "2025-01-25",
+      "reported_location": "Cerro Guacamaya, Reserva Hídrica, Penonomé, Coclé",
+      "source_id": "SOURCE-002",
+      "url": "https://www.tvn-2.com/nacionales/provincias/cerro-guacamaya-mil-hectareas-afectadas-incendio-reserva-hidrica_1_2174469.html"
+    },
+    {
+      "cause_status": "suspected_intentional",
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-01-27",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "reported_area_ha": 1050,
+      "reported_area_qualifier": "more_than",
+      "reported_event_date_start": "2025-01-23",
+      "reported_location": "Cerro Guacamaya, Penonomé, Coclé",
+      "source_id": "SOURCE-003",
+      "url": "https://www.tvn-2.com/nacionales/siguen-trabajos-controlar-incendio-cerro_1_2174481.html"
+    },
+    {
+      "cause_status": "suspected_intentional",
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-01-27",
+      "publisher": "EcoTV Panamá",
+      "publisher_type": "news_media",
+      "reported_area_ha": 1500,
+      "reported_area_qualifier": "about",
+      "reported_event_date_end": "2025-01-27",
+      "reported_event_date_start": "2025-01-23",
+      "reported_location": "Cerro Guacamaya, Cañaveral, Penonomé, Coclé",
+      "source_id": "SOURCE-004",
+      "url": "https://www.ecotvpanama.com/nacionales/autoridades-extinguen-incendio-cerro-guacamaya-penonome-n6026325"
+    },
+    {
+      "cause_status": "suspected_intentional",
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-01-27",
+      "publisher": "Telemetro Noticias",
+      "publisher_type": "news_media",
+      "reported_area_ha": null,
+      "reported_event_date": "2025-01-26",
+      "reported_location": "Cerro Guacamaya, Penonomé, Coclé",
+      "source_id": "SOURCE-005",
+      "url": "https://www.telemetro.com/nacionales/noticias/2025/01/27/incendio-cerro-guacamaya-3000.html"
+    },
+    {
+      "cause_status": null,
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-01-28",
+      "publisher": "Benemérito Cuerpo de Bomberos de la República de Panamá",
+      "publisher_type": "official_institution",
+      "reported_area_ha": 1500,
+      "reported_area_qualifier": "near",
+      "reported_event_date": "2025-01-26",
+      "reported_location": "Reserva Hídrica Cerro Guacamaya, Coclé",
+      "source_id": "SOURCE-006",
+      "url": "https://www.bomberos.gob.pa/2025/01/28/incendios-en-cerro-guacamaya-y-tubuala-control-prevencion-y-nuevas-alianzas-internacionales/"
+    },
+    {
+      "cause_status": "suspected_intentional",
+      "incident_id": "REFERENCE-002",
+      "publication_date": "2025-02-07",
+      "publisher": "Ministerio de Ambiente de Panamá (MiAMBIENTE)",
+      "publisher_type": "official_institution",
+      "reported_area_ha": null,
+      "reported_event_date_end": "2025-01-27",
+      "reported_event_date_start": "2025-01-23",
+      "reported_location": "Reserva Hídrica Cerro Guacamaya, Cañaveral, Penonomé, Coclé",
+      "source_id": "SOURCE-007",
+      "url": "https://miambiente.gob.pa/avanzan-investigaciones-sobre-incendio-en-la-reserva-hidrica-cerro-guacamaya-y-reiteran-recompensa-para-encontrar-a-los-responsables/"
+    }
+  ],
+  "package_version": "firepa-public-release-v1",
+  "registry": {
+    "incident_count": 2,
+    "path": "references/external_reference_sources_v1.json",
+    "sha256": "6fcd1830a994fda553bc1c1ae7733ffa22823c8360653479d6ed09358f9d9a49",
+    "source_count": 7
+  },
+  "scientific_sources": [
+    {
+      "path": "docs/FIREPA_PILOT_V1_FREEZE.md",
+      "role": "scientific freeze",
+      "sha256": "b8b7a7c08e51d42668a3c60165f8ad87dd0094376feef6eb7f4b086016c8dead"
+    },
+    {
+      "path": "docs/FIREPA_PILOT_SCIENTIFIC_REPORT.md",
+      "role": "final scientific report",
+      "sha256": "1d463bc03f06f47d0bfe3dbaf40a051aed0a82884d773457ecc728fc39847e18"
+    },
+    {
+      "path": "docs/FIREPA_PILOT_FINAL_CHECKPOINT.md",
+      "role": "final checkpoint",
+      "sha256": "cb1f1e467d405d772e1c5d88b19004363c5b40715932424b9ab5d9f07844c8a2"
+    }
+  ]
+}

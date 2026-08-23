@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "firepa-blind-control-r1-pass-a-v1",
+  "title": "FirePA blind control R1 Pass A response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "round_id",
+    "pass",
+    "protocol_version",
+    "reviewer_id",
+    "reviewer_type",
+    "reviewer_expertise",
+    "reviewer_model",
+    "label_status",
+    "reviews"
+  ],
+  "properties": {
+    "schema_version": {"const": "firepa-blind-control-r1-response-v1"},
+    "round_id": {"const": "control_r1"},
+    "pass": {"const": "A"},
+    "protocol_version": {"const": "candidate-v1"},
+    "reviewer_id": {"type": "string", "minLength": 1},
+    "reviewer_type": {"const": "ai_assisted"},
+    "reviewer_expertise": {"const": "not_applicable"},
+    "reviewer_model": {"type": "string", "minLength": 1},
+    "label_status": {"const": "provisional_pseudolabel"},
+    "reviews": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/review"}
+    }
+  },
+  "$defs": {
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "pass_a_visible_burn_scar",
+        "pass_a_scar_confidence",
+        "pass_a_event_association",
+        "pass_a_competing_land_change",
+        "observation_limitation",
+        "pass_a_notes"
+      ],
+      "properties": {
+        "case_id": {"enum": ["CASE-001", "CASE-002", "CASE-003", "CASE-004", "CASE-005", "CASE-006", "CASE-007"]},
+        "pass_a_visible_burn_scar": {"enum": ["yes", "no", "ambiguous", "unobserved"]},
+        "pass_a_scar_confidence": {"enum": ["high", "medium", "low", "not_applicable"]},
+        "pass_a_event_association": {"enum": ["likely", "possible", "unlikely", "indeterminate"]},
+        "pass_a_competing_land_change": {"enum": ["none_visible", "agriculture_or_harvest", "soil_exposure", "vegetation_phenology", "moisture_or_flooding", "water", "urban_or_construction", "mixed", "unknown"]},
+        "observation_limitation": {"enum": ["none", "cloud_or_haze", "shadow_or_atmosphere", "mask_or_nodata", "partial_coverage", "long_temporal_gap", "mixed", "unknown"]},
+        "pass_a_notes": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

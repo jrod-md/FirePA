@@ -1,0 +1,68 @@
+---
+import { citations, manifest, methodology, projectSummary, provenance } from "../data/public";
+
+const boundaryEntries = Object.entries(provenance.public_private_boundary);
+const publicFiles = projectSummary.files;
+const figureRecords = provenance.figure_provenance;
+const hashShort = (value: string) => `${value.slice(0, 12)}…`;
+---
+
+<section id="reproduce" class="research-section inspect-section" aria-labelledby="inspect-title">
+  <div class="site-frame">
+    <div class="inspect-opening" data-reveal>
+      <div class="inspect-opening__title">
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 07</p>
+        <h2 id="inspect-title" class="inspect-title">Inspect <em>everything.</em></h2>
+      </div>
+      <div class="inspect-opening__note">
+        <p class="section-label">PUBLIC PACKAGE / {projectSummary.package_version}</p>
+        <p>The site is a reading layer over a frozen package. Its provenance is part of the evidence, not a technical afterthought.</p>
+      </div>
+    </div>
+
+    <div class="inspect-overview" data-reveal>
+      <div><p class="section-label">PACKAGE</p><p class="inspect-overview__value">{projectSummary.package_version}</p><p>Scientific freeze <code>{projectSummary.scientific_freeze_commit}</code></p></div>
+      <div><p class="section-label">GENERATOR</p><p class="inspect-overview__value">{provenance.generator.version}</p><p>{provenance.generator.command}</p></div>
+      <div><p class="section-label">NETWORK / EE</p><p class="inspect-overview__value">{provenance.network_access ? "enabled" : "off"} / {provenance.earth_engine_queries_made ? "queried" : "not queried"}</p><p>Static public package. No backend required.</p></div>
+    </div>
+
+    <div class="inspect-grid" data-reveal>
+      <div>
+        <p class="section-label">PUBLIC TREE</p>
+        <ul class="package-tree">
+          {publicFiles.map((file) => <li><code>{file}</code></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="section-label">MANIFEST</p>
+        <p>{manifest.files.length} hashed public entries. Deterministic: <code>{String(manifest.deterministic)}</code>.</p>
+        <div class="hash-list">
+          {manifest.files.slice(0, 6).map((file) => <div><code>{file.path}</code><span>{hashShort(file.sha256)}</span></div>)}
+          <p class="hash-list__more">+ {manifest.files.length - 6} more entries in the package manifest.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="inspect-grid inspect-grid--lower" data-reveal>
+      <div>
+        <p class="section-label">FIGURE PROVENANCE</p>
+        <div class="provenance-list">
+          {figureRecords.map((figure) => <div><code>{figure.derivative_path}</code><span>{figure.transformation} · {figure.width}×{figure.height} · same hash <code>{figure.derivative_sha256 === figure.source_sha256 ? "yes" : "no"}</code></span></div>)}
+        </div>
+      </div>
+      <div>
+        <p class="section-label">PUBLIC BOUNDARY</p>
+        <dl class="boundary-list">
+          {boundaryEntries.map(([key, value]) => <div><dt>{key.replaceAll("_", " ")}</dt><dd>{value ? "present" : "absent"}</dd></div>)}
+        </dl>
+        <p class="inspect-note">The package exposes 19 public event fields. Private review identities, raw detection rows, SQLite, secrets and absolute paths remain outside the public boundary.</p>
+      </div>
+    </div>
+
+    <div class="inspect-links">
+      <a class="text-link" href="/methodology">Read methodology <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href="/sources">Open sources &amp; provenance <span aria-hidden="true">↗</span></a>
+      <span class="inspect-links__meta">{citations.registry.source_count} external source documents · {methodology.source_artifacts.length} scientific source artifacts</span>
+    </div>
+  </div>
+</section>

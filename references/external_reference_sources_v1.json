@@ -1,0 +1,234 @@
+{
+  "schema_version": "firepa-external-reference-sources-v1",
+  "created_at": "2026-08-09T00:00:00Z",
+  "freeze_base_commit": "22ad92a72a81f3d8bec6938dd625634d731177ee",
+  "research_scope": {
+    "place": "Coclé, Panamá",
+    "period_start": "2025-01-01",
+    "period_end": "2025-04-30",
+    "inclusive": true
+  },
+  "source_count": 7,
+  "incident_count": 2,
+  "incidents": [
+    {
+      "incident_id": "REFERENCE-001",
+      "canonical_name": "Cerro Los Picachos",
+      "location_text": "Olá, Coclé, Panamá",
+      "matching_anchor_id": "MATCHING_ANCHOR-001",
+      "official_matching_window": {
+        "start": "2025-01-15",
+        "end": "2025-01-17",
+        "inclusive": true
+      },
+      "official_matching_radius_m": 5000,
+      "event_date_supported": "2025-01-16",
+      "source_ids": [
+        "SOURCE-001"
+      ],
+      "reported_area_range_ha": null,
+      "cause_statuses": [
+        "not_reported"
+      ]
+    },
+    {
+      "incident_id": "REFERENCE-002",
+      "canonical_name": "Cerro Guacamaya",
+      "location_text": "Cañaveral / Penonomé, Coclé, Panamá",
+      "matching_anchor_id": "MATCHING_ANCHOR-002",
+      "official_matching_window": {
+        "start": "2025-01-23",
+        "end": "2025-01-27",
+        "inclusive": true
+      },
+      "official_matching_radius_m": 5000,
+      "source_ids": [
+        "SOURCE-002",
+        "SOURCE-003",
+        "SOURCE-004",
+        "SOURCE-005",
+        "SOURCE-006",
+        "SOURCE-007"
+      ],
+      "reported_area_range_ha": {
+        "min": 1035,
+        "max": 1500,
+        "claims_preserved": [
+          {
+            "source_id": "SOURCE-002",
+            "reported_area_ha": 1035,
+            "qualifier": "around"
+          },
+          {
+            "source_id": "SOURCE-003",
+            "reported_area_ha": 1050,
+            "qualifier": "more_than"
+          },
+          {
+            "source_id": "SOURCE-004",
+            "reported_area_ha": 1500,
+            "qualifier": "about"
+          },
+          {
+            "source_id": "SOURCE-006",
+            "reported_area_ha": 1500,
+            "qualifier": "near"
+          }
+        ]
+      },
+      "cause_statuses": [
+        "not_reported",
+        "suspected_intentional"
+      ],
+      "intentionality_status": "suspected_unconfirmed"
+    }
+  ],
+  "matching_anchors": [
+    {
+      "anchor_id": "MATCHING_ANCHOR-001",
+      "incident_id": "REFERENCE-001",
+      "latitude": 8.42097,
+      "longitude": -80.65114,
+      "coordinate_status": "approximate",
+      "coordinate_source": "researcher_provided_approximate_anchor",
+      "coordinate_claimed_by_news_source": false,
+      "used_for_matching": true
+    },
+    {
+      "anchor_id": "MATCHING_ANCHOR-002",
+      "incident_id": "REFERENCE-002",
+      "latitude": 8.516667,
+      "longitude": -80.433333,
+      "coordinate_status": "approximate",
+      "coordinate_source": "researcher_provided_approximate_anchor",
+      "coordinate_claimed_by_news_source": false,
+      "used_for_matching": true
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "SOURCE-001",
+      "incident_id": "REFERENCE-001",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "publication_date": "2025-01-17",
+      "reported_event_date": "2025-01-16",
+      "reported_location": "Cerro Los Picachos, Olá, Coclé",
+      "reported_area_ha": null,
+      "cause_status": null,
+      "url": "https://www.tvn-2.com/nacionales/incendio-picachos-ola-afecto-extensa-area-investigan-causas_1_2173253.html",
+      "researcher_summary": "Un incendio de masa vegetal se registró el 16 de enero de 2025 en el Cerro Los Picachos (Olá, Coclé), afectando una extensa área de vegetación. Las autoridades (bomberos y MiAmbiente) combatieron el fuego, investigándose las posibles causas del siniestro."
+    },
+    {
+      "source_id": "SOURCE-002",
+      "incident_id": "REFERENCE-002",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "publication_date": "2025-01-26",
+      "reported_event_date": "2025-01-25",
+      "reported_location": "Cerro Guacamaya, Reserva Hídrica, Penonomé, Coclé",
+      "reported_area_ha": 1035,
+      "reported_area_qualifier": "around",
+      "cause_status": null,
+      "url": "https://www.tvn-2.com/nacionales/provincias/cerro-guacamaya-mil-hectareas-afectadas-incendio-reserva-hidrica_1_2174469.html",
+      "researcher_summary": "El 26 de enero de 2025 se reportó un incendio forestal en la Reserva Hídrica Cerro Guacamaya (Penonomé, Coclé) que consumió alrededor de 1,035 hectáreas. El fuerte viento propagó las llamas, por lo que se requirió coordinar a bomberos y aeronaves de Senan para intentar controlarlo."
+    },
+    {
+      "source_id": "SOURCE-003",
+      "incident_id": "REFERENCE-002",
+      "publisher": "TVN Noticias",
+      "publisher_type": "news_media",
+      "publication_date": "2025-01-27",
+      "reported_event_date_start": "2025-01-23",
+      "reported_location": "Cerro Guacamaya, Penonomé, Coclé",
+      "reported_area_ha": 1050,
+      "reported_area_qualifier": "more_than",
+      "cause_status": "suspected_intentional",
+      "url": "https://www.tvn-2.com/nacionales/siguen-trabajos-controlar-incendio-cerro_1_2174481.html",
+      "researcher_summary": "Para el 27 de enero de 2025, el director regional de MiAmbiente reportó que el incendio en Cerro Guacamaya había consumido más de 1,050 hectáreas. Se destacó el esfuerzo de bomberos y brigadas desde el 23 de enero y se mencionaron indicios de intencionalidad."
+    },
+    {
+      "source_id": "SOURCE-004",
+      "incident_id": "REFERENCE-002",
+      "publisher": "EcoTV Panamá",
+      "publisher_type": "news_media",
+      "publication_date": "2025-01-27",
+      "reported_event_date_start": "2025-01-23",
+      "reported_event_date_end": "2025-01-27",
+      "reported_location": "Cerro Guacamaya, Cañaveral, Penonomé, Coclé",
+      "reported_area_ha": 1500,
+      "reported_area_qualifier": "about",
+      "cause_status": "suspected_intentional",
+      "url": "https://www.ecotvpanama.com/nacionales/autoridades-extinguen-incendio-cerro-guacamaya-penonome-n6026325",
+      "researcher_summary": "Las autoridades anunciaron la extinción de un incendio forestal en Cerro Guacamaya que habría afectado unas 1,500 hectáreas de bosque y pajonal. MiAmbiente señaló indicios de posible mano criminal."
+    },
+    {
+      "source_id": "SOURCE-005",
+      "incident_id": "REFERENCE-002",
+      "publisher": "Telemetro Noticias",
+      "publisher_type": "news_media",
+      "publication_date": "2025-01-27",
+      "reported_event_date": "2025-01-26",
+      "reported_location": "Cerro Guacamaya, Penonomé, Coclé",
+      "reported_area_ha": null,
+      "cause_status": "suspected_intentional",
+      "url": "https://www.telemetro.com/nacionales/noticias/2025/01/27/incendio-cerro-guacamaya-3000.html",
+      "researcher_summary": "Telemetro reportó el control del incendio y una recompensa de B/.3,000 para información sobre posibles responsables, ante sospechas de provocación intencional."
+    },
+    {
+      "source_id": "SOURCE-006",
+      "incident_id": "REFERENCE-002",
+      "publisher": "Benemérito Cuerpo de Bomberos de la República de Panamá",
+      "publisher_type": "official_institution",
+      "publication_date": "2025-01-28",
+      "reported_event_date": "2025-01-26",
+      "reported_location": "Reserva Hídrica Cerro Guacamaya, Coclé",
+      "reported_area_ha": 1500,
+      "reported_area_qualifier": "near",
+      "cause_status": null,
+      "url": "https://www.bomberos.gob.pa/2025/01/28/incendios-en-cerro-guacamaya-y-tubuala-control-prevencion-y-nuevas-alianzas-internacionales/",
+      "researcher_summary": "El Cuerpo de Bomberos informó que el incendio de masa vegetal había consumido cerca de 1,500 hectáreas y amenazado la fuente de agua de más de 52 comunidades."
+    },
+    {
+      "source_id": "SOURCE-007",
+      "incident_id": "REFERENCE-002",
+      "publisher": "Ministerio de Ambiente de Panamá (MiAMBIENTE)",
+      "publisher_type": "official_institution",
+      "publication_date": "2025-02-07",
+      "reported_event_date_start": "2025-01-23",
+      "reported_event_date_end": "2025-01-27",
+      "reported_location": "Reserva Hídrica Cerro Guacamaya, Cañaveral, Penonomé, Coclé",
+      "reported_area_ha": null,
+      "cause_status": "suspected_intentional",
+      "url": "https://miambiente.gob.pa/avanzan-investigaciones-sobre-incendio-en-la-reserva-hidrica-cerro-guacamaya-y-reiteran-recompensa-para-encontrar-a-los-responsables/",
+      "researcher_summary": "MiAmbiente informó que el incendio inició la tarde del 23 de enero y duró hasta el 27. Indicó que se presume que fue provocado intencionalmente y reiteró una recompensa para identificar responsables."
+    }
+  ],
+  "search_coverage": {
+    "method": "manual OSINT search",
+    "monthly_article_counts": {
+      "2025-01": 6,
+      "2025-02": 1,
+      "2025-03": 0,
+      "2025-04": 0
+    },
+    "total_located_articles": 7,
+    "manual_search_exhaustiveness_claimed": false,
+    "exact_caution": "No qualifying articles were located during the manual OSINT search for March or April 2025.",
+    "absence_of_media_report_is_not_absence_of_thermal_activity": true,
+    "absence_of_media_report_is_not_absence_of_fire": true
+  },
+  "provenance_limits": {
+    "urls_are_provenance_only": true,
+    "source_urls_used_as_pipeline_inputs": false,
+    "source_urls_used_for_matching": false,
+    "external_references_are_ground_truth": false,
+    "source_areas_are_adjudicated": false,
+    "source_cause_claims_are_confirmed": false,
+    "used_as_target": false,
+    "used_for_supervised_modeling": false,
+    "used_for_human_review": false,
+    "used_for_scientific_result_recalculation": false,
+    "network_access_required_to_reproduce_scientific_results": false
+  }
+}

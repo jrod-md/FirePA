@@ -1,0 +1,58 @@
+---
+import FigurePlate from "./FigurePlate.astro";
+import { citations, externalReferences, formatExact, formatMeters } from "../data/public";
+
+const reference = externalReferences.features.find((feature) => feature.properties.reference_id === "REFERENCE-001");
+const source = citations.external_sources.find((item) => item.source_id === "SOURCE-001");
+---
+
+<section id="picachos" class="research-section case-section picachos-section" aria-labelledby="picachos-title">
+  <div class="site-frame">
+    <div class="case-opening case-opening--light" data-reveal>
+      <div class="case-opening__title">
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 05 · CASE 02</p>
+        <h2 id="picachos-title" class="case-title">Los Picachos marks a<br /><em>threshold miss.</em></h2>
+      </div>
+      <div class="case-opening__note">
+        <p class="section-label">REFERENCE-001 · {reference?.properties.reference_name}</p>
+        <p>The official comparison returns zero matches inside its frozen rule. That is a statement about this comparison, not a statement that no fire, activity or signal existed.</p>
+      </div>
+    </div>
+
+    <div class="distance-reading" aria-label={`Official threshold ${formatMeters(reference?.properties.official_matching_radius_m ?? 0)}; nearest documented contemporary signal ${formatExact(reference?.properties.nearest_documented_contemporary_signal_m ?? 0)} metres`} data-reveal>
+      <div class="distance-reading__threshold">
+        <p class="section-label">OFFICIAL MATCHING THRESHOLD</p>
+        <p class="distance-reading__value">{formatMeters(reference?.properties.official_matching_radius_m ?? 0)}</p>
+      </div>
+      <div class="distance-reading__axis" aria-hidden="true">
+        <span class="distance-reading__origin"></span>
+        <span class="distance-reading__threshold-mark"><i></i></span>
+        <span class="distance-reading__signal-mark"><i></i></span>
+      </div>
+      <div class="distance-reading__signal">
+        <p class="section-label">NEAREST DOCUMENTED CONTEMPORARY SIGNAL</p>
+        <p class="distance-reading__value">{reference?.properties.nearest_documented_contemporary_signal_m === null ? "Not available" : formatExact(reference?.properties.nearest_documented_contemporary_signal_m ?? 0)}<small> m</small></p>
+      </div>
+      <div class="distance-reading__result">
+        <p><strong>{reference?.properties.official_match_count}</strong><span>official matches inside {formatMeters(reference?.properties.official_matching_radius_m ?? 0)}</span></p>
+        <div><p class="section-label">DIAGNOSTIC</p><code>{reference?.properties.diagnostic}</code><p>Official match count is zero because the documented nearest contemporary signal is outside the 5 km matching threshold.</p></div>
+      </div>
+    </div>
+
+    <div class="diagnostic-caveat" data-reveal>
+      <p><strong>Read literally:</strong> `official_match_count = 0` does not mean no fire, no activity and no thermal signal. It means the frozen 5,000 m inclusive spatial rule found no match for this external reference.</p>
+      <p><a href={source?.url} target="_blank" rel="noreferrer">{source?.source_id} · {source?.publisher}</a></p>
+    </div>
+
+    <div class="picachos-plate" data-reveal>
+      <FigurePlate
+        figureId="figure-06"
+        src="/figures/06_los_picachos_diagnostic.png"
+        alt="Frozen Los Picachos diagnostic showing zero official matches at 5 kilometres and the nearest documented contemporary signal beyond that threshold."
+        title="A zero with a boundary"
+        caption="The frozen diagnostic figure preserves the official 5 km rule and the wider diagnostic context. The structured public result is SPATIAL_THRESHOLD_MISS."
+        longDescription="The frozen figure shows the approximate Los Picachos reference anchor, the official 5 km matching radius, wider diagnostic context and the nearest documented contemporary signal at 10.400826 km. The page does not turn the wider context into a new control or recompute the result."
+      />
+    </div>
+  </div>
+</section>

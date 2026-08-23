@@ -1,0 +1,17 @@
+---
+import { cocleCartography } from "../data/cartography";
+---
+
+<figure class="boundary-art" aria-labelledby="boundary-art-title" aria-describedby="boundary-art-description">
+  <svg viewBox={cocleCartography.viewBox} role="img">
+    <title id="boundary-art-title">Coclé, Panamá boundary context</title>
+    <desc id="boundary-art-description">The approved Coclé boundary is shown as a low-contrast territorial context. It contains no detections, coordinates, event marks, or operational map layer.</desc>
+    <path class="boundary-art__layer boundary-art__layer--fill" d={cocleCartography.path}></path>
+    <path class="boundary-art__layer boundary-art__layer--primary" d={cocleCartography.path}></path>
+    <g class="boundary-art__layer--echo" aria-hidden="true">
+      <path d={cocleCartography.path} transform="translate(1.4 -1.1)"></path>
+    </g>
+    <text class="boundary-art__label" x={cocleCartography.labelPoint[0]} y={cocleCartography.labelPoint[1]} transform="translate(12 -38)">COCLÉ</text>
+  </svg>
+  <figcaption class="sr-only">Presentation-only cartographic derivative of the approved repository boundary at data/reference/cocle.geojson. This territorial context is not a detection map or scientific output.</figcaption>
+</figure>

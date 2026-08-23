@@ -1,0 +1,74 @@
+{
+  "definition": "FirePA is a reproducible remote-sensing pilot for detecting, grouping and analyzing provisional thermal events in Coclé, Panamá using NASA FIRMS and Sentinel-2 optical evidence.",
+  "external_reference_summary": {
+    "guacamaya": {
+      "inter_cluster_gaps_gt_6h": 5,
+      "matched_provisional_clusters": 6,
+      "official_matches": 6,
+      "temporal_span_hours": 72.733
+    },
+    "los_picachos": {
+      "diagnostic": "SPATIAL_THRESHOLD_MISS",
+      "nearest_documented_contemporary_signal_m": 10400.826,
+      "official_matches": 0
+    },
+    "registry_sha256": "6fcd1830a994fda553bc1c1ae7733ffa22823c8360653479d6ed09358f9d9a49"
+  },
+  "files": [
+    "project-summary.json",
+    "events.geojson",
+    "external-references.geojson",
+    "guacamaya-timeline.json",
+    "methodology.json",
+    "citations.json",
+    "provenance.json",
+    "figures/01_pipeline_overview.png",
+    "figures/02_cluster_distribution.png",
+    "figures/03_external_reference_map.png",
+    "figures/04_guacamaya_timeline.png",
+    "figures/05_guacamaya_frp_distribution.png",
+    "figures/06_los_picachos_diagnostic.png",
+    "manifest.json"
+  ],
+  "frozen_counts": {
+    "configuration_id": "r1500_t06",
+    "external_incidents": 2,
+    "external_source_documents": 7,
+    "firms_processed_detections": 1185,
+    "firms_raw_detections": 1532,
+    "formal_human_observations": 0,
+    "multi_detection_events": 267,
+    "optical_cohort_events": 30,
+    "optically_observable_events": 28,
+    "possible_chain_merge_events": 17,
+    "provisional_thermal_events": 611,
+    "singletons": 344,
+    "unobserved_events": 2
+  },
+  "limitations": [
+    "FirePA does not provide confirmed wildfire classification.",
+    "FirePA does not provide ground truth or institutional validation.",
+    "FirePA does not provide supervised prediction or severity estimation.",
+    "FirePA does not provide operational monitoring, realtime alerts or an emergency dashboard.",
+    "Unobserved optical cases are not negative cases.",
+    "External references are relational evidence, not ground truth."
+  ],
+  "package_version": "firepa-public-release-v1",
+  "period": {
+    "end": "2025-04-30",
+    "inclusive": true,
+    "start": "2025-01-01",
+    "timezone": "UTC"
+  },
+  "project": "FirePA",
+  "public_package_scope": {
+    "backend_required": false,
+    "earth_engine_required": false,
+    "frontend_agnostic": true,
+    "network_required": false,
+    "p2_started": false,
+    "projection": "frozen FirePA v1 artifacts to public-safe static data"
+  },
+  "scientific_freeze_commit": "7694da7df5808911de48de84016759c5fd22f176",
+  "study_area": "Coclé, Panamá"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "firepa-research-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "prepare:cartography": "node scripts/build-cocle-presentation.mjs",
+    "predev": "npm run prepare:cartography",
+    "prebuild": "npm run prepare:cartography",
+    "test": "node scripts/verify-site-contract.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "5.2.5",
+    "@fontsource/ibm-plex-sans": "5.2.5",
+    "@fontsource/source-serif-4": "5.2.5",
+    "astro": "5.15.0"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "deterministic": true,
+  "files": [
+    {
+      "path": "citations.json",
+      "sha256": "0536018e05ab09c3e3f8d18b4e805c63ecf066d9a97cde183bb7dcf1c17f2804",
+      "size_bytes": 4877
+    },
+    {
+      "path": "events.geojson",
+      "sha256": "8b3a6ab835d0617ada766213b17d4f0c267aa720bf8a266d37fea7f1bf71bee0",
+      "size_bytes": 534769
+    },
+    {
+      "path": "external-references.geojson",
+      "sha256": "2a0f72ef60d453bce8d4f7c712468bb246d7faf3ddc30cd88ac147c71b1834e9",
+      "size_bytes": 2297
+    },
+    {
+      "path": "figures/01_pipeline_overview.png",
+      "sha256": "f818cc2f0ebe93a450c6dff5c505849a91c71bf013e597bdc6852a8cc7b94d1c",
+      "size_bytes": 14151
+    },
+    {
+      "path": "figures/02_cluster_distribution.png",
+      "sha256": "5941c237f74a4ad95809aa7a0430a70269337560aa4cbabc62601d03edf2c2ea",
+      "size_bytes": 12182
+    },
+    {
+      "path": "figures/03_external_reference_map.png",
+      "sha256": "3f0bcd569a0d762bb1c2435fe25158bf9ecbdedb1ada682c04c1a299a32916e7",
+      "size_bytes": 22082
+    },
+    {
+      "path": "figures/04_guacamaya_timeline.png",
+      "sha256": "d248bdda6b88eee52dc27f2567a29ec3bcf494a72b139ffc1340bed7db4566d0",
+      "size_bytes": 15576
+    },
+    {
+      "path": "figures/05_guacamaya_frp_distribution.png",
+      "sha256": "973ef4f72e0f15873a11007359a6dba5aae419d4b83a78a855f428227a4c777b",
+      "size_bytes": 15747
+    },
+    {
+      "path": "figures/06_los_picachos_diagnostic.png",
+      "sha256": "8fa486e16e97063ad5f55b76165a3c671c2b1acd6b6c5c717a838ef56d4176a2",
+      "size_bytes": 14882
+    },
+    {
+      "path": "guacamaya-timeline.json",
+      "sha256": "264b7ab19e5e86c61ee415eaf817d310ad37bf56ce73f8f77fc903a7adc84eca",
+      "size_bytes": 2865
+    },
+    {
+      "path": "methodology.json",
+      "sha256": "b073207d62b3f23ef72b093dc8736ce7899535980b3a58c43982189e010e6ed9",
+      "size_bytes": 2887
+    },
+    {
+      "path": "project-summary.json",
+      "sha256": "faad792c4619c18922816b93d977703acba7993506842c7a8f53a031f3b28abf",
+      "size_bytes": 2645
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "833b3652166127139f60e395695d11d519734fe705227fddccec57b8beed36a4",
+      "size_bytes": 9683
+    }
+  ],
+  "generator_version": "firepa-public-release-generator-v1",
+  "manifest_excludes": [
+    "manifest.json"
+  ],
+  "package_version": "firepa-public-release-v1",
+  "scientific_freeze_commit": "7694da7df5808911de48de84016759c5fd22f176"
+}

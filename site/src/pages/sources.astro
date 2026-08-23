@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { citations, formatDecimal, manifest, projectSummary, provenance } from "../data/public";
+
+const title = "FirePA — Sources & provenance";
+const sourceDate = (source: typeof citations.external_sources[number]) => source.reported_event_date ?? (source.reported_event_date_start && source.reported_event_date_end ? `${source.reported_event_date_start} → ${source.reported_event_date_end}` : source.reported_event_date_start ?? source.reported_event_date_end ?? "not specified");
+const figureHashes = provenance.figure_provenance;
+const figureSize = (path: string) => manifest.files.find((file) => file.path === path)?.size_bytes ?? 0;
+---
+
+<BaseLayout title={title} description="FirePA's public source registry, package provenance and frozen figure records.">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <SiteHeader />
+  <main id="main-content" class="docs-page sources-page">
+    <section class="docs-hero">
+      <div class="site-frame docs-hero__grid">
+        <div data-reveal>
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span> SOURCES / PROVENANCE</p>
+          <h1 class="docs-title">A public result needs a <em>trace.</em></h1>
+          <p class="docs-standfirst">This page names the external documents and package records used by the public FirePA release. Where the package has no publication metadata, the interface does not invent it.</p>
+        </div>
+        <div class="docs-hero__meta" data-reveal><p class="section-label">REGISTRY</p><p>{citations.registry.source_count} external source documents<br />{citations.registry.incident_count} external incidents<br /><code>{citations.registry.sha256}</code></p></div>
+      </div>
+      <nav class="site-frame docs-index" aria-label="Source sections">
+        <a href="#sources-external-title"><span>01</span>External registry</a>
+        <a href="#sources-package-title"><span>02</span>Package</a>
+        <a href="#sources-figures-title"><span>03</span>Figures</a>
+        <a href="#sources-science-title"><span>04</span>Scientific record</a>
+      </nav>
+    </section>
+
+    <section class="docs-section" aria-labelledby="sources-external-title">
+      <div class="site-frame" data-reveal>
+        <div class="docs-section__heading"><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> 01 · EXTERNAL REGISTRY</p><h2 id="sources-external-title" class="docs-section-title">Seven documents, two reference windows.</h2></div>
+        <div class="source-list">
+          {citations.external_sources.map((source) => (
+            <article class="source-row" id={source.source_id}>
+              <div class="source-row__id"><code>{source.source_id}</code><span>{source.incident_id}</span></div>
+              <div class="source-row__body"><h3>{source.publisher}</h3><p>{source.reported_location} · published {source.publication_date} · reported {sourceDate(source)}</p><p>{source.reported_area_ha === null || source.reported_area_ha === undefined ? "No area value in package" : `${source.reported_area_qualifier ?? ""} ${source.reported_area_ha} ha`} {source.cause_status ? `· ${source.cause_status}` : ""}</p></div>
+              <a class="source-row__link" href={source.url} target="_blank" rel="noreferrer">Open source ↗</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--paper" aria-labelledby="sources-package-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> 02 · PACKAGE</p><h2 id="sources-package-title" class="docs-section-title">The package is its own citation.</h2></div>
+        <div class="docs-copy"><p>{projectSummary.package_version} is frozen at <code>{projectSummary.scientific_freeze_commit}</code>. The manifest is deterministic: <code>{String(manifest.deterministic)}</code>, with {manifest.files.length} hashed entries and a generator version of <code>{manifest.generator_version}</code>.</p><dl class="docs-facts"><div><dt>Generator</dt><dd>{provenance.generator.command}</dd></div><div><dt>Network access</dt><dd>{String(provenance.network_access)}</dd></div><div><dt>Earth Engine queries</dt><dd>{String(provenance.earth_engine_queries_made)}</dd></div><div><dt>Registry path</dt><dd><code>{citations.registry.path}</code></dd></div><div><dt>Registry SHA-256</dt><dd><code>{citations.registry.sha256}</code></dd></div></dl></div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--dark" aria-labelledby="sources-figures-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> 03 · FIGURES</p><h2 id="sources-figures-title" class="docs-section-title">Frozen means byte-identical.</h2></div>
+        <div class="docs-copy"><p>The six public figures are copied byte-for-byte. They remain 1600 × 900, their scientific content was not recomputed, and each derivative hash equals its source hash.</p><div class="figure-source-list">{figureHashes.map((figure) => <div><code>{figure.derivative_path}</code><span>{figure.width}×{figure.height} · {formatDecimal(figureSize(figure.derivative_path), 0)} bytes · <code>{figure.derivative_sha256 === figure.source_sha256 ? "hash match" : "review"}</code></span></div>)}</div></div>
+      </div>
+    </section>
+
+    <section class="docs-section" aria-labelledby="sources-science-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> 04 · SCIENTIFIC RECORD</p><h2 id="sources-science-title" class="docs-section-title">The frozen source artifacts.</h2></div>
+        <div class="docs-copy"><ul class="source-artifact-list">{citations.scientific_sources.map((source) => <li><code>{source.path}</code><span>{source.role}</span><small>{source.sha256}</small></li>)}</ul><p class="sources-next">For the method that connects these records to the public event fields, read <a class="text-link" href="/methodology">Methodology ↗</a>.</p></div>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>

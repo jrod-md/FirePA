@@ -1,0 +1,63 @@
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+.git.broken-*/
+.venv/
+venv/
+ENV/
+
+# Python tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Downloaded or generated data/artifacts: never commit datasets.
+data/raw/*
+data/interim/*
+data/processed/*
+outputs/*
+*.zip
+*.log
+# Blind calibration packages and private mappings are generated locally and
+# must never be included in a public commit.
+outputs/human_review/private/
+outputs/human_review/blind_ai_calibration_r1/
+outputs/firepa_blind_ai_calibration_r1_pass_a.zip
+outputs/firepa_blind_ai_calibration_r1_pass_b.zip
+outputs/human_review/firepa_human_review.sqlite3*
+!data/raw/.gitkeep
+!data/raw/manifests/
+data/raw/manifests/*
+!data/raw/manifests/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+data/reference/*
+data/reference/source/
+data/reference/source/*
+data/reference/*.geojson
+!data/reference/.gitkeep
+!data/reference/README.md
+
+# Version only the notebook directory marker; notebooks and checkpoints stay local.
+notebooks/*
+!notebooks/.gitkeep
+
+# Local notebook checkpoints
+.ipynb_checkpoints/
+.git.broken-*
+
+.pytest-tmp/
+.pytest-tmp*
+.test-tmp/
+.temp/
+
+# Local visual review captures; never part of the public release package.
+site/review-*/
