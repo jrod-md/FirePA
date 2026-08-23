@@ -47,10 +47,10 @@ ACTIVE_PATTERNS = (
     "tests/test_dnbr_quicklook.py",
     "docs/SENTINEL2_DNBR_DESIGN.md",
     "README.md",
-    "docs/PREFLIGHT.md",
-    "PLAN.md",
-    "CONTEXT.md",
-    "docs/HANDOFF_FIREPA_2026-07-21.md",
+    "docs/SCIENTIFIC_REPORT.md",
+    "docs/METHODOLOGY.md",
+    "docs/DATA_AND_REPRODUCIBILITY.md",
+    "docs/LIMITATIONS.md",
     ".gitignore",
 )
 
@@ -131,7 +131,7 @@ def build_manifest() -> dict[str, object]:
         "commit_sha": _git_sha(),
         "pipeline_version": "fuegopa-sentinel2-dnbr-v3",
         "quicklook_version": "legacy-current-panel-v1 (source had no explicit version constant)",
-        "scope": "Active scientific inputs/outputs and dNBR v3 code before Quicklook v2; no files copied.",
+        "scope": "Active scientific inputs/outputs and dNBR v3 code; no files copied.",
         "entry_count": len(entries),
         "entries": entries,
     }

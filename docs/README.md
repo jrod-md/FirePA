@@ -1,0 +1,27 @@
+# FirePA documentation
+
+## Current public authority
+
+1. `site-data/manifest.json` and the machine-readable package
+2. [`SCIENTIFIC_REPORT.md`](SCIENTIFIC_REPORT.md)
+3. [`METHODOLOGY.md`](METHODOLOGY.md)
+4. [`DATA_AND_REPRODUCIBILITY.md`](DATA_AND_REPRODUCIBILITY.md)
+5. [`LIMITATIONS.md`](LIMITATIONS.md)
+6. [`ASSET_PROVENANCE.md`](ASSET_PROVENANCE.md) and root `SOURCES.md`
+
+The scientific freeze is
+`7694da7df5808911de48de84016759c5fd22f176`.
+
+## Supporting technical records
+
+Other files retained in this directory document reproducible scientific
+protocols, calibration contracts, review infrastructure, or frozen technical
+evidence. They are supporting records, not competing current-state summaries.
+Files describing superseded public-site phases, internal handoffs, temporary
+visual review, or abandoned release plans are intentionally excluded from the
+public documentation set.
+
+`CONTEXT.md`, `PLAN.md`, `PROJECT_STATUS.md`, and
+`P1_PUBLIC_RELEASE_HANDOFF.md` remain only as explicitly marked historical
+provenance because frozen scientific protocols cite them. Their phase labels do
+not describe the current publication.

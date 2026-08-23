@@ -1,223 +1,105 @@
-# FirePA — registro de fuentes
+# FirePA sources and provenance register
 
-Fecha de verificación documental: 2026-07-19.
+This register distinguishes scientific inputs, public derived artifacts,
+external narrative references, and sources considered but not used. A URL is a
+provenance record, not a transfer of licensing rights or a scientific truth
+label.
 
-Este registro distingue fuentes planeadas, datos efectivamente descargados y
-artefactos públicos derivados. Las URLs se documentan para que una adquisición
-futura sea reproducible y auditable; no son por sí mismas una autorización para
-redistribuir los materiales de cada proveedor.
+The machine-readable external-source registry is
+`references/external_reference_sources_v1.json` (seven documents, two
+incidents). Its frozen SHA-256 is
+`6fcd1830a994fda553bc1c1ae7733ffa22823c8360653479d6ed09358f9d9a49`.
 
-## Alcance de publicación y límites de licencia
+## Sources used in the frozen pilot
 
-Este archivo distingue la procedencia científica de los artefactos que el
-repositorio expone públicamente. La presencia de un archivo en Git no convierte
-sus fuentes externas en material relicenciado por FirePA.
+### NASA FIRMS / LANCE
 
-### 1. Software autoría FirePA
+- Official service: <https://firms.modaps.eosdis.nasa.gov/api/area/>
+- Availability service: <https://firms.modaps.eosdis.nasa.gov/api/data_availability/>
+- API documentation: <https://firms.modaps.eosdis.nasa.gov/content/academy/data_api/firms_api_use.html>
+- Role: VIIRS thermal-anomaly detections for the 2025 Coclé cohort.
+- Frozen result: 1,532 audited raw detections and 1,185 processed detections.
+- Boundary: a FIRMS detection is not a confirmed independent wildfire.
 
-El código fuente escrito para este repositorio —incluidos `src/`, `scripts/`,
-`tests/` y el frontend en `site/`— se ofrece bajo la licencia indicada en
-[`LICENSE`](LICENSE), sujeto a las exclusiones de [`NOTICE.md`](NOTICE.md).
-Las dependencias conservan sus propias licencias.
+Historical downloads require a local `FIRMS_MAP_KEY`. No key, raw FIRMS row,
+or request URL containing credentials is published.
 
-### 2. Artefactos analíticos derivados públicos
+### Sentinel-2 Surface Reflectance Harmonized
 
-`site-data/` es un paquete público derivado de artefactos congelados del piloto.
-Incluye 611 unidades analíticas de eventos térmicos provisionales, dos anclas
-de referencia externa, metodología, procedencia, manifiestos y seis figuras
-congeladas. No incluye filas raw FIRMS, claves, joins privados, asignaciones de
-revisión humana, SQLite, escenas Sentinel-2 ni resultados locales de Earth
-Engine. Un evento provisional no equivale automáticamente a un incendio
-confirmado, perímetro de quema, ground truth, severidad o alerta.
+- Catalog: <https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED>
+- Role: descriptive optical follow-up for the frozen 30-event cohort.
+- Frozen result: 28 observable cases and two `unobserved` cases.
+- Bands used by the NBR/dNBR contract: B8 and B12, evaluated at 20 m support.
+- Boundary: imagery and indices are descriptive evidence; no severity class,
+  target, or ground-truth label was created.
 
-### 3. Datos científicos y referencias externas
+### Cloud Score+
 
-NASA FIRMS, Sentinel-2/Copernicus, ERA5-Land, ESA WorldCover, Copernicus DEM,
-el límite administrativo de Coclé y las referencias externas conservan las
-condiciones de sus proveedores o fuentes. Las secciones siguientes registran
-esas condiciones sin inventar una licencia común para todos los materiales.
-Cuando una condición de redistribución no está resuelta, se declara y el input
-permanece fuera de Git.
+- Catalog: <https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_CLOUD_SCORE_PLUS_V1_S2_HARMONIZED>
+- Role: optical clarity assessment for linked Sentinel-2 scenes.
+- Boundary: clarity scores are not evidence of fire or burn severity.
 
-### 4. Inputs locales excluidos
+### Administrative boundary of Coclé
 
-Las descargas raw, outputs de investigación, la fuente boundary local de Coclé,
-cachés, paquetes de revisión y credenciales permanecen excluidos mediante
-`.gitignore`. El frontend público usa un derivado de presentación versionado;
-la ausencia del boundary local no debe impedir construir ese frontend.
+- Preferred source: Instituto Geografico Nacional Tommy Guardia / ANATI.
+- Source page: <https://ignpanama.anati.gob.pa/index.php/divisionpolitica-administrativa>
+- Local source metadata: Panama administrative boundary, province layer
+  `limi_prov_a`, 2025, scale 1:25,000, `EPSG:32617`, UTF-8.
+- Use: select the Coclé geometry, transform it to `EPSG:4326`, and spatially
+  filter detections.
+- Redistribution boundary: the source metadata declares `CC BY-NC-SA`; the
+  original shapefile and generated local `data/reference/cocle.geojson` remain
+  outside Git. The website uses a tracked deterministic presentation derivative.
 
-### 5. Activos visuales decorativos
+The presentation derivative is contextual geometry, not a scientific output,
+burn perimeter, or synthetic geography.
 
-`site/public/assets/mineral-field.png` es una superficie visual suministrada
-para el proyecto con carácter authored/generative. Es
-decorativa, no es evidencia científica, no es terreno medido, no es imagery de
-satélite y no es una capa geográfica. Su procedencia está documentada en
-[`docs/ASSET_PROVENANCE.md`](docs/ASSET_PROVENANCE.md). La licencia MIT del
-software no se extiende automáticamente a este activo ni a los materiales
-científicos externos.
+## External incident references
 
-## 1. NASA FIRMS — detecciones térmicas
+The source registry preserves claims separately and does not adjudicate a
+single true area or cause. Matching coordinates are approximate anchors
+provided by the researcher and are not claimed to come from the articles.
 
-- **Proveedor:** NASA FIRMS / LANCE.
-- **Fuente oficial:** [FIRMS Area API](https://firms.modaps.eosdis.nasa.gov/api/area/).
-- **Disponibilidad oficial:** [Data Availability API](https://firms.modaps.eosdis.nasa.gov/api/data_availability/).
-- **Documentación de uso:** [FIRMS API tutorial](https://firms.modaps.eosdis.nasa.gov/content/academy/data_api/firms_api_use.html).
-- **Papel:** fuente de detecciones candidatas para la cohorte 2025 de Coclé.
-- **Fuentes VIIRS candidatas:** `VIIRS_SNPP_SP`, `VIIRS_NOAA20_SP` y
-  `VIIRS_NOAA21_SP`, siempre que la respuesta de disponibilidad confirme que
-  cubren el intervalo solicitado. El pipeline no supone disponibilidad por el
-  nombre: consulta primero `data_availability` y selecciona las fuentes
-  `VIIRS_*_SP` con solapamiento. Las fuentes `*_NRT` no se seleccionan por
-  defecto para este análisis histórico.
-- **Campos esperados:** `latitude`, `longitude`, `acq_date`, `acq_time`,
-  `satellite`, `instrument`, `confidence` y `frp`; también se conservan, si
-  están presentes, `daynight`, `version` y `type`.
-- **Acceso:** la API requiere `FIRMS_MAP_KEY`. La clave solo puede llegar por
-  `FIRMS_MAP_KEY` o `--map-key`; nunca se escribe en código, logs o manifests.
-- **Contrato temporal:** el Area API se consulta en fragmentos inclusivos de
-  como máximo cinco días. Cada fuente y fragmento tiene su propio raw y
-  manifest.
-- **Producto y limitaciones:** FIRMS es una detección de anomalía térmica, no
-  una etiqueta de incendio independiente ni una cicatriz de quema. Diferentes
-  filas pueden pertenecer al mismo evento. La respuesta de disponibilidad y la
-  fuente concreta deben conservarse para interpretar cobertura.
-- **Estado en este checkout:** la snapshot de disponibilidad y la adquisición
-  histórica local de 2025 ya fueron auditadas sin red: 48 fragmentos y 48
-  manifests para `VIIRS_NOAA20_SP` y `VIIRS_SNPP_SP`, con raw inmutable y
-  cohorte procesada reproducible. Una nueva descarga todavía requiere
-  `FIRMS_MAP_KEY`; un CSV local real sigue siendo una vía alternativa.
+| ID | Publisher | Date | Incident | URL |
+|---|---|---|---|---|
+| `SOURCE-001` | TVN Noticias | 2025-01-17 | Cerro Los Picachos | <https://www.tvn-2.com/nacionales/incendio-picachos-ola-afecto-extensa-area-investigan-causas_1_2173253.html> |
+| `SOURCE-002` | TVN Noticias | 2025-01-26 | Cerro Guacamaya | <https://www.tvn-2.com/nacionales/provincias/cerro-guacamaya-mil-hectareas-afectadas-incendio-reserva-hidrica_1_2174469.html> |
+| `SOURCE-003` | TVN Noticias | 2025-01-27 | Cerro Guacamaya | <https://www.tvn-2.com/nacionales/siguen-trabajos-controlar-incendio-cerro_1_2174481.html> |
+| `SOURCE-004` | EcoTV Panama | 2025-01-27 | Cerro Guacamaya | <https://www.ecotvpanama.com/nacionales/autoridades-extinguen-incendio-cerro-guacamaya-penonome-n6026325> |
+| `SOURCE-005` | Telemetro Noticias | 2025-01-27 | Cerro Guacamaya | <https://www.telemetro.com/nacionales/noticias/2025/01/27/incendio-cerro-guacamaya-3000.html> |
+| `SOURCE-006` | Benemerito Cuerpo de Bomberos de la Republica de Panama | 2025-01-28 | Cerro Guacamaya | <https://www.bomberos.gob.pa/2025/01/28/incendios-en-cerro-guacamaya-y-tubuala-control-prevencion-y-nuevas-alianzas-internacionales/> |
+| `SOURCE-007` | Ministerio de Ambiente de Panama | 2025-02-07 | Cerro Guacamaya | <https://miambiente.gob.pa/avanzan-investigaciones-sobre-incendio-en-la-reserva-hidrica-cerro-guacamaya-y-reiteran-recompensa-para-encontrar-a-los-responsables/> |
 
-## 2. Sentinel-2 Surface Reflectance Harmonized
+The manual search located six records published in January and one in
+February 2025; none qualifying were located for March or April. The search was
+not exhaustive. Absence of a located article is not absence of fire, activity,
+or thermal signal.
 
-- **Proveedor:** Copernicus / ESA; catálogo de Google Earth Engine.
-- **Fuente oficial:** [COPERNICUS/S2_SR_HARMONIZED](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED?hl=en).
-- **Papel previsto:** observación posterior para construir la evidencia de
-  cicatriz, NBR y dNBR después de que se definan eventos.
-- **Cobertura documentada:** el catálogo indica disponibilidad desde 2017-03-28
-  y revisita nominal de cinco días; la disponibilidad efectiva depende de la
-  ubicación, adquisición y nubes.
-- **Variables relevantes:** bandas de reflectancia que incluyen NIR y SWIR,
-  además de la clasificación de escena (`SCL`). La resolución de banda no es
-  uniforme; el catálogo documenta B8 a 10 m y B12 a 20 m.
-- **Acceso/condiciones:** requiere autenticación y un proyecto de Earth Engine;
-  aplican los términos de datos de Copernicus Sentinel.
-- **Estado:** no utilizado en esta fase; no se descargan imágenes ni se calcula
-  NBR/dNBR.
+External references are relational evidence only. Their URLs are not pipeline
+inputs, are not required to reproduce the frozen result, and do not provide
+ground truth or institutional validation.
 
-## 3. Probabilidad de nubes Sentinel-2
+## Considered but not used
 
-- **Proveedor:** Copernicus / ESA / Sentinel Hub; catálogo de Google Earth
-  Engine.
-- **Fuente oficial:** [COPERNICUS/S2_CLOUD_PROBABILITY](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_CLOUD_PROBABILITY?hl=en).
-- **Papel previsto:** apoyo a la regla de observabilidad y al descarte o
-  marcado de composiciones Sentinel-2 no utilizables.
-- **Variable documentada:** probabilidad por píxel de 0 a 100 (`UINT8`),
-  producida por un modelo s2cloudless/LightGBM según el catálogo.
-- **Acceso/condiciones:** requiere Earth Engine autenticado; no se fija aún un
-  umbral de nube.
-- **Estado:** no utilizado en esta fase.
+ERA5-Land, ESA WorldCover, and Copernicus DEM were considered as possible
+future contextual covariates. They were not incorporated into the frozen
+pilot, no environmental-feature model was built, and they are not scientific
+dependencies of the published result.
 
-## 4. ERA5-Land hourly
+## Public derived package
 
-- **Proveedor:** ECMWF / Copernicus Climate Change Service; catálogo de Earth
-  Engine.
-- **Fuente oficial:** [ECMWF/ERA5_LAND/HOURLY](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_HOURLY?hl=en).
-- **Papel previsto:** variables meteorológicas de contexto alrededor de un
-  evento ya definido.
-- **Variables candidatas documentadas:** temperatura y punto de rocío a 2 m,
-  componentes del viento a 10 m, precipitación total horaria y presión de
-  superficie.
-- **Resolución y tiempo:** el catálogo describe datos horarios y una escala de
-  aproximadamente 11.1 km; no es una medición puntual de cada parcela.
-- **Acceso/condiciones:** la extracción concreta dependerá de Earth Engine o
-  del mecanismo elegido del Climate Data Store y sus condiciones de licencia y
-  atribución.
-- **Limitaciones:** se debe revisar el aviso del catálogo sobre las bandas de
-  evaporación antes de usar cualquiera de ellas.
-- **Estado:** no utilizado en esta fase; no se extraen variables.
+`site-data/` contains derived, public-safe records: 611 provisional thermal
+event centroids, two reference anchors, methodology/provenance metadata, and
+six frozen figures. It excludes raw data, local rasters, private review
+mappings, SQLite, credentials, and Earth Engine outputs.
 
-## 5. ESA WorldCover
+The MIT software license does not automatically relicense NASA, Copernicus,
+ANATI, publisher content, or other third-party material. See `NOTICE.md` and
+`docs/ASSET_PROVENANCE.md`.
 
-- **Proveedor:** ESA WorldCover Consortium; catálogo de Earth Engine.
-- **Fuente oficial:** [ESA/WorldCover/v200](https://developers.google.com/earth-engine/datasets/catalog/ESA_WorldCover_v200?hl=en).
-- **Papel previsto:** covariable de vegetación/cobertura del suelo para un
-  evento, solo después de definir cómo se extraerá y con qué fecha se alineará.
-- **Resolución y tiempo:** clasificación global a 10 m; la versión v200
-  documentada corresponde a 2021 y contiene 11 clases.
-- **Licencia:** el catálogo identifica CC-BY-4.0; cualquier producto derivado
-  debe mantener la atribución correspondiente.
-- **Limitación:** una clasificación de 2021 puede no representar el uso del
-  suelo el día de una detección posterior.
-- **Estado:** no utilizado en esta fase.
+## Excluded decorative artwork
 
-## 6. Copernicus DEM GLO-30
-
-- **Proveedor:** Copernicus; catálogo de Earth Engine.
-- **Fuente oficial:** [COPERNICUS/DEM/GLO30](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_DEM_GLO30?hl=en).
-- **Papel previsto:** elevación y derivados topográficos definidos antes del
-  modelado.
-- **Resolución y referencia:** DSM global de 30 m; el catálogo documenta el
-  datum vertical EGM2008 y restricciones de disponibilidad para determinados
-  territorios.
-- **Condiciones:** usar la licencia mundial gratuita y sus excepciones según la
-  documentación del producto; conservar la atribución.
-- **Estado:** no utilizado en esta fase.
-
-## 7. Límite administrativo de Coclé
-
-- **Fuente preferida:** Instituto Geográfico Nacional Tommy Guardia / ANATI.
-- **Página oficial:** [División político-administrativa de Panamá](https://ignpanama.anati.gob.pa/index.php/divisionpolitica-administrativa).
-- **Registro oficial incorporado localmente:** conjunto de datos de límites
-  político-administrativos de la República de Panamá, escala 1:25 000, año 2025
-  (provincia), capa `limi_prov_a`, obtenido y descomprimido localmente desde la
-  fuente oficial. El XML declara 20 registros tipo polígono, de los cuales 7
-  son masas de agua y 13 son de uso tierra; el extractor conserva la capa y
-  selecciona por el campo `nomb_prov`.
-- **CRS y encoding verificados:** el `.prj` declara `WGS_1984_UTM_Zone_17N`,
-  equivalente a `EPSG:32617`; el `.cpg` declara UTF-8. La geometría seleccionada
-  se reproyecta explícitamente a `EPSG:4326` en
-  `data/reference/cocle.geojson`.
-- **Selección y validación local:** el registro activo con valor exacto
-  normalizado `Coclé` es uno, con geometría `Polygon` multipart de cinco partes
-  que se serializa como `MultiPolygon`. La validación no aplicó reparaciones,
-  simplificación ni disolución; el reporte y la figura se generan con
-  `python scripts/prepare_cocle_boundary.py`.
-- **Licencia y limitación:** el XML de metadatos declara `CC BY-NC-SA` y una
-  advertencia de uso como referencia/representación cartográfica. Por esa
-  restricción, el SHP original y el GeoJSON generado se mantienen fuera de Git;
-  se registran rutas y hashes en `outputs/cocle_boundary_validation.json`.
-- **Contrato local:** el importador exige GeoJSON `Feature`, `FeatureCollection`,
-  `Polygon` o `MultiPolygon`, un CRS explícito o `--boundary-crs`, anillos
-  cerrados sin auto-cruces y coordenadas transformables a `EPSG:4326`. Filtra
-  por punto dentro del polígono; el bbox solo reduce la consulta FIRMS.
-- **Fallback reconocido documentado, no seleccionado:** [geoBoundaries API](https://www.geoboundaries.org/api.html)
-  ofrece límites abiertos y una capa ADM1 para Panamá bajo CC-BY 4.0. Si se
-  utiliza, debe registrarse el archivo, versión y licencia en el manifest o
-  documentación de la corrida; no se mezcla silenciosamente con el límite
-  oficial.
-- **Estado:** la extracción y validación local están implementadas y pasan el
-  smoke test de punto interior, punto exterior y punto en el borde. La
-  geometría permanece como artefacto local ignorado por Git; no se afirma que
-  sea un resultado científico ni una verdad de incendio.
-
-## 8. Accesos que no son dependencias
-
-No se requiere información privada de Bomberos, MiAmbiente, SINAPROC ni de
-terceros para construir la etiqueta propuesta. El contacto institucional puede
-ser útil para contexto, pero no es un prerrequisito técnico ni una fuente de
-ground truth de esta fase.
-
-## 9. Cloud Score+ para observabilidad Sentinel-2
-
-- **Catálogo oficial:** [GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_CLOUD_SCORE_PLUS_V1_S2_HARMONIZED?hl=en).
-- **Papel en esta fase:** evaluar claridad por píxel de escenas SR enlazadas por
-  `system:index`; no es una etiqueta de quema.
-- **Bandas utilizadas:** `cs` como diagnóstico y `cs_cdf` como criterio primario
-  de claridad. El pipeline conserva ambas estadísticas y evalúa los umbrales
-  `0.50`, `0.60` y `0.65`.
-- **Propiedades registradas:** `MODEL_VERSION` y `NO_CONTEXT_FRACTION`, cuando
-  están disponibles en la imagen enlazada. La ausencia se registra y no se
-  convierte silenciosamente en una escena limpia.
-- **Estado:** la interfaz Earth Engine está implementada de forma segura, pero
-  una corrida real requiere `EARTH_ENGINE_PROJECT` en el entorno local. No se
-  descargan rasters ni se calcula NBR/dNBR en esta fase.
+An unused decorative mineral-field raster was evaluated during development but
+is not part of this public repository. It had no scientific role, was not
+rendered by the final publication, and had an unresolved redistribution
+boundary. No decorative raster is required for the clean-clone build.

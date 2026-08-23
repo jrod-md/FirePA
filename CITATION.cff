@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use FirePA, please cite this repository and the scientific sources documented in SOURCES.md."
+title: "FirePA: a reproducible remote-sensing pilot for provisional thermal events in Coclé, Panama"
+type: software
+authors:
+  - name: "Jose"
+abstract: "FirePA is a static, reproducible research publication about provisional thermal events in Coclé, Panama, from 2025-01-01 through 2025-04-30."
+keywords:
+  - remote sensing
+  - thermal anomalies
+  - NASA FIRMS
+  - Sentinel-2
+  - reproducible research
+license: MIT

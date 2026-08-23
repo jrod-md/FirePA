@@ -1,5 +1,10 @@
 # FirePA — Estado del proyecto
 
+> **ARCHIVED DEVELOPMENT SNAPSHOT — NOT CURRENT PUBLICATION STATUS.** The
+> historical phase statements below are retained as protocol provenance. The
+> current bilingual publication is complete; use `README.md` and
+> `docs/README.md` for current status.
+
 **Snapshot:** 2026-08-09
 **Checkout de trabajo:** raíz del repositorio
 **Rama observada al iniciar el refresh:** master

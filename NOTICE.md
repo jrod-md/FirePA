@@ -2,31 +2,35 @@
 
 ## License scope
 
-The MIT license in `LICENSE` applies to FirePA source code authored for this
-repository, unless a file or notice identifies a separate condition. It does
-not automatically relicense third-party datasets, scientific source material,
-external references, generated evidence figures, frontend dependencies, or
-separately identified visual assets.
+The MIT license in `LICENSE` applies to FirePA-authored source code and
+documentation in this repository unless a file identifies a different
+condition. It does not relicense third-party datasets, source publications,
+scientific imagery, external references, frontend dependencies, or the
+underlying administrative boundary source.
 
-Source-specific provenance and conditions are recorded in
-[`SOURCES.md`](SOURCES.md). If a source's redistribution status is uncertain,
-the corresponding raw/reference input remains outside Git.
+Source-specific provenance and redistribution limits are recorded in
+`SOURCES.md`. When redistribution rights are not established, the source input
+remains outside Git.
 
 ## Public analytical package
 
-`site-data/` is a public derived package containing 611 provisional thermal
-events, two external reference anchors, methodology/provenance records, and six
-frozen figures. Its inclusion does not turn the underlying NASA, Copernicus,
-ANATI, or other source material into MIT-licensed content.
+`site-data/` is a derived public package containing 611 provisional thermal
+events, two approximate external-reference anchors, methodology and provenance
+records, and six byte-frozen figures. The package does not convert underlying
+NASA, Copernicus, ANATI, or publisher materials into MIT-licensed content.
 
-## Decorative mineral field
+## Figures and cartographic presentation
 
-`site/public/assets/mineral-field.png` is an authored/generative decorative
-surface created specifically for the FirePA experience and supplied for use in
-this repository. It has no scientific meaning: it is not measured terrain,
-satellite imagery, a geographic layer, or evidence of a thermal event.
+The six files in `site-data/figures/` are frozen scientific derivatives and
+retain the provenance recorded in `site-data/provenance.json`. The website's
+Coclé boundary is a deterministic presentation derivative of a locally
+validated source whose original files are not redistributed. Neither should
+be interpreted as a burn perimeter or independent geographic evidence.
 
-Its project provenance and reuse boundary are documented in
-[`docs/ASSET_PROVENANCE.md`](docs/ASSET_PROVENANCE.md). This notice makes no
-unsupported claim about copyright ownership or third-party rights for that
-asset, and the MIT license does not automatically apply to it.
+See `docs/ASSET_PROVENANCE.md` for the public presentation-asset boundary.
+
+## Excluded decorative artwork
+
+The final public repository does not include the unused mineral-field artwork
+evaluated during development. It had no scientific meaning or runtime role and
+was excluded because its redistribution boundary was unresolved.

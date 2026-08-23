@@ -1,5 +1,10 @@
 # FirePA — P1 Public Release Package handoff
 
+> **ARCHIVED PACKAGE HANDOFF — NOT CURRENT PUBLICATION STATUS.** This record
+> documents the package state before the bilingual site existed. Current
+> publication authority begins at `site-data/manifest.json`,
+> `docs/SCIENTIFIC_REPORT.md`, and `docs/README.md`.
+
 **Snapshot:** 2026-08-10
 **Gate:** **P1 PASS — remediation complete**
 **Checkout:** raíz del repositorio

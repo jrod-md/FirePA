@@ -1,5 +1,10 @@
 # FirePA — Contexto maestro después del freeze científico v1
 
+> **ARCHIVED DEVELOPMENT SNAPSHOT — NOT CURRENT PUBLICATION STATUS.** This file
+> is retained because frozen scientific protocols cite its historical context.
+> The current bilingual publication is complete; use `README.md`,
+> `docs/SCIENTIFIC_REPORT.md`, and `docs/README.md` for current authority.
+
 **Actualizado:** 2026-08-09
 **Repositorio:** raíz del repositorio
 **Rama observada al iniciar este refresh:** master
