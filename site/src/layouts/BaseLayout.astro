@@ -1,25 +1,37 @@
 ---
 import "../styles/global.css";
 import PublicationMotion from "../components/PublicationMotion.astro";
+import { localeRoutes, type Locale, type PublicationPage } from "../i18n";
 
 interface Props {
   title?: string;
   description?: string;
+  locale?: Locale;
+  page?: PublicationPage;
 }
 
 const {
   title = "FirePA — A remote-sensing research pilot",
-  description = "A reproducible remote-sensing pilot for detecting, grouping and analyzing provisional thermal events in Coclé, Panamá."
+  description = "A reproducible remote-sensing pilot for detecting, grouping and analyzing provisional thermal events in Coclé, Panamá.",
+  locale = "en",
+  page = "home"
 } = Astro.props;
+const canonicalUrl = localeRoutes[locale][page];
+const englishUrl = localeRoutes.en[page];
+const spanishUrl = localeRoutes.es[page];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f3eee4" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={englishUrl} />
+    <link rel="alternate" hreflang="es" href={spanishUrl} />
+    <link rel="alternate" hreflang="x-default" href={englishUrl} />
     <title>{title}</title>
   </head>
   <body>

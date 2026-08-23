@@ -1,11 +1,15 @@
 ---
 import { projectSummary } from "../data/public";
+import { routeFor, t, type Locale } from "../i18n";
+
+interface Props { locale?: Locale; }
+const { locale = "en" } = Astro.props;
 ---
 
 <footer class="site-footer">
   <div class="site-frame site-footer__inner">
     <p class="site-footer__brand">FirePA</p>
     <p>{projectSummary.study_area} · {projectSummary.period.start} → {projectSummary.period.end} · {projectSummary.package_version}</p>
-    <div class="site-footer__links"><a href="/methodology">Methodology</a><a href="/sources">Sources</a><a href="#research">Back to opening ↑</a></div>
+    <div class="site-footer__links"><a href={routeFor(locale, "methodology")}>{t(locale, "Methodology")}</a><a href={routeFor(locale, "sources")}>{t(locale, "Sources")}</a><a href={`${routeFor(locale, "home")}#research`}>{t(locale, "Back to opening ↑")}</a></div>
   </div>
 </footer>

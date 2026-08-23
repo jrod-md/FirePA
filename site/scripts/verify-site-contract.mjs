@@ -24,7 +24,14 @@ function sha256(path) {
 const files = walk(distRoot).filter((path) => statSync(path).isFile());
 const textFiles = files.filter((path) => !path.toLowerCase().endsWith(".png"));
 const output = textFiles.map((path) => readFileSync(path, "utf8")).join("\n");
-const requiredPages = ["index.html", "methodology/index.html", "sources/index.html"];
+const requiredPages = [
+  "index.html",
+  "methodology/index.html",
+  "sources/index.html",
+  "es/index.html",
+  "es/metodologia/index.html",
+  "es/fuentes/index.html"
+];
 
 for (const page of requiredPages) {
   if (!existsSync(resolve(distRoot, page))) throw new Error(`Built route is missing: ${page}`);
@@ -64,6 +71,22 @@ for (const value of forbidden) {
   if (output.includes(value)) throw new Error(`Built output contains forbidden content: ${value}`);
 }
 
+const englishHome = readFileSync(resolve(distRoot, "index.html"), "utf8");
+const spanishHome = readFileSync(resolve(distRoot, "es/index.html"), "utf8");
+const spanishMethodology = readFileSync(resolve(distRoot, "es/metodologia/index.html"), "utf8");
+const spanishSources = readFileSync(resolve(distRoot, "es/fuentes/index.html"), "utf8");
+
+for (const [document, expected] of [
+  [englishHome, ['lang="en"', 'href="/es/"', "Can thermal signals"]],
+  [spanishHome, ['lang="es"', 'href="/"', "¿Pueden las señales térmicas", "CAPÍTULO 07"]],
+  [spanishMethodology, ['lang="es"', 'href="/methodology/"', "Metodología pública congelada"]],
+  [spanishSources, ['lang="es"', 'href="/sources/"', "FUENTES / PROCEDENCIA"]]
+]) {
+  for (const value of expected) {
+    if (!document.includes(value)) throw new Error(`Localized route is missing required text: ${value}`);
+  }
+}
+
 const manifest = JSON.parse(readFileSync(resolve(publicRoot, "manifest.json"), "utf8"));
 const figureChecks = manifest.files.filter((file) => file.path.startsWith("figures/")).map((file) => {
   const builtPath = resolve(distRoot, file.path);
@@ -78,5 +101,5 @@ console.log(JSON.stringify({
   files_checked: files.length,
   routes_checked: requiredPages,
   frozen_figures_checked: figureChecks.length,
-  public_contract: "Chapters 01–07 + methodology + sources"
+  public_contract: "English and Spanish Chapters 01–07 + methodology + sources"
 }, null, 2));

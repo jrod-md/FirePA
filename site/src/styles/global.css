@@ -1113,6 +1113,43 @@ code {
   padding-top: 1.35rem;
 }
 
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  color: var(--slate);
+  font: 500 0.62rem/1 var(--mono);
+  letter-spacing: 0.1em;
+}
+
+.language-switch a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.58;
+}
+
+.language-switch a[aria-current="page"] {
+  color: var(--clay-deep);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.language-switch a:hover,
+.language-switch a:focus-visible {
+  color: var(--clay-deep);
+  opacity: 1;
+}
+
+:lang(es) .method-step h3 {
+  text-transform: none;
+}
+
 .opening-stage {
   position: relative;
 }

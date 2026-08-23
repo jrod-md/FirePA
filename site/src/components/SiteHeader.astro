@@ -1,18 +1,34 @@
 ---
-const pathname = Astro.url.pathname;
-const isHome = pathname === "/";
+import { routeFor, t, type Locale, type PublicationPage } from "../i18n";
+
+interface Props {
+  locale?: Locale;
+  page?: PublicationPage;
+}
+
+const { locale = "en", page = "home" } = Astro.props;
+const home = routeFor(locale, "home");
+const methodology = routeFor(locale, "methodology");
+const sources = routeFor(locale, "sources");
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-brand" href="/" aria-label="FirePA research opening">FirePA</a>
-    <nav aria-label="Primary navigation">
-      <ul class="site-nav">
-        <li><a class="site-nav__link" href="/#research" aria-current={isHome ? "page" : undefined}>Research</a></li>
-        <li><a class="site-nav__link" href="/#map">Chapters</a></li>
-        <li><a class="site-nav__link" href="/methodology" aria-current={pathname === "/methodology" ? "page" : undefined}>Methodology</a></li>
-        <li><a class="site-nav__link" href="/sources" aria-current={pathname === "/sources" ? "page" : undefined}>Sources</a></li>
-      </ul>
-    </nav>
+    <a class="site-brand" href={home} aria-label={t(locale, "FirePA research opening")}>FirePA</a>
+    <div class="site-header__actions">
+      <nav aria-label={t(locale, "Primary navigation")}>
+        <ul class="site-nav">
+          <li><a class="site-nav__link" href={`${home}#research`} aria-current={page === "home" ? "page" : undefined}>{t(locale, "Research")}</a></li>
+          <li><a class="site-nav__link" href={`${home}#map`}>{t(locale, "Chapters")}</a></li>
+          <li><a class="site-nav__link" href={methodology} aria-current={page === "methodology" ? "page" : undefined}>{t(locale, "Methodology")}</a></li>
+          <li><a class="site-nav__link" href={sources} aria-current={page === "sources" ? "page" : undefined}>{t(locale, "Sources")}</a></li>
+        </ul>
+      </nav>
+      <nav class="language-switch" aria-label={t(locale, "Language")}>
+        <a href={routeFor("en", page)} lang="en" hreflang="en" aria-current={locale === "en" ? "page" : undefined}>EN</a>
+        <span aria-hidden="true">/</span>
+        <a href={routeFor("es", page)} lang="es" hreflang="es" aria-current={locale === "es" ? "page" : undefined}>ES</a>
+      </nav>
+    </div>
   </div>
 </header>

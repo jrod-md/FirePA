@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FigurePlate from "./FigurePlate.astro";
+import SiteFooter from "./SiteFooter.astro";
+import SiteHeader from "./SiteHeader.astro";
+import { counts, formatCount, methodology, period, projectSummary, publicEventFields } from "../data/public";
+import { pageMeta, routeFor, t, translateData, type Locale } from "../i18n";
+
+interface Props { locale?: Locale; }
+const { locale = "en" } = Astro.props;
+const [title, description] = pageMeta[locale].methodology;
+const clustering = methodology.workflow.find((item) => item.stage === "provisional_clustering");
+const optical = methodology.workflow.find((item) => item.stage === "sentinel2_optical_followup");
+const external = methodology.workflow.find((item) => item.stage === "external_reference_check");
+const studyLead = locale === "es"
+  ? `El estudio abarca ${projectSummary.study_area} desde ${period.start} hasta ${period.end} UTC, ambas fechas inclusive. FirePA parte de detecciones NASA FIRMS, audita los conteos brutos y procesados y luego agrupa las detecciones en eventos térmicos provisionales.`
+  : `The study covers ${projectSummary.study_area} from ${period.start} through ${period.end} UTC, inclusive. FirePA starts with NASA FIRMS detections, audits the raw and processed counts, then groups detections into provisional thermal events.`;
+---
+
+<BaseLayout title={title} description={description} locale={locale} page="methodology">
+  <a class="skip-link" href="#main-content">{t(locale, "Skip to content")}</a>
+  <SiteHeader locale={locale} page="methodology" />
+  <main id="main-content" class="docs-page">
+    <section class="docs-hero">
+      <div class="site-frame docs-hero__grid">
+        <div data-reveal>
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span> {t(locale, "METHOD / PUBLIC PACKAGE")}</p>
+          <h1 class="docs-title">{t(locale, "A reduction from")} <em>{t(locale, "signal")}</em> {t(locale, "to event.")}</h1>
+          <p class="docs-standfirst">{t(locale, "A static analysis of provisional thermal events in Coclé using FIRMS and Sentinel-2 evidence.")}</p>
+        </div>
+        <div class="docs-hero__meta" data-reveal><p class="section-label">{t(locale, "STUDY FRAME")}</p><p>{projectSummary.study_area}<br />{period.start} → {period.end} · {period.timezone}<br />{t(locale, "Inclusive window · static package")}</p></div>
+      </div>
+      <nav class="site-frame docs-index" aria-label={t(locale, "Methodology sections")}>
+        <a href="#method-study-title"><span>01</span>{t(locale, "Study")}</a>
+        <a href="#method-workflow-title"><span>02</span>{t(locale, "Workflow")}</a>
+        <a href="#method-rules-title"><span>03</span>{t(locale, "Rules")}</a>
+        <a href="#method-schema-title"><span>04</span>{t(locale, "Public schema")}</a>
+        <a href="#method-deferred-title"><span>05</span>{t(locale, "Deferred")}</a>
+      </nav>
+    </section>
+
+    <section class="docs-section" aria-labelledby="method-study-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "01 · STUDY")}</p><h2 id="method-study-title" class="docs-section-title">{t(locale, "The unit is provisional.")}</h2></div>
+        <div class="docs-copy"><p>{studyLead}</p><p>{t(locale, "The public package is frontend-agnostic and static. It does not require a backend, Earth Engine or network access to read the frozen records.")}</p></div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--paper" aria-labelledby="method-workflow-title">
+      <div class="site-frame" data-reveal>
+        <div class="docs-section__heading"><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "02 · WORKFLOW")}</p><h2 id="method-workflow-title" class="docs-section-title">{t(locale, "Five passes, one public boundary.")}</h2></div>
+        <ol class="method-steps">
+          {methodology.workflow.map((item, index) => (
+            <li class="method-step">
+              <span class="method-step__number">0{index + 1}</span>
+              <div><h3>{translateData(locale, item.stage.replaceAll("_", " "))}</h3><p>{translateData(locale, item.result)}</p><p class="method-step__meta"><code>{item.status}</code>{item.configuration_id && <><span>·</span><code>{item.configuration_id}</code></>}{item.algorithm && <><span>·</span><code>{item.algorithm}</code></>}</p></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="docs-section" aria-labelledby="method-rules-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "03 · RULES")}</p><h2 id="method-rules-title" class="docs-section-title">{t(locale, "Keep the rule visible.")}</h2></div>
+        <div class="docs-copy docs-copy--facts">
+          <dl class="docs-facts">
+            <div><dt>{t(locale, "Clustering")}</dt><dd>{clustering?.radius_m} m · {clustering?.time_window_hours} h · {clustering?.metric_projection}</dd></div>
+            <div><dt>{t(locale, "Algorithm")}</dt><dd>{clustering?.algorithm} · {counts.configuration_id}</dd></div>
+            <div><dt>{t(locale, "Optical cohort")}</dt><dd>{optical?.cohort_events} {locale === "es" ? "casos" : "cases"} · {optical?.observable_events} {locale === "es" ? "observables" : "observable"} · {optical?.unobserved_events} {locale === "es" ? "no observados" : "unobserved"}</dd></div>
+            <div><dt>{t(locale, "Evidence modes")}</dt><dd>{optical?.evidence_modes?.join(" / ")}</dd></div>
+            <div><dt>NBR / dNBR</dt><dd>{t(locale, "Descriptive metrics only; no severity class.")}</dd></div>
+            <div><dt>{t(locale, "External check")}</dt><dd>{translateData(locale, external?.matching_rule ?? "")} · {locale === "es" ? "reagrupado" : "reclustered"}: {t(locale, String(external?.reclustered))}</dd></div>
+          </dl>
+          <p>{translateData(locale, external?.result ?? "")} {t(locale, "The two public references are relational checks, not ground truth.")}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--dark" aria-labelledby="method-schema-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "04 · PUBLIC SCHEMA")}</p><h2 id="method-schema-title" class="docs-section-title">{t(locale, "Nineteen fields, no hidden row.")}</h2></div>
+        <div class="docs-copy"><p>{t(locale, "The public event explorer exposes the fields below. Coordinates are public WGS84 centroids. The schema does not publish raw detection rows, scene paths, private IDs or reviewer identities.")}</p><div class="schema-list">{publicEventFields.map((field) => <code>{field}</code>)}</div></div>
+      </div>
+    </section>
+
+    <section class="docs-section" aria-labelledby="method-deferred-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "05 · DEFERRED")}</p><h2 id="method-deferred-title" class="docs-section-title">{t(locale, "What this release does not add.")}</h2></div>
+        <div class="docs-copy"><p>{t(locale, "Formal human review remains deferred:")} {translateData(locale, methodology.formal_review.reason)} {t(locale, "The public count of formal observations is")} {methodology.formal_review.formal_human_observations}. {t(locale, "Supervised modeling remains deferred:")} {translateData(locale, methodology.supervised_modeling.reason)}</p><p>{t(locale, "Those are evidence boundaries, not empty interface states. See")} <a class="text-link" href={routeFor(locale, "sources")}>{t(locale, "Sources & provenance ↗")}</a> {t(locale, "for the frozen references and hashes.")}</p></div>
+      </div>
+    </section>
+
+    <div class="site-frame docs-figure-band" data-reveal>
+      <FigurePlate
+        figureId="figure-01"
+        src="/figures/01_pipeline_overview.png"
+        alt={t(locale, "Frozen FirePA pipeline overview from FIRMS detections through provisional events and the optical follow-up.")}
+        title={t(locale, "The frozen pipeline")}
+        caption={`${locale === "es" ? "El paquete público cuenta" : "The public package counts"} ${formatCount(counts.firms_raw_detections)} ${t(locale, "raw detections")}, ${formatCount(counts.firms_processed_detections)} ${t(locale, "processed detections and")} ${formatCount(counts.provisional_thermal_events)} ${t(locale, "provisional events before the optical follow-up.")}`}
+        longDescription={t(locale, "The frozen pipeline overview records the audited FIRMS counts, the r1500_t06 clustering configuration, the 611 provisional events, the 30-event Sentinel-2 pilot, the two external reference checks and the public release boundary.")}
+        locale={locale}
+      />
+    </div>
+  </main>
+  <SiteFooter locale={locale} />
+</BaseLayout>

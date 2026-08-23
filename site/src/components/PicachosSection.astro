@@ -1,7 +1,10 @@
 ---
 import FigurePlate from "./FigurePlate.astro";
 import { citations, externalReferences, formatExact, formatMeters } from "../data/public";
+import { t, type Locale } from "../i18n";
 
+interface Props { locale?: Locale; }
+const { locale = "en" } = Astro.props;
 const reference = externalReferences.features.find((feature) => feature.properties.reference_id === "REFERENCE-001");
 const source = citations.external_sources.find((item) => item.source_id === "SOURCE-001");
 const officialThresholdM = reference?.properties.official_matching_radius_m ?? 0;
@@ -20,35 +23,35 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
   <div class="site-frame">
     <div class="case-opening case-opening--light" data-reveal>
       <div class="case-opening__title">
-        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> CHAPTER 05 · CASE 02</p>
-        <h2 id="picachos-title" class="case-title">Los Picachos marks a<br /><em>threshold miss.</em></h2>
+        <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "CHAPTER 05 · CASE 02")}</p>
+        <h2 id="picachos-title" class="case-title">{t(locale, "Los Picachos marks a")}<br /><em>{t(locale, "threshold miss.")}</em></h2>
       </div>
       <div class="case-opening__note">
         <p class="section-label">REFERENCE-001 · {reference?.properties.reference_name}</p>
-        <p>The official comparison returns zero matches inside its frozen rule. That is a statement about this comparison, not a statement that no fire, activity or signal existed.</p>
+        <p>{t(locale, "The official comparison returns zero matches inside its frozen rule. That is a statement about this comparison, not a statement that no fire, activity or signal existed.")}</p>
       </div>
     </div>
 
     <div id="picachos-distance-scale" class="distance-reading" data-reveal>
       <div class="distance-reading__heading">
         <div>
-          <p class="section-label">OFFICIAL MATCHING THRESHOLD</p>
+          <p class="section-label">{t(locale, "OFFICIAL MATCHING THRESHOLD")}</p>
           <p class="distance-reading__value">{formatMeters(officialThresholdM)}</p>
         </div>
         <div>
-          <p class="section-label">NEAREST DOCUMENTED CONTEMPORARY SIGNAL</p>
+          <p class="section-label">{t(locale, "NEAREST DOCUMENTED CONTEMPORARY SIGNAL")}</p>
           <p class="distance-reading__value">{formatExact(nearestSignalM)}<small> m</small></p>
         </div>
       </div>
 
       <svg class="distance-scale" viewBox="0 0 1500 260" role="img" aria-labelledby="picachos-scale-title picachos-scale-description" focusable="false">
-        <title id="picachos-scale-title">Los Picachos official threshold and nearest documented signal</title>
-        <desc id="picachos-scale-description">Distance scale from zero to 15 kilometres. The official threshold is {formatMeters(officialThresholdM)} with {reference?.properties.official_match_count} official matches. The nearest documented contemporary signal is {formatExact(nearestSignalM)} metres, beyond the official threshold.</desc>
+        <title id="picachos-scale-title">{t(locale, "Los Picachos official threshold and nearest documented signal")}</title>
+        <desc id="picachos-scale-description">{t(locale, "Distance scale from zero to 15 kilometres. The official threshold is")} {formatMeters(officialThresholdM)} {t(locale, "with")} {reference?.properties.official_match_count} {t(locale, "official matches. The nearest documented contemporary signal is")} {formatExact(nearestSignalM)} {t(locale, "metres, beyond the official threshold.")}</desc>
 
         <!-- Official matching zone (0 to 5 km) -->
         <rect class="distance-scale__official-zone" x={scaleStartX} y="78" width={thresholdX - scaleStartX} height="84" rx="2"></rect>
-        <text class="distance-scale__zone-label" x={(scaleStartX + thresholdX) / 2} y="122">{reference?.properties.official_match_count} OFFICIAL MATCHES</text>
-        <text class="distance-scale__zone-sub" x={(scaleStartX + thresholdX) / 2} y="144">5,000 m matching zone</text>
+        <text class="distance-scale__zone-label" x={(scaleStartX + thresholdX) / 2} y="122">{reference?.properties.official_match_count} {t(locale, "OFFICIAL MATCHES")}</text>
+        <text class="distance-scale__zone-sub" x={(scaleStartX + thresholdX) / 2} y="144">{t(locale, "5,000 m matching zone")}</text>
 
         <!-- Distance baseline track -->
         <line class="distance-scale__track" x1={scaleStartX} y1="162" x2={scaleEndX} y2="162" pathLength="1"></line>
@@ -64,7 +67,7 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
         <g class="distance-scale__tick distance-scale__tick--threshold">
           <line x1={thresholdX} y1="46" x2={thresholdX} y2="178" stroke-dasharray="3 3"></line>
           <circle cx={thresholdX} cy="162" r="7"></circle>
-          <text class="distance-scale__annotation" x={thresholdX} y="34">OFFICIAL RULE</text>
+          <text class="distance-scale__annotation" x={thresholdX} y="34">{t(locale, "OFFICIAL RULE")}</text>
           <text class="distance-scale__threshold-val" x={thresholdX} y="206">5 km</text>
         </g>
 
@@ -77,7 +80,7 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
         <g class="distance-scale__tick distance-scale__tick--signal">
           <line x1={signalX} y1="46" x2={signalX} y2="178"></line>
           <circle cx={signalX} cy="162" r="8"></circle>
-          <text class="distance-scale__annotation distance-scale__annotation--signal" x={signalX} y="34">CLOSEST SIGNAL</text>
+          <text class="distance-scale__annotation distance-scale__annotation--signal" x={signalX} y="34">{t(locale, "CLOSEST SIGNAL")}</text>
           <text class="distance-scale__signal-value" x={signalX} y="62">{nearestSignalKm} km</text>
           <text class="distance-scale__signal-sub" x={signalX} y="206">10,400.826 m</text>
         </g>
@@ -91,13 +94,13 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
       </svg>
 
       <div class="distance-reading__result">
-        <p><strong>{reference?.properties.official_match_count}</strong><span>official matches inside {formatMeters(officialThresholdM)}</span></p>
-        <div><p class="section-label">DIAGNOSTIC</p><code>{reference?.properties.diagnostic}</code><p>Official match count is zero because the documented nearest contemporary signal is outside the 5 km matching threshold.</p></div>
+        <p><strong>{reference?.properties.official_match_count}</strong><span>{t(locale, "official matches inside")} {formatMeters(officialThresholdM)}</span></p>
+        <div><p class="section-label">{t(locale, "DIAGNOSTIC")}</p><code>{reference?.properties.diagnostic}</code><p>{t(locale, "Official match count is zero because the documented nearest contemporary signal is outside the 5 km matching threshold.")}</p></div>
       </div>
     </div>
 
     <div class="diagnostic-caveat" data-reveal>
-      <p><strong>Read literally:</strong> `official_match_count = 0` does not mean no fire, no activity and no thermal signal. It means the frozen 5,000 m inclusive spatial rule found no match for this external reference.</p>
+      <p><strong>{t(locale, "Read literally:")}</strong> {t(locale, "official_match_count = 0 does not mean no fire, no activity and no thermal signal. It means the frozen 5,000 m inclusive spatial rule found no match for this external reference.")}</p>
       <p><a href={source?.url} target="_blank" rel="noreferrer">{source?.source_id} · {source?.publisher}</a></p>
     </div>
 
@@ -105,10 +108,11 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
       <FigurePlate
         figureId="figure-06"
         src="/figures/06_los_picachos_diagnostic.png"
-        alt="Frozen Los Picachos diagnostic showing zero official matches at 5 kilometres and the nearest documented contemporary signal beyond that threshold."
-        title="A zero with a boundary"
-        caption="The frozen diagnostic figure preserves the official 5 km rule and the wider diagnostic context. The structured public result is SPATIAL_THRESHOLD_MISS."
-        longDescription="The frozen figure shows the approximate Los Picachos reference anchor, the official 5 km matching radius, wider diagnostic context and the nearest documented contemporary signal at 10.400826 km. The page does not turn the wider context into a new control or recompute the result."
+        alt={t(locale, "Frozen Los Picachos diagnostic showing zero official matches at 5 kilometres and the nearest documented contemporary signal beyond that threshold.")}
+        title={t(locale, "A zero with a boundary")}
+        caption={t(locale, "The frozen diagnostic figure preserves the official 5 km rule and the wider diagnostic context. The structured public result is SPATIAL_THRESHOLD_MISS.")}
+        longDescription={t(locale, "The frozen figure shows the approximate Los Picachos reference anchor, the official 5 km matching radius, wider diagnostic context and the nearest documented contemporary signal at 10.400826 km. The page does not turn the wider context into a new control or recompute the result.")}
+        locale={locale}
       />
     </div>
   </div>

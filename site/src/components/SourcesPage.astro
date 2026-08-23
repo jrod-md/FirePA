@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteFooter from "./SiteFooter.astro";
+import SiteHeader from "./SiteHeader.astro";
+import { citations, formatDecimal, manifest, projectSummary, provenance } from "../data/public";
+import { pageMeta, routeFor, t, translateData, type Locale } from "../i18n";
+
+interface Props { locale?: Locale; }
+const { locale = "en" } = Astro.props;
+const [title, description] = pageMeta[locale].sources;
+const sourceDate = (source: typeof citations.external_sources[number]) => source.reported_event_date ?? (source.reported_event_date_start && source.reported_event_date_end ? `${source.reported_event_date_start} → ${source.reported_event_date_end}` : source.reported_event_date_start ?? source.reported_event_date_end ?? t(locale, "not specified"));
+const figureHashes = provenance.figure_provenance;
+const figureSize = (path: string) => manifest.files.find((file) => file.path === path)?.size_bytes ?? 0;
+---
+
+<BaseLayout title={title} description={description} locale={locale} page="sources">
+  <a class="skip-link" href="#main-content">{t(locale, "Skip to content")}</a>
+  <SiteHeader locale={locale} page="sources" />
+  <main id="main-content" class="docs-page sources-page">
+    <section class="docs-hero">
+      <div class="site-frame docs-hero__grid">
+        <div data-reveal>
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span> {t(locale, "SOURCES / PROVENANCE")}</p>
+          <h1 class="docs-title">{t(locale, "A public result needs a")} <em>{t(locale, "trace.")}</em></h1>
+          <p class="docs-standfirst">{t(locale, "This page names the external documents and package records used by the public FirePA release. Where the package has no publication metadata, the interface does not invent it.")}</p>
+        </div>
+        <div class="docs-hero__meta" data-reveal>
+          <p class="section-label">{t(locale, "REGISTRY")}</p>
+          <p>{citations.registry.source_count} {t(locale, "external source documents")}<br />{citations.registry.incident_count} {t(locale, "external incidents")}<br /><code>{citations.registry.sha256}</code></p>
+        </div>
+      </div>
+      <nav class="site-frame docs-index" aria-label={t(locale, "Source sections")}>
+        <a href="#sources-external-title"><span>01</span>{t(locale, "External registry")}</a>
+        <a href="#sources-package-title"><span>02</span>{t(locale, "Package")}</a>
+        <a href="#sources-figures-title"><span>03</span>{t(locale, "Figures")}</a>
+        <a href="#sources-science-title"><span>04</span>{t(locale, "Scientific record")}</a>
+      </nav>
+    </section>
+
+    <section class="docs-section" aria-labelledby="sources-external-title">
+      <div class="site-frame" data-reveal>
+        <div class="docs-section__heading">
+          <p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "01 · EXTERNAL REGISTRY")}</p>
+          <h2 id="sources-external-title" class="docs-section-title">{t(locale, "Seven documents, two reference windows.")}</h2>
+        </div>
+        <div class="source-list">
+          {citations.external_sources.map((source) => (
+            <article class="source-row" id={source.source_id}>
+              <div class="source-row__id"><code>{source.source_id}</code><span class="source-row__incident">{source.incident_id}</span></div>
+              <div class="source-row__body">
+                <h3>{source.publisher}</h3>
+                <p class="source-row__meta">{source.reported_location} · {t(locale, "published")} {source.publication_date} · {t(locale, "reported")} {sourceDate(source)}</p>
+                <p class="source-row__details">{source.reported_area_ha === null || source.reported_area_ha === undefined ? t(locale, "No area value in package") : `${translateData(locale, source.reported_area_qualifier ?? "")} ${source.reported_area_ha} ha`} {source.cause_status ? `· ${translateData(locale, source.cause_status)}` : ""}</p>
+              </div>
+              <div class="source-row__action"><a class="source-row__link" href={source.url} target="_blank" rel="noreferrer">{t(locale, "Open source ↗")}</a></div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--paper" aria-labelledby="sources-package-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "02 · PACKAGE")}</p><h2 id="sources-package-title" class="docs-section-title">{t(locale, "The package is its own citation.")}</h2></div>
+        <div class="docs-copy docs-copy--facts">
+          <p>{projectSummary.package_version} {t(locale, "is frozen at")} <code>{projectSummary.scientific_freeze_commit}</code>. {t(locale, "The manifest is deterministic:")} <code>{t(locale, String(manifest.deterministic))}</code>, {t(locale, "with")} {manifest.files.length} {t(locale, "hashed entries and a generator version of")} <code>{manifest.generator_version}</code>.</p>
+          <dl class="docs-facts">
+            <div><dt>{t(locale, "Generator")}</dt><dd>{provenance.generator.command}</dd></div>
+            <div><dt>{t(locale, "Network access")}</dt><dd>{t(locale, String(provenance.network_access))}</dd></div>
+            <div><dt>{t(locale, "Earth Engine queries")}</dt><dd>{t(locale, String(provenance.earth_engine_queries_made))}</dd></div>
+            <div><dt>{t(locale, "Registry path")}</dt><dd><code>{citations.registry.path}</code></dd></div>
+            <div><dt>{t(locale, "Registry SHA-256")}</dt><dd><code>{citations.registry.sha256}</code></dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section docs-section--dark" aria-labelledby="sources-figures-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "03 · FIGURES")}</p><h2 id="sources-figures-title" class="docs-section-title">{t(locale, "Frozen means byte-identical.")}</h2></div>
+        <div class="docs-copy docs-copy--figures">
+          <p>{t(locale, "The six public figures are copied byte-for-byte. They remain 1600 × 900, their scientific content was not recomputed, and each derivative hash equals its source hash.")}</p>
+          <div class="figure-source-table">
+            {figureHashes.map((figure) => (
+              <div class="figure-source-row">
+                <div class="figure-source-row__file"><code>{figure.derivative_path}</code></div>
+                <div class="figure-source-row__meta"><span>{figure.width}×{figure.height}</span><span>{formatDecimal(figureSize(figure.derivative_path), 0)} B</span><span class="figure-source-row__status"><code>{t(locale, figure.derivative_sha256 === figure.source_sha256 ? "hash match" : "review")}</code></span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section" aria-labelledby="sources-science-title">
+      <div class="site-frame docs-section__grid" data-reveal>
+        <div><p class="chapter-kicker"><span class="chapter-kicker__rule" aria-hidden="true"></span> {t(locale, "04 · SCIENTIFIC RECORD")}</p><h2 id="sources-science-title" class="docs-section-title">{t(locale, "The frozen source artifacts.")}</h2></div>
+        <div class="docs-copy docs-copy--science">
+          <ul class="source-artifact-list">
+            {citations.scientific_sources.map((source) => (
+              <li class="source-artifact-item">
+                <div class="source-artifact-item__header"><span class="source-artifact-item__role">{translateData(locale, source.role)}</span></div>
+                <div class="source-artifact-item__path"><code>{source.path}</code></div>
+                <div class="source-artifact-item__hash"><small title={source.sha256}>SHA-256: <code>{source.sha256}</code></small></div>
+              </li>
+            ))}
+          </ul>
+          <p class="sources-next">{t(locale, "For the method that connects these records to the public event fields, read")} <a class="text-link" href={routeFor(locale, "methodology")}>{t(locale, "Methodology ↗")}</a>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <SiteFooter locale={locale} />
+</BaseLayout>
