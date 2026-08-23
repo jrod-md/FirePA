@@ -59,10 +59,6 @@ const title = "FirePA — Can thermal signals tell us what happened on the groun
           </div>
 
           <div class="site-frame opening-chapter__exhibit" aria-describedby="pipeline-field-disclosure">
-            <div class="opening-chapter__connectors" aria-hidden="true">
-              <span class="opening-chapter__connector opening-chapter__connector--one"></span>
-              <span class="opening-chapter__connector opening-chapter__connector--two"></span>
-            </div>
             <div class="opening-chapter__stages">
               <article class="opening-stage opening-stage--one" aria-labelledby="stage-one-title">
                 <p class="stage-index">STEP 01</p>
@@ -70,11 +66,15 @@ const title = "FirePA — Can thermal signals tell us what happened on the groun
                 <h3 id="stage-one-title" class="stage-label">AUDITED FIRMS<br />RAW DETECTIONS</h3>
               </article>
 
+              <span class="opening-chapter__connector" aria-hidden="true"></span>
+
               <article class="opening-stage opening-stage--two" aria-labelledby="stage-two-title">
                 <p class="stage-index">STEP 02</p>
                 <p class="pipeline-number">{formatCount(counts.firms_processed_detections)}</p>
                 <h3 id="stage-two-title" class="stage-label">PROCESSED<br />DETECTIONS</h3>
               </article>
+
+              <span class="opening-chapter__connector" aria-hidden="true"></span>
 
               <article class="opening-stage opening-stage--three" aria-labelledby="stage-three-title">
                 <p class="stage-index">STEP 03</p>

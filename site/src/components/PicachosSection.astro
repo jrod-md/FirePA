@@ -4,6 +4,16 @@ import { citations, externalReferences, formatExact, formatMeters } from "../dat
 
 const reference = externalReferences.features.find((feature) => feature.properties.reference_id === "REFERENCE-001");
 const source = citations.external_sources.find((item) => item.source_id === "SOURCE-001");
+const officialThresholdM = reference?.properties.official_matching_radius_m ?? 0;
+const nearestSignalM = reference?.properties.nearest_documented_contemporary_signal_m ?? 0;
+const scaleStartX = 60;
+const scaleEndX = 1440;
+const scaleMaxM = 15000;
+const scaleX = (metres: number) => scaleStartX + (metres / scaleMaxM) * (scaleEndX - scaleStartX);
+const thresholdX = scaleX(officialThresholdM);
+const tenKilometresX = scaleX(10000);
+const signalX = scaleX(nearestSignalM);
+const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
 ---
 
 <section id="picachos" class="research-section case-section picachos-section" aria-labelledby="picachos-title">
@@ -19,22 +29,69 @@ const source = citations.external_sources.find((item) => item.source_id === "SOU
       </div>
     </div>
 
-    <div class="distance-reading" aria-label={`Official threshold ${formatMeters(reference?.properties.official_matching_radius_m ?? 0)}; nearest documented contemporary signal ${formatExact(reference?.properties.nearest_documented_contemporary_signal_m ?? 0)} metres`} data-reveal>
-      <div class="distance-reading__threshold">
-        <p class="section-label">OFFICIAL MATCHING THRESHOLD</p>
-        <p class="distance-reading__value">{formatMeters(reference?.properties.official_matching_radius_m ?? 0)}</p>
+    <div id="picachos-distance-scale" class="distance-reading" data-reveal>
+      <div class="distance-reading__heading">
+        <div>
+          <p class="section-label">OFFICIAL MATCHING THRESHOLD</p>
+          <p class="distance-reading__value">{formatMeters(officialThresholdM)}</p>
+        </div>
+        <div>
+          <p class="section-label">NEAREST DOCUMENTED CONTEMPORARY SIGNAL</p>
+          <p class="distance-reading__value">{formatExact(nearestSignalM)}<small> m</small></p>
+        </div>
       </div>
-      <div class="distance-reading__axis" aria-hidden="true">
-        <span class="distance-reading__origin"></span>
-        <span class="distance-reading__threshold-mark"><i></i></span>
-        <span class="distance-reading__signal-mark"><i></i></span>
-      </div>
-      <div class="distance-reading__signal">
-        <p class="section-label">NEAREST DOCUMENTED CONTEMPORARY SIGNAL</p>
-        <p class="distance-reading__value">{reference?.properties.nearest_documented_contemporary_signal_m === null ? "Not available" : formatExact(reference?.properties.nearest_documented_contemporary_signal_m ?? 0)}<small> m</small></p>
-      </div>
+
+      <svg class="distance-scale" viewBox="0 0 1500 260" role="img" aria-labelledby="picachos-scale-title picachos-scale-description" focusable="false">
+        <title id="picachos-scale-title">Los Picachos official threshold and nearest documented signal</title>
+        <desc id="picachos-scale-description">Distance scale from zero to 15 kilometres. The official threshold is {formatMeters(officialThresholdM)} with {reference?.properties.official_match_count} official matches. The nearest documented contemporary signal is {formatExact(nearestSignalM)} metres, beyond the official threshold.</desc>
+
+        <!-- Official matching zone (0 to 5 km) -->
+        <rect class="distance-scale__official-zone" x={scaleStartX} y="78" width={thresholdX - scaleStartX} height="84" rx="2"></rect>
+        <text class="distance-scale__zone-label" x={(scaleStartX + thresholdX) / 2} y="122">{reference?.properties.official_match_count} OFFICIAL MATCHES</text>
+        <text class="distance-scale__zone-sub" x={(scaleStartX + thresholdX) / 2} y="144">5,000 m matching zone</text>
+
+        <!-- Distance baseline track -->
+        <line class="distance-scale__track" x1={scaleStartX} y1="162" x2={scaleEndX} y2="162" pathLength="1"></line>
+
+        <!-- 0 km origin -->
+        <g class="distance-scale__tick distance-scale__tick--origin">
+          <line x1={scaleStartX} y1="150" x2={scaleStartX} y2="174"></line>
+          <circle cx={scaleStartX} cy="162" r="5"></circle>
+          <text x={scaleStartX} y="206">0 km</text>
+        </g>
+
+        <!-- 5 km official threshold boundary -->
+        <g class="distance-scale__tick distance-scale__tick--threshold">
+          <line x1={thresholdX} y1="46" x2={thresholdX} y2="178" stroke-dasharray="3 3"></line>
+          <circle cx={thresholdX} cy="162" r="7"></circle>
+          <text class="distance-scale__annotation" x={thresholdX} y="34">OFFICIAL RULE</text>
+          <text class="distance-scale__threshold-val" x={thresholdX} y="206">5 km</text>
+        </g>
+
+        <!-- 10 km scale tick -->
+        <g class="distance-scale__tick distance-scale__tick--mid">
+          <line x1={tenKilometresX} y1="152" x2={tenKilometresX} y2="172"></line>
+        </g>
+
+        <!-- 10.400826 km nearest signal mark -->
+        <g class="distance-scale__tick distance-scale__tick--signal">
+          <line x1={signalX} y1="46" x2={signalX} y2="178"></line>
+          <circle cx={signalX} cy="162" r="8"></circle>
+          <text class="distance-scale__annotation distance-scale__annotation--signal" x={signalX} y="34">CLOSEST SIGNAL</text>
+          <text class="distance-scale__signal-value" x={signalX} y="62">{nearestSignalKm} km</text>
+          <text class="distance-scale__signal-sub" x={signalX} y="206">10,400.826 m</text>
+        </g>
+
+        <!-- 15 km scale end -->
+        <g class="distance-scale__tick distance-scale__tick--end">
+          <line x1={scaleEndX} y1="150" x2={scaleEndX} y2="174"></line>
+          <circle cx={scaleEndX} cy="162" r="5"></circle>
+          <text x={scaleEndX} y="206">15 km</text>
+        </g>
+      </svg>
+
       <div class="distance-reading__result">
-        <p><strong>{reference?.properties.official_match_count}</strong><span>official matches inside {formatMeters(reference?.properties.official_matching_radius_m ?? 0)}</span></p>
+        <p><strong>{reference?.properties.official_match_count}</strong><span>official matches inside {formatMeters(officialThresholdM)}</span></p>
         <div><p class="section-label">DIAGNOSTIC</p><code>{reference?.properties.diagnostic}</code><p>Official match count is zero because the documented nearest contemporary signal is outside the 5 km matching threshold.</p></div>
       </div>
     </div>

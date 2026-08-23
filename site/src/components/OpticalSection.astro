@@ -18,13 +18,13 @@ const opticalWorkflow = methodology.workflow.find((item) => item.stage === "sent
       </div>
     </div>
 
-    <div class="optical-sequence" aria-label="Optical cohort reduction" data-reveal>
+    <div class="optical-sequence" role="img" aria-label="Optical cohort reduction: 611 provisional thermal events narrow to a 30-event optical cohort, with 28 observable cases and 2 unobserved cases." data-reveal>
       <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.provisional_thermal_events}</span><span class="optical-sequence__label">provisional<br />thermal events</span></div>
-      <span class="optical-sequence__arrow" aria-hidden="true">→</span>
+      <span class="optical-sequence__operator optical-sequence__arrow" aria-hidden="true">→</span>
       <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.optical_cohort_events}</span><span class="optical-sequence__label">optical<br />cohort</span></div>
-      <span class="optical-sequence__arrow" aria-hidden="true">→</span>
+      <span class="optical-sequence__operator optical-sequence__arrow" aria-hidden="true">→</span>
       <div class="optical-sequence__stage"><span class="optical-sequence__number">{counts.optically_observable_events}</span><span class="optical-sequence__label">observable<br />cases</span></div>
-      <span class="optical-sequence__plus" aria-hidden="true">+</span>
+      <span class="optical-sequence__operator optical-sequence__plus" aria-hidden="true">+</span>
       <div class="optical-sequence__stage optical-sequence__stage--quiet"><span class="optical-sequence__number">{counts.unobserved_events}</span><span class="optical-sequence__label">unobserved<br />cases</span></div>
     </div>
 
