@@ -22,9 +22,13 @@ from fuegopa.formal_review import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_FORMAL_QUEUE = ROOT / "outputs/sentinel2_dnbr_review_queue.csv"
+PRIVATE_FORMAL_UNOBSERVED = ROOT / "outputs/human_review/unobserved_events.csv"
 
 
 def _prepared(tmp_path: Path, *, seed_inside_output: bool = False) -> tuple[Path, Path]:
+    if not (PRIVATE_FORMAL_QUEUE.is_file() and PRIVATE_FORMAL_UNOBSERVED.is_file()):
+        pytest.skip("protected formal-review inputs are not redistributed")
     database = tmp_path / "formal.sqlite3"
     output = tmp_path / "formal_packages"
     kwargs = {"seed_path": None if seed_inside_output else tmp_path / "private_seed.txt"}

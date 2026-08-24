@@ -6,11 +6,23 @@ import json
 from pathlib import Path
 from urllib.parse import urlparse
 
+import pytest
+
 from fuegopa.external_reference import REFERENCES
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "references/external_reference_sources_v1.json"
+PRIVATE_EXTERNAL_OUTPUT = ROOT / "outputs/external_reference_check_v1/report.json"
+PRIVATE_PROTECTED_SOURCE = ROOT / "data/processed/firms_cocle_2025_detections.csv"
+requires_private_external_output = pytest.mark.skipif(
+    not PRIVATE_EXTERNAL_OUTPUT.is_file(),
+    reason=f"protected external-reference output is not redistributed: {PRIVATE_EXTERNAL_OUTPUT.relative_to(ROOT)}",
+)
+requires_private_protected_sources = pytest.mark.skipif(
+    not PRIVATE_PROTECTED_SOURCE.is_file(),
+    reason=f"protected scientific source is not redistributed: {PRIVATE_PROTECTED_SOURCE.relative_to(ROOT)}",
+)
 
 
 def _load_registry() -> dict:
@@ -202,6 +214,7 @@ def test_registry_urls_are_syntactically_valid_and_not_pipeline_inputs() -> None
     assert registry["provenance_limits"]["used_for_human_review"] is False
 
 
+@requires_private_external_output
 def test_official_match_counts_remain_in_existing_local_output() -> None:
     summary_path = ROOT / "outputs/external_reference_check_v1/reference_summary.csv"
     with summary_path.open(encoding="utf-8", newline="") as handle:
@@ -210,6 +223,7 @@ def test_official_match_counts_remain_in_existing_local_output() -> None:
     assert rows["REFERENCE-002"]["match_count"] == "6"
 
 
+@requires_private_protected_sources
 def test_protected_scientific_artifacts_keep_the_frozen_sha256() -> None:
     expected_hashes = {
         "data/processed/firms_cocle_2025_detections.csv": "3f166e8c2417e9ea875105f313bb3048498688af4c477c356d689ce1a212aa6e",

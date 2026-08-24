@@ -84,9 +84,13 @@ formal_human_observations = 0
 ```
 
 No supervised predictive model was trained because the pilot has no defensible
-target or ground truth. Historical automated-review calibration outputs remain
-provisional pseudolabel evidence only and are not human observations, targets,
-accuracy estimates, or model validation.
+target or ground truth. A seven-case blind model-assisted calibration tested the
+review instrument, followed by a two-reviewer control. Both were exploratory:
+their outputs remained provisional pseudolabel evidence and were not human
+observations, targets, accuracy estimates, model validation, or inputs to the
+frozen release. The method, aggregate findings, and public/private boundary are
+documented in
+[`MODEL_ASSISTED_CALIBRATION.md`](MODEL_ASSISTED_CALIBRATION.md).
 
 ## 6. External-reference comparison
 

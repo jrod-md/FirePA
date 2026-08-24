@@ -31,8 +31,11 @@ scar, severity category, or causal attribution.
 
 Formal human observations equal zero. There is no ground truth, institutional
 validation, defensible supervised target, trained predictive model, accuracy
-estimate, or generalization claim. Automated calibration outputs are not human
-observations and were not promoted to scientific labels.
+estimate, or generalization claim. The blind model-assisted calibration was an
+exploratory test of the review instrument. Its provisional outputs are not
+human observations and were not promoted to scientific labels or used to
+produce the frozen release. See
+[`MODEL_ASSISTED_CALIBRATION.md`](MODEL_ASSISTED_CALIBRATION.md).
 
 ## External references
 

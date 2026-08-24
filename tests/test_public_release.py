@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -17,11 +18,26 @@ from build_public_release import build_package, public_files, sha256_file  # noq
 from verify_public_release_package import verify_package  # noqa: E402
 
 
+PRIVATE_GENERATOR_INPUT = ROOT / "data/processed/firms_cocle_2025_detections.csv"
+PRIVATE_FIGURE_SOURCE = ROOT / "outputs/final_scientific_report/01_pipeline_overview.png"
+requires_private_generator = pytest.mark.skipif(
+    not PRIVATE_GENERATOR_INPUT.is_file(),
+    reason=f"protected generator input is not redistributed: {PRIVATE_GENERATOR_INPUT.relative_to(ROOT)}",
+)
+requires_private_figures = pytest.mark.skipif(
+    not PRIVATE_FIGURE_SOURCE.is_file(),
+    reason=f"protected frozen-figure source is not redistributed: {PRIVATE_FIGURE_SOURCE.relative_to(ROOT)}",
+)
+
+
 @pytest.fixture()
 def public_package(tmp_path: Path) -> Path:
     output = tmp_path / "public-package"
-    result = build_package(output, ROOT)
-    assert result["deterministic"] is True
+    if PRIVATE_GENERATOR_INPUT.is_file():
+        result = build_package(output, ROOT)
+        assert result["deterministic"] is True
+    else:
+        shutil.copytree(ROOT / "site-data", output)
     return output
 
 
@@ -32,6 +48,7 @@ def write_json(path: Path, payload: object) -> None:
     )
 
 
+@requires_private_generator
 def test_public_package_build_is_byte_deterministic(tmp_path: Path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"
@@ -48,7 +65,7 @@ def test_public_package_build_is_byte_deterministic(tmp_path: Path) -> None:
         assert (first / relative).read_bytes() == (second / relative).read_bytes(), relative
 
 
-def test_clean_public_package_passes_full_verifier(public_package: Path) -> None:
+def test_clean_public_package_passes_public_release_verifier(public_package: Path) -> None:
     report = verify_package(public_package, ROOT)
     assert report["ok"], report["errors"]
     assert report["event_count"] == 611
@@ -58,6 +75,15 @@ def test_clean_public_package_passes_full_verifier(public_package: Path) -> None
 def test_existing_negative_limitations_pass(public_package: Path) -> None:
     report = verify_package(public_package, ROOT)
     assert report["ok"], report["errors"]
+
+
+def test_full_source_scope_reports_absent_protected_inputs(public_package: Path) -> None:
+    if PRIVATE_GENERATOR_INPUT.is_file():
+        pytest.skip("full protected source boundary is available")
+    report = verify_package(public_package, ROOT, full_source=True)
+    assert not report["ok"]
+    assert report["verification_scope"] == "full-source"
+    assert any("protected source missing" in error for error in report["errors"])
 
 
 def test_verifier_rejects_positive_project_summary_fire_claim(public_package: Path) -> None:
@@ -129,6 +155,7 @@ def test_verifier_rejects_event_order_drift(public_package: Path) -> None:
     assert any("public event feature order drifted" in error for error in report["errors"])
 
 
+@requires_private_generator
 def test_verifier_freeze_expectation_is_independent_of_generator(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -142,6 +169,7 @@ def test_verifier_freeze_expectation_is_independent_of_generator(
     assert any("project freeze mismatch" in error for error in report["errors"])
 
 
+@requires_private_figures
 def test_public_figures_match_frozen_sources(public_package: Path) -> None:
     for name in (
         "01_pipeline_overview.png",

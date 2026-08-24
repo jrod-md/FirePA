@@ -1,8 +1,9 @@
 """Formal-review v1 contract and preparation helpers.
 
-This module prepares an empty, blind, two-human round.  It never reads
-Earth Engine and it never derives a scientific class from a panel or metric.
-The seven-case AI control round remains implemented by its historical module.
+This module prepares an empty, blind, two-human round. It never reads Earth
+Engine and it never derives a scientific class from a panel or metric.
+Historical model-assisted calibration is documented separately and is not a
+runtime dependency of the formal human-review contract.
 """
 
 from __future__ import annotations

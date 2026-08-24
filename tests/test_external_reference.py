@@ -26,6 +26,10 @@ from fuegopa.external_reference import (
 ROOT = Path(__file__).resolve().parents[1]
 EVENTS_PATH = ROOT / "outputs/clustering/r1500_t06/events.csv"
 OPTICAL_PATH = ROOT / "data/processed/sentinel2_observability_pilot_events.csv"
+requires_private_external_inputs = pytest.mark.skipif(
+    not (EVENTS_PATH.is_file() and OPTICAL_PATH.is_file()),
+    reason="protected clustering and optical inputs are not redistributed",
+)
 
 
 def _event_row(
@@ -55,6 +59,7 @@ def _event_row(
     }
 
 
+@requires_private_external_inputs
 def test_real_frozen_input_has_exactly_611_events_and_is_not_reclustered() -> None:
     rows = load_frozen_cluster_events(EVENTS_PATH)
     assert len(rows) == EXPECTED_CLUSTER_COUNT
@@ -146,6 +151,7 @@ def test_multiple_matches_are_preserved(monkeypatch: pytest.MonkeyPatch) -> None
     assert all(match["external_reference_match"] is True for match in matches if match)
 
 
+@requires_private_external_inputs
 def test_actual_external_check_counts_and_guacamaya_fragmentation() -> None:
     result = analyze_external_references(
         input_events_path=EVENTS_PATH,
@@ -160,6 +166,7 @@ def test_actual_external_check_counts_and_guacamaya_fragmentation() -> None:
     assert all(match["optical_followup_available"] is False for match in result["matches"])
 
 
+@requires_private_external_inputs
 def test_structured_output_has_no_label_fields_or_fire_relationship() -> None:
     result = analyze_external_references(
         input_events_path=EVENTS_PATH,
@@ -177,6 +184,7 @@ def test_structured_output_has_no_label_fields_or_fire_relationship() -> None:
     assert '"target"' not in serialized
 
 
+@requires_private_external_inputs
 def test_outputs_are_deterministic_and_manifest_hashes_verify(tmp_path: Path) -> None:
     result = analyze_external_references(
         input_events_path=EVENTS_PATH,
@@ -206,6 +214,7 @@ def test_outputs_are_deterministic_and_manifest_hashes_verify(tmp_path: Path) ->
     assert verified["manifest_file_count"] == 9
 
 
+@requires_private_external_inputs
 def test_scope_freeze_state_is_deferred_and_unexecuted() -> None:
     result = analyze_external_references(
         input_events_path=EVENTS_PATH,

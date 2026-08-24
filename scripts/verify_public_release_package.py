@@ -122,6 +122,21 @@ SOURCE_ARTIFACT_ROLES = {
     "outputs/final_scientific_report/manifest.json": "frozen final-report manifest",
 }
 
+FROZEN_SCIENTIFIC_CITATIONS = {
+    "docs/FIREPA_PILOT_V1_FREEZE.md": {
+        "role": "scientific freeze",
+        "sha256": "b8b7a7c08e51d42668a3c60165f8ad87dd0094376feef6eb7f4b086016c8dead",
+    },
+    "docs/FIREPA_PILOT_SCIENTIFIC_REPORT.md": {
+        "role": "final scientific report",
+        "sha256": "1d463bc03f06f47d0bfe3dbaf40a051aed0a82884d773457ecc728fc39847e18",
+    },
+    "docs/FIREPA_PILOT_FINAL_CHECKPOINT.md": {
+        "role": "final checkpoint",
+        "sha256": "cb1f1e467d405d772e1c5d88b19004363c5b40715932424b9ab5d9f07844c8a2",
+    },
+}
+
 
 def public_files() -> list[str]:
     return [
@@ -246,6 +261,24 @@ def read_json(path: Path) -> Any:
     )
 
 
+def canonical_public_bytes(path: Path) -> bytes:
+    """Return authored LF bytes for tracked publication text.
+
+    Git may expose CRLF working-tree bytes on Windows even when the committed
+    artifact and its manifest use LF. Scientific binary artifacts are returned
+    unchanged.
+    """
+
+    payload = path.read_bytes()
+    if path.suffix.lower() in {".json", ".geojson", ".md"}:
+        return payload.replace(b"\r\n", b"\n")
+    return payload
+
+
+def canonical_public_sha256(path: Path) -> str:
+    return sha256_bytes(canonical_public_bytes(path))
+
+
 def is_finite_number(value: Any) -> bool:
     return type(value) in (int, float) and math.isfinite(value)
 
@@ -313,7 +346,7 @@ def verify_file_set(package: Path, errors: list[str]) -> dict[str, Any] | None:
         path = package / relative
         if not path.is_file():
             continue
-        payload = path.read_bytes()
+        payload = canonical_public_bytes(path)
         expected_records.append(
             {"path": relative, "sha256": sha256_bytes(payload), "size_bytes": len(payload)}
         )
@@ -621,22 +654,17 @@ def verify_citations(citations: Any, root: Path, errors: list[str]) -> None:
     )
     scientific_sources = citations.get("scientific_sources")
     check(isinstance(scientific_sources, list) and len(scientific_sources) == 3, "scientific source list mismatch", errors)
-    expected_sources = {
-        "docs/FIREPA_PILOT_V1_FREEZE.md": "scientific freeze",
-        "docs/FIREPA_PILOT_SCIENTIFIC_REPORT.md": "final scientific report",
-        "docs/FIREPA_PILOT_FINAL_CHECKPOINT.md": "final checkpoint",
-    }
     if isinstance(scientific_sources, list):
         for source in scientific_sources:
             if not isinstance(source, dict):
                 errors.append("scientific citation is not an object")
                 continue
             relative = source.get("path")
-            check(relative in expected_sources, f"unexpected scientific citation: {relative}", errors)
-            if relative in expected_sources:
-                check(source.get("role") == expected_sources[relative], f"scientific citation role mismatch: {relative}", errors)
-                path = root / relative
-                check(path.is_file() and source.get("sha256") == sha256_file(path), f"scientific citation hash mismatch: {relative}", errors)
+            check(relative in FROZEN_SCIENTIFIC_CITATIONS, f"unexpected scientific citation: {relative}", errors)
+            if relative in FROZEN_SCIENTIFIC_CITATIONS:
+                expected = FROZEN_SCIENTIFIC_CITATIONS[relative]
+                check(source.get("role") == expected["role"], f"scientific citation role mismatch: {relative}", errors)
+                check(source.get("sha256") == expected["sha256"], f"scientific citation hash mismatch: {relative}", errors)
     external_sources = citations.get("external_sources")
     check(isinstance(external_sources, list) and len(external_sources) == 7, "external source list mismatch", errors)
     if isinstance(external_sources, list):
@@ -739,8 +767,15 @@ def verify_provenance(provenance: Any, package: Path, root: Path, errors: list[s
             check(isinstance(relative, str) and not Path(relative).is_absolute(), f"absolute provenance source path: {relative}", errors)
             if isinstance(relative, str) and (root / relative).is_file():
                 path = root / relative
-                check(record.get("sha256") == sha256_file(path), f"provenance source hash mismatch: {relative}", errors)
-                check(record.get("size_bytes") == path.stat().st_size, f"provenance source size mismatch: {relative}", errors)
+                if relative.startswith("references/"):
+                    payload = canonical_public_bytes(path)
+                    actual_hash = sha256_bytes(payload)
+                    actual_size = len(payload)
+                else:
+                    actual_hash = sha256_file(path)
+                    actual_size = path.stat().st_size
+                check(record.get("sha256") == actual_hash, f"provenance source hash mismatch: {relative}", errors)
+                check(record.get("size_bytes") == actual_size, f"provenance source size mismatch: {relative}", errors)
     output_hashes = provenance.get("output_hashes")
     expected_output_paths = sorted(item for item in public_files() if item != "provenance.json")
     check(isinstance(output_hashes, list), "provenance output hash ledger is invalid", errors)
@@ -749,7 +784,7 @@ def verify_provenance(provenance: Any, package: Path, root: Path, errors: list[s
         for relative in expected_output_paths:
             path = package / relative
             if path.is_file():
-                payload = path.read_bytes()
+                payload = canonical_public_bytes(path)
                 expected_output_records.append({"path": relative, "sha256": sha256_bytes(payload), "size_bytes": len(payload)})
         check(output_hashes == expected_output_records, "provenance output hash ledger mismatch", errors)
     figure_provenance = provenance.get("figure_provenance")
@@ -860,7 +895,12 @@ def verify_privacy(package: Path, errors: list[str]) -> None:
             )
 
 
-def verify_package(package_dir: Path, root: Path | None = None) -> dict[str, Any]:
+def verify_package(
+    package_dir: Path,
+    root: Path | None = None,
+    *,
+    full_source: bool = False,
+) -> dict[str, Any]:
     package = package_dir.resolve()
     project_root = (root or Path(__file__).resolve().parents[1]).resolve()
     errors: list[str] = []
@@ -882,12 +922,19 @@ def verify_package(package_dir: Path, root: Path | None = None) -> dict[str, Any
     verify_privacy(package, errors)
     for relative, expected in PROTECTED_ARTIFACTS.items():
         source = project_root / relative
-        check(source.is_file(), f"protected source missing: {relative}", errors)
         if source.is_file():
-            check(sha256_file(source) == expected, f"protected source hash mismatch: {relative}", errors)
+            actual_hash = (
+                canonical_public_sha256(source)
+                if relative == REGISTRY_RELATIVE
+                else sha256_file(source)
+            )
+            check(actual_hash == expected, f"protected source hash mismatch: {relative}", errors)
+        elif full_source:
+            errors.append(f"protected source missing: {relative}")
     return {
         "ok": not errors,
         "package": str(package),
+        "verification_scope": "full-source" if full_source else "public-release",
         "package_version": PACKAGE_VERSION,
         "scientific_freeze_commit": SCIENTIFIC_FREEZE_COMMIT,
         "checked_files": len(EXPECTED_PACKAGE_FILES),
@@ -905,8 +952,13 @@ def main(argv: list[str] | None = None) -> int:
         default=Path(__file__).resolve().parents[1] / "site-data",
         help="public package directory to verify",
     )
+    parser.add_argument(
+        "--full-source",
+        action="store_true",
+        help="also require every protected scientific source and verify its frozen hash",
+    )
     args = parser.parse_args(argv)
-    report = verify_package(args.package)
+    report = verify_package(args.package, full_source=args.full_source)
     print(json.dumps(report, ensure_ascii=False, sort_keys=True))
     return 0 if report["ok"] else 1
 

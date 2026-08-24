@@ -32,6 +32,12 @@ from fuegopa.human_review_migrations import CURRENT_MIGRATION_VERSION
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_FORMAL_QUEUE = ROOT / "outputs/sentinel2_dnbr_review_queue.csv"
+PRIVATE_FORMAL_UNOBSERVED = ROOT / "outputs/human_review/unobserved_events.csv"
+requires_private_formal_inputs = pytest.mark.skipif(
+    not (PRIVATE_FORMAL_QUEUE.is_file() and PRIVATE_FORMAL_UNOBSERVED.is_file()),
+    reason="protected formal-review queue and unobserved-case table are not redistributed",
+)
 
 
 def _review(**overrides: object) -> dict[str, object]:
@@ -52,6 +58,8 @@ def _review(**overrides: object) -> dict[str, object]:
 
 
 def _prepared(tmp_path: Path) -> tuple[Path, Path, object]:
+    if not (PRIVATE_FORMAL_QUEUE.is_file() and PRIVATE_FORMAL_UNOBSERVED.is_file()):
+        pytest.skip("protected formal-review inputs are not redistributed")
     database = tmp_path / "formal.sqlite3"
     output = tmp_path / "formal_packages"
     seed = tmp_path / "private_seed.txt"
@@ -174,6 +182,7 @@ def test_r1_regression_cases_are_structured_and_not_majority_resolved():
     assert triage_006["expert_review_priority"] == "recommended"
 
 
+@requires_private_formal_inputs
 def test_real_formal_cohort_is_exactly_28_plus_2_and_has_no_2026():
     events, unobserved = load_formal_inputs(root=ROOT)
     assert len(events) == 28

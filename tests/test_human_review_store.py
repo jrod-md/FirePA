@@ -55,6 +55,16 @@ def _prepared_root(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def store_fixture(tmp_path: Path) -> tuple[HumanReviewStore, Path, Path]:
+    missing = [
+        path
+        for path in (DEFAULT_CALIBRATION_PATH, DEFAULT_MANIFEST_PATH, DEFAULT_UNOBSERVED_PATH)
+        if not path.is_file()
+    ]
+    if missing:
+        pytest.skip(
+            "protected human-review inputs are not redistributed: "
+            + ", ".join(str(path.relative_to(ROOT)) for path in missing)
+        )
     root = _prepared_root(tmp_path)
     db_path = tmp_path / "firepa_human_review.sqlite3"
     clock = Clock()

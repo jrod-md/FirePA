@@ -9,6 +9,13 @@ freeze commit is `7694da7df5808911de48de84016759c5fd22f176`.
 `site-data/manifest.json` records file sizes and SHA-256 values. The package is
 deterministic and excludes its own manifest from the hash list.
 
+The scientific-document hashes embedded in `citations.json` identify the
+frozen analytical snapshots used when the package was generated. Current
+publication-facing Markdown may add boundary explanations without claiming to
+be byte-identical to those snapshots. The verifier checks that citation ledger
+against verifier-owned frozen expectations, while canonical scientific
+statements are cross-checked separately.
+
 `project-summary.json` retains `p2_started: false` as frozen metadata from the
 package-generation checkpoint. It describes the state when the analytical
 projection was produced, not the current website status. The current bilingual
@@ -83,6 +90,12 @@ python scripts/verify_public_release_package.py --package site-data
 python -m pytest -q
 ```
 
+The verifier is the clean-clone public scientific contract. The pytest suite
+also runs from a clean clone: self-contained tests execute, while tests whose
+named protected inputs are absent report explicit skips. When those inputs are
+present, the same tests execute normally; scientific assertion failures are
+not converted into skips.
+
 ## Full-regeneration boundary
 
 A clean clone does not promise full scientific regeneration. The following are
@@ -93,12 +106,28 @@ intentionally excluded:
 - Sentinel-2 rasters, caches, quicklooks, and Earth Engine outputs;
 - the local administrative-boundary source;
 - private reviewer identities, alias mappings, assignments, and SQLite;
+- historical model-assisted response JSON, anonymized case packages, and the
+  private case-to-event mapping;
 - credentials, tokens, and `.env` values; and
 - generated reports and review bundles under `outputs/`.
 
 Regeneration of those stages requires the actual excluded inputs and, for
 remote optical acquisition, authorized external services. The pipeline must
 fail rather than fabricate scientific substitutes.
+
+The historical blind model-assisted calibration is therefore reproducible only
+inside the protected source boundary. Its public aggregate record and its
+explicit non-effect on released outputs are documented in
+[`MODEL_ASSISTED_CALIBRATION.md`](MODEL_ASSISTED_CALIBRATION.md).
+
+When every excluded artifact is available, run the stricter source gate:
+
+```powershell
+python scripts/verify_public_release_package.py --package site-data --full-source
+```
+
+This mode fails on any missing or hash-drifted protected source. It is not the
+default clean-clone contract.
 
 ## Protected source hashes
 

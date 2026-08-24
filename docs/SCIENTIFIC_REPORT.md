@@ -133,9 +133,14 @@ execution_authorized = false
 formal_human_observations = 0
 ```
 
-Historical automated-review calibration outputs remain provisional
-pseudolabel evidence. They are not human observations, ground truth, training
-targets, or accuracy estimates. No supervised predictive model was trained.
+A seven-case blind model-assisted calibration and a later two-reviewer control
+tested the review instrument. Their outputs remained provisional pseudolabel
+evidence. They did not alter any frozen count, event, optical cohort, external-
+reference result, figure, or public-package artifact; they are not human
+observations, ground truth, training targets, or accuracy estimates. No
+supervised predictive model was trained. The aggregate record and
+reproducibility boundary are documented in
+[`MODEL_ASSISTED_CALIBRATION.md`](MODEL_ASSISTED_CALIBRATION.md).
 
 ## 9. External-reference methodology
 

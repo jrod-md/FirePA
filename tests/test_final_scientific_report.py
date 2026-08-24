@@ -17,8 +17,14 @@ from fuegopa.final_scientific_report import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_FINAL_INPUT = ROOT / "outputs/clustering/r1500_t06/events.csv"
+requires_private_final_inputs = pytest.mark.skipif(
+    not PRIVATE_FINAL_INPUT.is_file(),
+    reason=f"protected final-analysis input is not redistributed: {PRIVATE_FINAL_INPUT.relative_to(ROOT)}",
+)
 
 
+@requires_private_final_inputs
 def test_final_analysis_preserves_real_counts_and_official_results() -> None:
     analysis = analyze_final_pilot(ROOT)
     assert analysis["analysis_version"] == ANALYSIS_VERSION
@@ -42,6 +48,7 @@ def test_final_analysis_preserves_real_counts_and_official_results() -> None:
     assert analysis["official_external_check"]["guacamaya_matches"] == 6
 
 
+@requires_private_final_inputs
 def test_picachos_diagnostics_classify_spatial_threshold_miss() -> None:
     analysis = analyze_final_pilot(ROOT)
     diagnostics = analysis["picachos_diagnostics"]
@@ -62,6 +69,7 @@ def test_distance_diagnostic_reuses_frozen_metric() -> None:
     assert distance == pytest.approx(3076.3886870861247, abs=1e-6)
 
 
+@requires_private_final_inputs
 def test_guacamaya_timeline_is_ordered_and_interprets_t06_gaps() -> None:
     analysis = analyze_final_pilot(ROOT)
     timeline = analysis["guacamaya_timeline"]
@@ -82,6 +90,7 @@ def test_guacamaya_timeline_is_ordered_and_interprets_t06_gaps() -> None:
     )
 
 
+@requires_private_final_inputs
 def test_guacamaya_percentiles_and_inclusive_ranks_use_611_unchanged() -> None:
     analysis = analyze_final_pilot(ROOT)
     rows = analysis["guacamaya_distribution_ranks"]
@@ -92,6 +101,7 @@ def test_guacamaya_percentiles_and_inclusive_ranks_use_611_unchanged() -> None:
     assert rows[-1]["metric"] == "duration"
 
 
+@requires_private_final_inputs
 def test_final_scope_has_no_network_or_prohibited_label_keys() -> None:
     analysis = analyze_final_pilot(ROOT)
     assert analysis["scope"]["network_access"] is False
@@ -118,6 +128,7 @@ def test_final_scope_has_no_network_or_prohibited_label_keys() -> None:
     )
 
 
+@requires_private_final_inputs
 def test_final_bundle_is_deterministic_and_does_not_touch_official_outputs(tmp_path: Path) -> None:
     analysis = analyze_final_pilot(ROOT)
     official_paths = [

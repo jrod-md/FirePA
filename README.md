@@ -50,6 +50,10 @@ Scientific freeze commit:
 
 See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for the method and
 [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) for the inference boundary.
+The exploratory blind model-assisted review calibration is documented
+separately in
+[`docs/MODEL_ASSISTED_CALIBRATION.md`](docs/MODEL_ASSISTED_CALIBRATION.md); it
+did not affect any frozen output.
 
 ## External-reference findings
 
@@ -142,17 +146,30 @@ Python 3.10 or later is required for the scientific code:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
+python scripts/verify_public_release_package.py --package site-data
 python -m pytest -q
 ```
 
+The verifier and pytest suite form the clean-clone public validation contract.
+Self-contained tests run normally. Tests that require specifically named,
+excluded source artifacts skip only when those preconditions are absent.
+
 Full scientific regeneration is intentionally not a clean-clone promise. It
 requires excluded source inputs and, for Sentinel-2 acquisition, external
-credentials and services. The public package remains inspectable and the site
-remains buildable without them.
+credentials and services. Historical model-assisted calibration additionally
+requires non-redistributed panels, response JSON, a private case mapping, and a
+local review store. The public package remains inspectable and the site remains
+buildable without them.
 
-The stricter `scripts/verify_public_release_package.py` verifier also compares
-protected local source hashes when those excluded artifacts are available. It
-is a full-source integrity gate, not a clean-clone requirement.
+The stricter full-source gate is explicit:
+
+```powershell
+python scripts/verify_public_release_package.py --package site-data --full-source
+```
+
+It requires every protected local source and compares its frozen hash. The
+command is expected to fail in a clean public clone because those inputs are
+intentionally absent.
 
 ## Documentation authority
 
