@@ -18,7 +18,7 @@ concurrency:
 jobs:
   python:
     name: Public Python package
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -36,7 +36,7 @@ jobs:
         run: python scripts/verify_public_release_package.py --package site-data
 
       - name: Run public Python tests
-        run: python -m pytest -q
+        run: python -m pytest -q --basetemp=.pytest-tmp-ci
 
   site:
     name: Astro publication
