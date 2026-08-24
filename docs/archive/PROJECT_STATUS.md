@@ -2,8 +2,9 @@
 
 > **ARCHIVED DEVELOPMENT SNAPSHOT — NOT CURRENT PUBLICATION STATUS.** The
 > historical phase statements below are retained as protocol provenance. The
-> current bilingual publication is complete; use `README.md` and
-> `docs/README.md` for current status.
+> current bilingual publication is complete; use the root
+> [`README.md`](../../README.md) and documentation [`README.md`](../README.md)
+> for current status.
 
 **Snapshot:** 2026-08-09
 **Checkout de trabajo:** raíz del repositorio

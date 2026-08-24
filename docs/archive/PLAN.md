@@ -1,8 +1,9 @@
 # FirePA — Plan maestro: del freeze científico a la publicación
 
 > **ARCHIVED DEVELOPMENT SNAPSHOT — NOT A CURRENT ROADMAP.** This file records
-> the phase plan used before the bilingual publication existed. Use `README.md`
-> and `docs/README.md` for current release status and authority.
+> the phase plan used before the bilingual publication existed. Use the root
+> [`README.md`](../../README.md) and documentation [`README.md`](../README.md)
+> for current release status and authority.
 
 **Actualizado:** 2026-08-09
 **Estado científico:** FIREPA SCIENTIFIC PILOT V1 = FROZEN / COMPLETE WITHIN DEFINED SCOPE

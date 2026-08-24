@@ -27,7 +27,9 @@ Files describing superseded public-site phases, internal handoffs, temporary
 visual review, or abandoned release plans are intentionally excluded from the
 public documentation set.
 
-`CONTEXT.md`, `PLAN.md`, `PROJECT_STATUS.md`, and
-`P1_PUBLIC_RELEASE_HANDOFF.md` remain only as explicitly marked historical
-provenance because frozen scientific protocols cite them. Their phase labels do
-not describe the current publication.
+[`archive/CONTEXT.md`](archive/CONTEXT.md),
+[`archive/PLAN.md`](archive/PLAN.md),
+[`archive/PROJECT_STATUS.md`](archive/PROJECT_STATUS.md), and
+[`P1_PUBLIC_RELEASE_HANDOFF.md`](P1_PUBLIC_RELEASE_HANDOFF.md) remain only as
+explicitly marked historical provenance because frozen scientific protocols
+cite them. Their phase labels do not describe the current publication.

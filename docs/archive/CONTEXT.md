@@ -2,8 +2,9 @@
 
 > **ARCHIVED DEVELOPMENT SNAPSHOT — NOT CURRENT PUBLICATION STATUS.** This file
 > is retained because frozen scientific protocols cite its historical context.
-> The current bilingual publication is complete; use `README.md`,
-> `docs/SCIENTIFIC_REPORT.md`, and `docs/README.md` for current authority.
+> The current bilingual publication is complete; use the root
+> [`README.md`](../../README.md), [`SCIENTIFIC_REPORT.md`](../SCIENTIFIC_REPORT.md),
+> and documentation [`README.md`](../README.md) for current authority.
 
 **Actualizado:** 2026-08-09
 **Repositorio:** raíz del repositorio
