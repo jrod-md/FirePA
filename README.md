@@ -5,12 +5,20 @@ thermal events** in Coclé, Panama, from **2025-01-01 through 2025-04-30**. It
 asks a bounded question: what can satellite thermal signals tell us about what
 happened on the ground, and where does that evidence stop?
 
+[Website](https://firepa.pages.dev/) ·
+[Source repository](https://github.com/jrod-md/FirePA) ·
+[Scientific report](docs/FirePA_Scientific_Pilot_v1.pdf)
+
+[![Public validation](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml/badge.svg)](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml)
+
 The repository contains:
 
 - a bilingual English/Latin American Spanish static publication in `site/`;
 - a deterministic, public-safe analytical package in `site-data/`;
 - the scientific pipeline and its verification tests; and
-- a canonical scientific report in [`docs/SCIENTIFIC_REPORT.md`](docs/SCIENTIFIC_REPORT.md).
+- a canonical scientific report in [`docs/SCIENTIFIC_REPORT.md`](docs/SCIENTIFIC_REPORT.md),
+  with the publication PDF at
+  [`docs/FirePA_Scientific_Pilot_v1.pdf`](docs/FirePA_Scientific_Pilot_v1.pdf).
 
 FirePA is **not real-time, not operational, and not a wildfire confirmation or
 alert system**. The 611 analytical units are provisional thermal events, not
@@ -186,9 +194,9 @@ not parallel current-state summaries. Start with [`docs/README.md`](docs/README.
 
 ## Citation, sources, and licensing
 
-Citation metadata is in [`CITATION.cff`](CITATION.cff). Until a DOI or public
-repository URL exists, cite the repository title, named author, versioned
-public package, and scientific freeze commit. Do not invent a DOI or venue.
+Citation metadata is in [`CITATION.cff`](CITATION.cff). Cite the repository
+title, named author, versioned public package, and scientific freeze commit.
+No DOI or publication venue is claimed.
 
 Source provenance and redistribution boundaries are documented in
 [`SOURCES.md`](SOURCES.md), [`NOTICE.md`](NOTICE.md), and
@@ -196,6 +204,6 @@ Source provenance and redistribution boundaries are documented in
 code is available under [`LICENSE`](LICENSE); third-party data and source
 materials retain their own terms.
 
-No production website URL, paper PDF URL, GitHub repository URL, or DOI is
-declared in this release candidate because none is yet part of the frozen
-public record.
+Public access: [website](https://firepa.pages.dev/),
+[source repository](https://github.com/jrod-md/FirePA), and
+[scientific report](docs/FirePA_Scientific_Pilot_v1.pdf).

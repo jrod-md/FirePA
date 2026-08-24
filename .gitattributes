@@ -3,3 +3,4 @@ site-data/*.json text eol=lf
 site-data/*.geojson text eol=lf
 references/*.json text eol=lf
 docs/*.md text eol=lf
+docs/*.pdf binary

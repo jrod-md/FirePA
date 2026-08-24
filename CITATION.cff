@@ -3,7 +3,7 @@ message: "If you use FirePA, please cite this repository and the scientific sour
 title: "FirePA: a reproducible remote-sensing pilot for provisional thermal events in Coclé, Panama"
 type: software
 authors:
-  - name: "Jose"
+  - name: "Jose Rodriguez"
 abstract: "FirePA is a static, reproducible research publication about provisional thermal events in Coclé, Panama, from 2025-01-01 through 2025-04-30."
 keywords:
   - remote sensing
@@ -12,3 +12,6 @@ keywords:
   - Sentinel-2
   - reproducible research
 license: MIT
+repository-code: "https://github.com/jrod-md/FirePA"
+url: "https://firepa.pages.dev/"
+version: "1.0.0"
