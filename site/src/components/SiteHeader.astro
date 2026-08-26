@@ -22,6 +22,7 @@ const sources = routeFor(locale, "sources");
           <li><a class="site-nav__link" href={`${home}#map`}>{t(locale, "Chapters")}</a></li>
           <li><a class="site-nav__link" href={methodology} aria-current={page === "methodology" ? "page" : undefined}>{t(locale, "Methodology")}</a></li>
           <li><a class="site-nav__link" href={sources} aria-current={page === "sources" ? "page" : undefined}>{t(locale, "Sources")}</a></li>
+          <li><a class="site-nav__link" href="/report.pdf" target="_blank" rel="noopener" aria-label={t(locale, "Open scientific report (PDF)")}>{t(locale, "Report")}</a></li>
         </ul>
       </nav>
       <nav class="language-switch" aria-label={t(locale, "Language")}>

@@ -15,6 +15,8 @@ const spanish: Record<string, string> = {
   "Chapters": "Capítulos",
   "Methodology": "Metodología",
   "Sources": "Fuentes",
+  "Report": "Informe",
+  "Open scientific report (PDF)": "Abrir informe científico (PDF)",
   "Back to opening ↑": "Volver a la apertura ↑",
   "A REMOTE-SENSING RESEARCH PILOT": "UN PILOTO DE INVESTIGACIÓN POR TELEDETECCIÓN",
   "Can thermal signals": "¿Pueden las señales térmicas",

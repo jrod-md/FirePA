@@ -7,6 +7,8 @@ const siteRoot = fileURLToPath(new URL("..", import.meta.url));
 const repoRoot = resolve(siteRoot, "..");
 const distRoot = resolve(siteRoot, "dist");
 const publicRoot = resolve(repoRoot, "site-data");
+const canonicalReport = resolve(repoRoot, "docs/FirePA_Scientific_Pilot_v1.pdf");
+const builtReport = resolve(distRoot, "report.pdf");
 
 if (!existsSync(distRoot)) throw new Error("Build output is missing: site/dist");
 
@@ -22,7 +24,7 @@ function sha256(path) {
 }
 
 const files = walk(distRoot).filter((path) => statSync(path).isFile());
-const textFiles = files.filter((path) => !path.toLowerCase().endsWith(".png"));
+const textFiles = files.filter((path) => !/\.(png|pdf)$/i.test(path));
 const output = textFiles.map((path) => readFileSync(path, "utf8")).join("\n");
 const requiredPages = [
   "index.html",
@@ -35,6 +37,15 @@ const requiredPages = [
 
 for (const page of requiredPages) {
   if (!existsSync(resolve(distRoot, page))) throw new Error(`Built route is missing: ${page}`);
+}
+
+if (!existsSync(canonicalReport)) throw new Error("Canonical scientific report is missing");
+if (!existsSync(builtReport)) throw new Error("Built report route is missing: report.pdf");
+if (readFileSync(builtReport).subarray(0, 5).toString("ascii") !== "%PDF-") {
+  throw new Error("Built report route is not a PDF artifact");
+}
+if (sha256(builtReport) !== sha256(canonicalReport)) {
+  throw new Error("Built report is not byte-identical to the canonical scientific report");
 }
 
 for (const value of [
@@ -72,9 +83,23 @@ for (const value of forbidden) {
 }
 
 const englishHome = readFileSync(resolve(distRoot, "index.html"), "utf8");
+const englishMethodology = readFileSync(resolve(distRoot, "methodology/index.html"), "utf8");
+const englishSources = readFileSync(resolve(distRoot, "sources/index.html"), "utf8");
 const spanishHome = readFileSync(resolve(distRoot, "es/index.html"), "utf8");
 const spanishMethodology = readFileSync(resolve(distRoot, "es/metodologia/index.html"), "utf8");
 const spanishSources = readFileSync(resolve(distRoot, "es/fuentes/index.html"), "utf8");
+
+for (const document of [englishHome, englishMethodology, englishSources]) {
+  for (const value of ['href="/report.pdf"', ">Report</a>", 'aria-label="Open scientific report (PDF)"']) {
+    if (!document.includes(value)) throw new Error(`English route is missing report navigation: ${value}`);
+  }
+}
+
+for (const document of [spanishHome, spanishMethodology, spanishSources]) {
+  for (const value of ['href="/report.pdf"', ">Informe</a>", 'aria-label="Abrir informe científico (PDF)"']) {
+    if (!document.includes(value)) throw new Error(`Spanish route is missing report navigation: ${value}`);
+  }
+}
 
 for (const [document, expected] of [
   [englishHome, ['lang="en"', 'href="/es/"', "Can thermal signals"]],
@@ -100,6 +125,7 @@ console.log(JSON.stringify({
   ok: true,
   files_checked: files.length,
   routes_checked: requiredPages,
+  report_sha256: sha256(builtReport),
   frozen_figures_checked: figureChecks.length,
-  public_contract: "English and Spanish Chapters 01–07 + methodology + sources"
+  public_contract: "English and Spanish Chapters 01–07 + methodology + sources + canonical report"
 }, null, 2));
