@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: public-validation-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   python:
@@ -63,3 +63,36 @@ jobs:
 
       - name: Verify publication contract
         run: npm run test
+
+      - name: Store the validated publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: firepa-site
+          path: site/dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy-pages:
+    name: Deploy Cloudflare Pages
+    runs-on: ubuntu-latest
+    needs:
+      - python
+      - site
+    if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Download the validated publication
+        uses: actions/download-artifact@v4
+        with:
+          name: firepa-site
+          path: site-dist/
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site-dist --project-name=firepa --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

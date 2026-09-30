@@ -22,6 +22,12 @@ stop.
 
 [![Public validation](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml/badge.svg)](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml)
 
+## GitHub listing
+
+- **Website:** [firepa.pages.dev](https://firepa.pages.dev/)
+- **Description:** Reproducible remote-sensing research pilot for provisional thermal events in Coclé, Panama.
+- **Topics:** `remote-sensing`, `earth-observation`, `geospatial`, `satellite-data`, `python`, `astro`, `cloudflare-pages`, `github-actions`
+
 ## Results at a glance
 
 | Item | Frozen result |
@@ -176,6 +182,13 @@ If you use or reference FirePA, citation metadata for Jose Rodriguez and
 version 1.0.0 is available in [CITATION.cff](CITATION.cff). No DOI or publication
 venue is claimed.
 
+## CI/CD and deployment
+
+The **Public validation** workflow runs on pull requests to **main** and pushes to **main**. It verifies the public Python package and runs its tests, then builds and checks the Astro publication. A push to **main** deploys the validated **site/dist** artifact to the Cloudflare Pages project **firepa** only after both validation jobs pass. Pull requests do not deploy to production.
+
+For the deploy job, add repository Actions secrets **CLOUDFLARE_ACCOUNT_ID** and **CLOUDFLARE_API_TOKEN**. Use an API token with only the Cloudflare Pages edit access needed for this project. If Pages Git integration is enabled, disable automatic production deployments from **main**; otherwise that separate path could publish a push before these checks finish.
+
+The workflow verifies the checked-in public package and publishes the static site. It does not regenerate or edit frozen scientific inputs, results, figures, or the **site-data/** package.
 ## License
 
 FirePA-authored source code is available under the [MIT License](LICENSE).
