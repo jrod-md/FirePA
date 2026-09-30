@@ -22,6 +22,12 @@ stop.
 
 [![Public validation](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml/badge.svg)](https://github.com/jrod-md/FirePA/actions/workflows/public-validation.yml)
 
+## GitHub listing
+
+- **Website:** [firepa.pages.dev](https://firepa.pages.dev/)
+- **Description:** Reproducible remote-sensing research pilot for provisional thermal events in Coclé, Panama.
+- **Topics:** `remote-sensing`, `earth-observation`, `geospatial`, `satellite-data`, `python`, `astro`, `cloudflare-pages`, `github-actions`
+
 ## Results at a glance
 
 | Item | Frozen result |
