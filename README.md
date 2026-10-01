@@ -184,11 +184,11 @@ venue is claimed.
 
 ## CI/CD and deployment
 
-The **Public validation** workflow runs on pull requests to **main** and pushes to **main**. It verifies the public Python package and runs its tests, then builds and checks the Astro publication. A push to **main** deploys the validated **site/dist** artifact to the Cloudflare Pages project **firepa** only after both validation jobs pass. Pull requests do not deploy to production.
+The **Public validation** workflow runs on pull requests to **main** and pushes to **main**. It verifies the public Python package and runs its tests, then builds and checks the Astro publication. Deployment is handled by Cloudflare Pages Git integration on **main** instead of a Wrangler deploy step in Actions.
 
-For the deploy job, add repository Actions secrets **CLOUDFLARE_ACCOUNT_ID** and **CLOUDFLARE_API_TOKEN**. Use an API token with only the Cloudflare Pages edit access needed for this project. If Pages Git integration is enabled, disable automatic production deployments from **main**; otherwise that separate path could publish a push before these checks finish.
+With Git integration enabled, no Cloudflare API token secrets are needed in GitHub Actions for deployment. Keep branch protection on **main** so merges require the validation checks before Cloudflare publishes a new production build.
 
-The workflow verifies the checked-in public package and publishes the static site. It does not regenerate or edit frozen scientific inputs, results, figures, or the **site-data/** package.
+The workflow verifies the checked-in public package and publication source. It does not regenerate or edit frozen scientific inputs, results, figures, or the **site-data/** package.
 ## License
 
 FirePA-authored source code is available under the [MIT License](LICENSE).
