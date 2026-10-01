@@ -82,6 +82,9 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - name: Download the validated publication
         uses: actions/download-artifact@v4
@@ -89,10 +92,15 @@ jobs:
           name: firepa-site
           path: site-dist/
 
+      - name: Skip deploy when Cloudflare secrets are unavailable
+        if: ${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' }}
+        run: echo "Skipping Cloudflare Pages deploy because CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not configured."
+
       - name: Deploy to Cloudflare Pages
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' }}
         uses: cloudflare/wrangler-action@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy site-dist --project-name=firepa --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

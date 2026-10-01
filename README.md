@@ -186,7 +186,7 @@ venue is claimed.
 
 The **Public validation** workflow runs on pull requests to **main** and pushes to **main**. It verifies the public Python package and runs its tests, then builds and checks the Astro publication. A push to **main** deploys the validated **site/dist** artifact to the Cloudflare Pages project **firepa** only after both validation jobs pass. Pull requests do not deploy to production.
 
-For the deploy job, add repository Actions secrets **CLOUDFLARE_ACCOUNT_ID** and **CLOUDFLARE_API_TOKEN**. Use an API token with only the Cloudflare Pages edit access needed for this project. If Pages Git integration is enabled, disable automatic production deployments from **main**; otherwise that separate path could publish a push before these checks finish.
+For the deploy job, add repository Actions secrets **CLOUDFLARE_ACCOUNT_ID** and **CLOUDFLARE_API_TOKEN**. The workflow skips the Pages publish step when either secret is unavailable. Use an API token with only the Cloudflare Pages edit access needed for this project. If Pages Git integration is enabled, disable automatic production deployments from **main**; otherwise that separate path could publish a push before these checks finish.
 
 The workflow verifies the checked-in public package and publishes the static site. It does not regenerate or edit frozen scientific inputs, results, figures, or the **site-data/** package.
 ## License
