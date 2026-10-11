@@ -4,7 +4,8 @@ import {
   formatDecimal,
   formatHours,
   formatStatus,
-  formatUtc
+  formatUtc,
+  period
 } from "../data/public";
 import { cocleEventMap, mappedEvents, mappedReferences } from "../data/event-map";
 import FigurePlate from "./FigurePlate.astro";
@@ -13,6 +14,23 @@ import { t, type Locale } from "../i18n";
 interface Props { locale?: Locale; }
 const { locale = "en" } = Astro.props;
 const defaultEvent = mappedEvents[0];
+const DAY_MS = 86400000;
+const seasonStart = Date.parse(`${period.start}T00:00:00Z`);
+const seasonDays = Math.round((Date.parse(`${period.end}T00:00:00Z`) - seasonStart) / DAY_MS) + 1;
+const startsByDay = new Map<string, number>();
+mappedEvents.forEach((event) => {
+  const day = event.properties.start_time_utc.slice(0, 10);
+  startsByDay.set(day, (startsByDay.get(day) ?? 0) + 1);
+});
+const busiestDay = Math.max(...startsByDay.values());
+const season = Array.from({ length: seasonDays }, (_, index) => {
+  const day = new Date(seasonStart + index * DAY_MS).toISOString().slice(0, 10);
+  return { day, index, count: startsByDay.get(day) ?? 0, monthStart: day.endsWith("-01") };
+});
+const STRIP_DAY = 10;
+const STRIP_HEIGHT = 96;
+const STRIP_BASE = 70;
+const pointRadius = (detections: number) => (1.5 + Math.sqrt(detections) * 0.95).toFixed(2);
 const serializedEvents = JSON.stringify(mappedEvents.map(({ properties, geometry }) => ({ ...properties, coordinates: geometry.coordinates })));
 const statusLabel = (status: string) => status === "not-in-cohort" ? t(locale, "Not in optical cohort") : status === "observable" ? t(locale, "Observable optical case") : t(locale, "Unobserved optical case");
 const clientCopy = JSON.stringify({
@@ -28,7 +46,9 @@ const clientCopy = JSON.stringify({
   source: t(locale, "source"), sources: t(locale, "sources"),
   knownDetections: t(locale, "known detections"), unavailable: t(locale, "not available"), day: t(locale, "day"),
   chainMergeYes: t(locale, "Possible chain merge is flagged in the public record."),
-  chainMergeNo: t(locale, "No possible chain merge flag in the public record.")
+  chainMergeNo: t(locale, "No possible chain merge flag in the public record."),
+  detection: t(locale, "detection"), detections: t(locale, "detections"),
+  began: t(locale, "provisional events began"), seasonIdle: t(locale, "Move across the season to light the events that began each day.")
 });
 ---
 
@@ -54,11 +74,27 @@ const clientCopy = JSON.stringify({
           <p class="mono-note">{t(locale, "611 WGS84 DISPLAY POINTS · FROZEN PUBLIC PACKAGE")}</p>
           <p class="mono-note">{t(locale, "EXTENT DERIVED FROM ALL POINTS + QUIET PADDING")}</p>
         </div>
+        <div class="event-map-wrap">
         <svg class="event-map" viewBox={cocleEventMap.viewBox} role="img" aria-labelledby="event-map-title event-map-description">
           <title id="event-map-title">{t(locale, "Coclé provisional thermal event centroids")}</title>
           <desc id="event-map-description">{t(locale, "A static map of 611 public WGS84 event centroids and two approximate external reference anchors. The anchors show 5 kilometre matching-rule rings, not burn extents.")}</desc>
           <path class="event-map__boundary" d={cocleEventMap.path} fill-rule="evenodd" />
           <text class="event-map__boundary-label" x={cocleEventMap.labelPoint[0]} y={cocleEventMap.labelPoint[1]}>COCLÉ</text>
+
+          {mappedEvents.map((event) => (
+            <circle
+              class={`event-map__point event-map__point--${event.statusClass}`}
+              cx={event.x}
+              cy={event.y}
+              r={pointRadius(event.properties.detection_count)}
+              data-day={event.properties.start_time_utc.slice(0, 10)}
+              role="button"
+              aria-label={`${event.properties.public_event_id}, ${t(locale, formatStatus(event.properties.optical_cohort_status))}`}
+              data-event-id={event.properties.public_event_id}
+              data-event-select
+              tabindex="-1"
+            />
+          ))}
 
           {mappedReferences.map((reference) => (
             <g class="event-map__reference" data-reference-id={reference.properties.reference_id}>
@@ -68,21 +104,31 @@ const clientCopy = JSON.stringify({
               <text class="event-map__reference-note" x={reference.x + 12} y={reference.y + 8}>{t(locale, "approx. anchor · 5 km rule")}</text>
             </g>
           ))}
-
-          {mappedEvents.map((event) => (
-            <circle
-              class={`event-map__point event-map__point--${event.statusClass}`}
-              cx={event.x}
-              cy={event.y}
-              r={event.properties.optical_cohort_status === "not_in_cohort" ? "2.2" : "3.2"}
-              role="button"
-              aria-label={`${event.properties.public_event_id}, ${t(locale, formatStatus(event.properties.optical_cohort_status))}`}
-              data-event-id={event.properties.public_event_id}
-              data-event-select
-              tabindex="-1"
-            />
-          ))}
         </svg>
+        <div class="event-map-tip" data-map-tip hidden></div>
+        </div>
+
+        <figure class="season-strip" data-season-strip>
+          <figcaption class="season-strip__head">
+            <span class="section-label">{t(locale, "WHEN THE EVENTS BEGAN")}</span>
+            <span class="season-strip__readout" data-season-readout aria-live="polite">{t(locale, "Move across the season to light the events that began each day.")}</span>
+          </figcaption>
+          <svg viewBox={`0 0 ${seasonDays * STRIP_DAY} ${STRIP_HEIGHT}`} preserveAspectRatio="none" role="img" aria-label={`${t(locale, "Provisional events by UTC start day")}, ${period.start} → ${period.end}. ${t(locale, "Busiest day")}: ${busiestDay}.`}>
+            <line class="season-strip__base" x1="0" x2={seasonDays * STRIP_DAY} y1={STRIP_BASE} y2={STRIP_BASE}></line>
+            {season.filter((entry) => entry.monthStart).map((entry) => (
+              <line class="season-strip__month" x1={entry.index * STRIP_DAY} x2={entry.index * STRIP_DAY} y1="0" y2={STRIP_BASE + 8}></line>
+            ))}
+            {season.map((entry) => (
+              <g class="season-strip__day" data-day={entry.day} data-count={entry.count}>
+                {entry.count > 0 && <rect class="season-strip__bar" x={entry.index * STRIP_DAY + 1.5} y={STRIP_BASE - (entry.count / busiestDay) * (STRIP_BASE - 6)} width={STRIP_DAY - 3} height={(entry.count / busiestDay) * (STRIP_BASE - 6)}></rect>}
+                <rect class="season-strip__hit" x={entry.index * STRIP_DAY} y="0" width={STRIP_DAY} height={STRIP_HEIGHT}></rect>
+              </g>
+            ))}
+          </svg>
+          <div class="season-strip__months" aria-hidden="true">
+            {season.filter((entry) => entry.monthStart).map((entry) => <span style={`left:${(entry.index / seasonDays) * 100}%`}>{entry.day.slice(0, 7)}</span>)}
+          </div>
+        </figure>
 
         <div class="event-map-key" aria-label={t(locale, "Map key")}>
           <span><i class="event-map-key__symbol event-map-key__symbol--dense" aria-hidden="true"></i> {t(locale, "Not in optical cohort")}</span>
@@ -222,6 +268,80 @@ const clientCopy = JSON.stringify({
     };
 
     explorerToggle?.addEventListener("click", openExplorer);
+
+    // Hover reads a centroid before the explorer is opened; picking the nearest
+    // mark keeps two-pixel points usable.
+    const mapSvg = document.querySelector(".event-map");
+    const mapTip = document.querySelector("[data-map-tip]");
+    const pickable = eventPoints.map((element) => ({ element, id: element.dataset.eventId, x: Number(element.getAttribute("cx")), y: Number(element.getAttribute("cy")) }));
+    let hovered = null;
+    const nearestPoint = (event) => {
+      const matrix = mapSvg.getScreenCTM();
+      if (!matrix) return null;
+      const cursor = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+      let best = null;
+      let bestDistance = 16 * 16;
+      for (const candidate of pickable) {
+        const distance = (candidate.x - cursor.x) ** 2 + (candidate.y - cursor.y) ** 2;
+        if (distance < bestDistance) { bestDistance = distance; best = candidate; }
+      }
+      return best;
+    };
+    const clearHover = () => {
+      hovered?.element.classList.remove("is-hover");
+      hovered = null;
+      if (mapTip) mapTip.hidden = true;
+      if (mapSvg) mapSvg.style.cursor = "";
+    };
+    mapSvg?.addEventListener("pointermove", (event) => {
+      const candidate = nearestPoint(event);
+      if (!candidate) { clearHover(); return; }
+      if (candidate !== hovered) {
+        hovered?.element.classList.remove("is-hover");
+        hovered = candidate;
+        candidate.element.classList.add("is-hover");
+        const record = eventData.find((item) => item.public_event_id === candidate.id);
+        if (record && mapTip) {
+          const title = document.createElement("strong");
+          title.textContent = record.public_event_id;
+          const when = document.createElement("span");
+          when.textContent = `${formatUtcClient(record.start_time_utc)} · ${record.detection_count} ${record.detection_count === 1 ? eventCopy.detection : eventCopy.detections}`;
+          const status = document.createElement("span");
+          status.textContent = statusLabelClient(record.optical_cohort_status);
+          mapTip.replaceChildren(title, when, status);
+        }
+      }
+      if (mapTip) {
+        const frame = mapSvg.parentElement.getBoundingClientRect();
+        const left = event.clientX - frame.left;
+        mapTip.hidden = false;
+        mapTip.style.left = `${left}px`;
+        mapTip.style.top = `${event.clientY - frame.top}px`;
+        mapTip.classList.toggle("event-map-tip--flip", left > frame.width - 240);
+      }
+      mapSvg.style.cursor = "pointer";
+    });
+    mapSvg?.addEventListener("pointerleave", clearHover);
+    mapSvg?.addEventListener("click", (event) => {
+      const candidate = nearestPoint(event);
+      if (candidate) selectEvent(candidate.id);
+    });
+
+    const seasonStrip = document.querySelector("[data-season-strip]");
+    const seasonReadout = document.querySelector("[data-season-readout]");
+    let activeDay = null;
+    const setDay = (group) => {
+      const day = group?.dataset.day ?? null;
+      if (day === activeDay) return;
+      seasonStrip?.querySelector(".is-active")?.classList.remove("is-active");
+      activeDay = day;
+      mapSvg?.classList.toggle("is-filtering", Boolean(day));
+      eventPoints.forEach((point) => point.classList.toggle("is-day", Boolean(day) && point.dataset.day === day));
+      group?.classList.add("is-active");
+      if (seasonReadout) seasonReadout.textContent = day ? `${day} · ${group.dataset.count} ${eventCopy.began}` : eventCopy.seasonIdle;
+    };
+    seasonStrip?.addEventListener("pointermove", (event) => setDay(event.target.closest?.(".season-strip__day")));
+    seasonStrip?.addEventListener("pointerleave", () => setDay(null));
     eventButtons.forEach((button) => button.addEventListener("click", () => selectEvent(button.dataset.eventId)));
     eventPoints.forEach((point) => {
       point.addEventListener("click", () => selectEvent(point.dataset.eventId));

@@ -31,6 +31,13 @@ const opticalWorkflow = methodology.workflow.find((item) => item.stage === "sent
       <div class="optical-sequence__stage optical-sequence__stage--quiet"><span class="optical-sequence__number">{counts.unobserved_events}</span><span class="optical-sequence__label">{locale === "es" ? <>casos<br />no observados</> : <>unobserved<br />cases</>}</span></div>
     </div>
 
+    <figure class="cohort-units" data-reveal>
+      <div class="cohort-units__marks" role="img" aria-label={t(locale, "Thirty cohort marks: 28 filled for observable cases and 2 hollow for unobserved cases.")}>
+        {Array.from({ length: counts.optical_cohort_events }, (_, index) => <span class:list={{ "cohort-units__mark": true, "cohort-units__mark--unobserved": index >= counts.optically_observable_events }}></span>)}
+      </div>
+      <figcaption>{t(locale, "One mark per cohort event. Hollow means unobserved: no usable optical support under the frozen policy. It is not a negative result.")}</figcaption>
+    </figure>
+
     <div class="optical-reading" data-reveal>
       <div>
         <p class="section-label">{t(locale, "TWO EVIDENCE MODES")}</p>
