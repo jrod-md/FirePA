@@ -71,6 +71,50 @@ The results are published as a bilingual static site and a deterministic
 methodology and provenance records, the external-reference chronology, and six
 byte-frozen scientific figures.
 
+## Screenshots
+
+These captures show real, frozen historical research data from the public
+release for Coclé, Panama (January–April 2025), rendered by the locally running
+English publication.
+
+### Home – Hero: the research question and study frame
+
+The opening introduces the question behind FirePA, the study area and dates,
+and the boundary between historical analysis and operational monitoring.
+
+![FirePA homepage with the thermal-signal research question, a Coclé map of provisional event centroids, and the January–April 2025 study frame.](screenshots/01-home-hero.png)
+
+### Evidence chain: from 1,532 detections to 611 provisional events
+
+The three-step ledger distinguishes filtering from grouping: 1,532 audited
+records become 1,185 processed detections, then 611 provisional thermal events.
+
+![Evidence-chain view showing 1,532 audited FIRMS detections, 1,185 processed detections, and 611 provisional events, including 267 multi-detection groups and 344 singletons.](screenshots/02-evidence-chain.png)
+
+### Event field map: centroids, reference anchors, and the 5 km rule
+
+The map places all 611 public centroids in Coclé, alongside two approximate
+incident anchors and their matching-rule rings. The seasonal strip shows when
+events began; the points and rings do not represent burn perimeters.
+
+![Coclé event-field map with 611 public centroids, Guacamaya and Los Picachos reference anchors, 5 km matching rings, an optical-status legend, and a January–April 2025 event-start timeline.](screenshots/03-event-field-map.png)
+
+### Guacamaya fragmentation: six matches remain six separate groups
+
+The time axis makes the five gaps above six hours visible. The case preserves
+six provisional clusters across a 72.733-hour span, with the frozen timeline
+and descriptive FRP figures below.
+
+![Guacamaya case showing six separate provisional clusters on a UTC time axis, five gaps above the six-hour link window, a 72.733-hour span, and supporting timeline and descriptive FRP figures.](screenshots/04-guacamaya-fragmentation.png)
+
+### Picachos threshold: why the official comparison returns zero matches
+
+The distance scale compares the inclusive 5,000 m rule with the nearest
+documented contemporary signal at 10,400.826 m. The view keeps the threshold
+diagnostic explicit: zero matches does not establish that no fire occurred.
+
+![Los Picachos case comparing the 5,000 m matching threshold with the nearest documented signal at 10,400.826 m, showing zero official matches, the SPATIAL_THRESHOLD_MISS diagnostic, and the frozen supporting figure.](screenshots/05-picachos-threshold.png)
+
 ## Two cases that shaped the analysis
 
 ### Cerro Guacamaya
