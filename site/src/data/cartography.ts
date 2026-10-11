@@ -74,3 +74,7 @@ export const cocleCartography = {
   pointCount: points.length,
   provenance: "Presentation-only cartographic derivative of data/reference/cocle.geojson"
 };
+
+// Shared with the opening so event centroids land on the same undistorted
+// projection as the boundary artwork.
+export const projectDisplay = project;

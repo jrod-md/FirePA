@@ -1,0 +1,71 @@
+---
+import { cocleCartography, projectDisplay } from "../data/cartography";
+import { events, period } from "../data/public";
+import { t, type Locale } from "../i18n";
+
+interface Props { locale?: Locale; }
+const { locale = "en" } = Astro.props;
+
+const IGNITION_SECONDS = 4.2;
+const seasonStart = Date.parse(`${period.start}T00:00:00Z`);
+const seasonEnd = Date.parse(`${period.end}T23:59:59Z`);
+const embers = events.features.map((feature) => {
+  const [x, y] = projectDisplay(feature.geometry.coordinates);
+  const fraction = (Date.parse(feature.properties.start_time_utc) - seasonStart) / (seasonEnd - seasonStart);
+  return {
+    x: x.toFixed(1),
+    y: y.toFixed(1),
+    r: (1.5 + Math.sqrt(feature.properties.detection_count) * 1.15).toFixed(2),
+    delay: `${(0.5 + fraction * IGNITION_SECONDS).toFixed(2)}s`
+  };
+});
+---
+
+<figure class="ember-territory" data-ember-territory data-season-start={period.start} data-season-end={period.end} data-ignition={IGNITION_SECONDS}>
+  <svg viewBox={cocleCartography.viewBox} role="img" aria-labelledby="ember-territory-title ember-territory-description">
+    <title id="ember-territory-title">{t(locale, "Coclé provisional thermal event centroids")}</title>
+    <desc id="ember-territory-description">{t(locale, "The real Coclé boundary with the 611 public event centroids. Mark size follows the number of detections in each group. The marks are not confirmed fires or burn perimeters.")}</desc>
+    <defs>
+      <radialGradient id="ember-halo">
+        <stop offset="0" stop-color="#ff8a3d" stop-opacity="0.5" />
+        <stop offset="0.45" stop-color="#e2531f" stop-opacity="0.16" />
+        <stop offset="1" stop-color="#e2531f" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <path class="ember-territory__land" d={cocleCartography.path} fill-rule="evenodd"></path>
+    <text class="ember-territory__label" x={cocleCartography.labelPoint[0]} y={cocleCartography.labelPoint[1]} transform="translate(12 -38)">COCLÉ</text>
+    <g aria-hidden="true">
+      {embers.map((ember) => (
+        <g class="ember" style={`--ember-delay:${ember.delay}`}>
+          <circle class="ember__halo" cx={ember.x} cy={ember.y} r={Number(ember.r) * 4.4} fill="url(#ember-halo)" />
+          <circle class="ember__core" cx={ember.x} cy={ember.y} r={ember.r} />
+        </g>
+      ))}
+    </g>
+  </svg>
+  <figcaption class="ember-territory__caption">
+    <span class="ember-territory__date" data-ember-date>{period.start} → {period.end}</span>
+    <span>{events.features.length} {t(locale, "provisional event centroids, appearing in order of first detection. Not confirmed fires.")}</span>
+  </figcaption>
+</figure>
+
+<script>
+  const figure = document.querySelector<HTMLElement>("[data-ember-territory]");
+  const label = figure?.querySelector<HTMLElement>("[data-ember-date]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (figure && label && !reducedMotion) {
+    const start = Date.parse(`${figure.dataset.seasonStart}T00:00:00Z`);
+    const end = Date.parse(`${figure.dataset.seasonEnd}T00:00:00Z`);
+    const duration = Number(figure.dataset.ignition) * 1000;
+    const settled = label.textContent ?? "";
+    const origin = performance.now() + 500;
+    const tick = (now: number) => {
+      const fraction = Math.min(1, Math.max(0, (now - origin) / duration));
+      if (fraction >= 1) { label.textContent = settled; return; }
+      label.textContent = `${figure.dataset.seasonStart} → ${new Date(start + (end - start) * fraction).toISOString().slice(0, 10)}`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+</script>

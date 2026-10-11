@@ -1,0 +1,325 @@
+---
+// Scroll-scrubbed burn between the opening and Chapter 01.
+// One deterministic edge profile drives both the opening's clip mask and the
+// WebGL glow, so the two can never disagree. No WebGL2 or reduced motion means
+// the opening simply stays in normal document flow.
+---
+
+<canvas class="burn-canvas" data-burn-canvas aria-hidden="true"></canvas>
+
+<script>
+  const stage = document.querySelector<HTMLElement>("[data-burn-stage]");
+  const surface = document.querySelector<HTMLElement>("[data-burn-surface]");
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-burn-canvas]");
+  const parallax = document.querySelector<HTMLElement>("[data-burn-parallax]");
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const VERTEX = `#version 300 es
+in vec2 aPosition;
+void main() { gl_Position = vec4(aPosition, 0.0, 1.0); }`;
+
+  const FRAGMENT = `#version 300 es
+precision highp float;
+uniform sampler2D uEdge;
+uniform vec2 uResolution;
+uniform float uDpr;
+uniform float uTime;
+uniform float uSamples;
+uniform float uStep;
+out vec4 outColor;
+
+// r: the torn edge with its grain. g: the same edge without grain, so the wide
+// bloom stays soft instead of inheriting every fibre.
+vec2 edgeAt(float x) {
+  float f = clamp(x / uStep, 0.0, uSamples - 1.001);
+  int i = int(floor(f));
+  vec2 a = texelFetch(uEdge, ivec2(i, 0), 0).rg;
+  vec2 b = texelFetch(uEdge, ivec2(i + 1, 0), 0).rg;
+  return mix(a, b, fract(f));
+}
+
+float hash(float n) { return fract(sin(n * 127.1) * 43758.5453); }
+
+void main() {
+  vec2 p = vec2(gl_FragCoord.x, uResolution.y * uDpr - gl_FragCoord.y) / uDpr;
+  vec2 here = edgeAt(p.x);
+  float vertical = p.y - here.r;
+  if (vertical > 240.0 || vertical < -380.0) { outColor = vec4(0.0); return; }
+
+  float d = abs(vertical);
+  float soft = abs(p.y - here.g);
+  for (int k = -9; k <= 9; k++) {
+    if (k == 0) continue;
+    float fine = float(k) * 2.6;
+    float wide = float(k) * 9.0;
+    d = min(d, length(vec2(fine, p.y - edgeAt(p.x + fine).r)));
+    soft = min(soft, length(vec2(wide, p.y - edgeAt(p.x + wide).g)));
+  }
+
+  float flicker = 0.84 + 0.16 * sin(uTime * 6.3 + p.x * 0.011) * sin(uTime * 2.7 - p.x * 0.004);
+  float core = smoothstep(3.6, 0.6, d);
+  vec3 hot = vec3(1.0, 0.95, 0.82);
+  vec3 glow = vec3(0.0);
+  vec3 body = vec3(0.0);
+  float alpha = 0.0;
+
+  if (vertical < 0.0) {
+    // Unburned side: incandescent bloom over the dark opening.
+    glow += vec3(1.0, 0.54, 0.15) * exp(-d / 7.0) * 0.8;
+    glow += vec3(1.0, 0.4, 0.09) * exp(-soft / 24.0) * 0.5 * flicker;
+    glow += vec3(0.8, 0.15, 0.04) * exp(-soft / 96.0) * 0.4 * flicker;
+
+    // Sparks lifting off the edge.
+    float cell = floor(p.x / 44.0);
+    for (int j = -1; j <= 1; j++) {
+      float id = cell + float(j);
+      float rnd = hash(id);
+      if (rnd < 0.5) continue;
+      float life = fract(uTime * (0.22 + rnd * 0.3) + rnd * 9.0);
+      float sx = (id + 0.5 + (hash(id + 71.0) - 0.5) * 0.8) * 44.0 + sin(life * 6.0 + rnd * 12.0) * 9.0;
+      float sy = edgeAt(sx).g - life * (80.0 + rnd * 150.0);
+      float r = length(p - vec2(sx, sy));
+      glow += vec3(1.0, 0.62, 0.22) * smoothstep(2.4, 0.0, r) * (1.0 - life) * (1.0 - life);
+    }
+  } else {
+    // Revealed side: the paper beneath is already light, so the edge needs
+    // contrast rather than more light. An opaque ember band, then char.
+    float ember = smoothstep(11.0, 3.0, d);
+    float scorch = exp(-soft / 30.0) * 0.78;
+    vec3 emberColor = mix(vec3(0.72, 0.2, 0.05), vec3(1.0, 0.6, 0.2), ember) * flicker;
+    body = mix(vec3(0.13, 0.055, 0.03) * scorch, emberColor, ember);
+    alpha = max(scorch, ember);
+  }
+
+  vec3 rgb = body * (1.0 - core) + hot * core + glow;
+  outColor = vec4(rgb, max(alpha, core));
+}`;
+
+  function hash2(ix: number, iy: number): number {
+    let h = Math.imul(ix, 374761393) + Math.imul(iy, 668265263);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  }
+
+  function valueNoise(x: number, y: number): number {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const xf = x - xi;
+    const yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf);
+    const v = yf * yf * (3 - 2 * yf);
+    const top = hash2(xi, yi) + (hash2(xi + 1, yi) - hash2(xi, yi)) * u;
+    const bottom = hash2(xi, yi + 1) + (hash2(xi + 1, yi + 1) - hash2(xi, yi + 1)) * u;
+    return top + (bottom - top) * v;
+  }
+
+  function fbm(x: number, y: number, octaves: number): number {
+    let sum = 0;
+    let amplitude = 0.5;
+    let frequency = 1;
+    let total = 0;
+    for (let i = 0; i < octaves; i++) {
+      sum += amplitude * valueNoise(x * frequency, y * frequency);
+      total += amplitude;
+      amplitude *= 0.5;
+      frequency *= 2.03;
+    }
+    return (sum / total) * 2 - 1;
+  }
+
+  function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader | null {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
+  }
+
+  function start(gl: WebGL2RenderingContext) {
+    if (!stage || !surface || !canvas) return;
+    const vertex = compile(gl, gl.VERTEX_SHADER, VERTEX);
+    const fragment = compile(gl, gl.FRAGMENT_SHADER, FRAGMENT);
+    const program = gl.createProgram();
+    if (!vertex || !fragment || !program) return;
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+    gl.useProgram(program);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const position = gl.getAttribLocation(program, "aPosition");
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+    const uniform = (name: string) => gl.getUniformLocation(program, name);
+    const uResolution = uniform("uResolution");
+    const uDpr = uniform("uDpr");
+    const uTime = uniform("uTime");
+    const uSamples = uniform("uSamples");
+    const uStep = uniform("uStep");
+
+    const STEP = 2;
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let samples = 0;
+    let edge = new Float32Array(0);
+    let distance = 1;
+    let target = 0;
+    let progress = -1;
+    let frame = 0;
+    let requestedAt = 0;
+    let lowest = 0;
+    let lead = 0;
+    let tail = 0;
+    let headerHeight = 78;
+    const origin = performance.now();
+
+    const measure = () => {
+      const nextWidth = window.innerWidth;
+      const nextHeight = window.innerHeight;
+      // Mobile browser chrome resizes the viewport while scrolling; ignore that.
+      if (!nextWidth || !nextHeight) return;
+      if (nextWidth === width && Math.abs(nextHeight - height) < (coarsePointer ? 140 : 1)) return;
+      width = nextWidth;
+      height = nextHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      distance = Math.round(height * 0.92);
+      samples = Math.ceil(width / STEP) + 2;
+      edge = new Float32Array(samples * 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      stage.style.setProperty("--burn-distance", `${distance}px`);
+      stage.style.setProperty("--burn-height", `${height}px`);
+      headerHeight = document.querySelector<HTMLElement>(".site-header")?.offsetHeight ?? 78;
+      lead = 10 - computeEdge(0, 0, true);
+      computeEdge(1, 0, true);
+      tail = lowest + 36;
+      progress = -1;
+    };
+
+    // lead/tail are measured from the profile itself, so the burn starts the
+    // moment scrolling does and finishes exactly when the last fibre leaves.
+    const computeEdge = (p: number, time: number, calibrating = false): number => {
+      const base = calibrating ? 0 : height + lead - p * (height + lead + tail);
+      let highest = Infinity;
+      lowest = -Infinity;
+      for (let i = 0; i < samples; i++) {
+        const x = i * STEP;
+        const xs = x / height;
+        const large = fbm(xs * 0.95 + 3.7, p * 1.6 + time * 0.015, 3) * height * 0.21;
+        const medium = fbm(xs * 5.2 + 40, p * 4 + time * 0.04, 2) * height * 0.035;
+        const rough = 0.25 + 0.75 * valueNoise(x * 0.012 + 17, p * 5);
+        const grain = Math.pow(valueNoise(x * 0.42, p * 55 + time * 0.9), 3) * 18 * rough + (valueNoise(x * 0.09, p * 20 + time * 0.3) - 0.5) * 9;
+        const tuftGate = Math.min(1, Math.max(0, (valueNoise(x * 0.02 + 90, p * 6) - 0.7) / 0.2));
+        const tuft = tuftGate * valueNoise(x * 0.6, p * 80 + time * 0.5) * 30;
+        const y = base + large + medium - grain - tuft;
+        edge[i * 2] = y;
+        edge[i * 2 + 1] = base + large + medium - 6;
+        if (y < highest) highest = y;
+        if (y > lowest) lowest = y;
+      }
+      return highest;
+    };
+
+    const applyMask = () => {
+      const limit = height + 4;
+      let path = `polygon(0px 0px,${width}px 0px`;
+      for (let i = samples - 1; i >= 0; i--) {
+        const raw = edge[i * 2];
+        const y = raw < -4 ? -4 : raw > limit ? limit : raw;
+        path += `,${Math.min(i * STEP, width)}px ${y.toFixed(1)}px`;
+      }
+      surface.style.clipPath = `${path})`;
+    };
+
+    const render = () => {
+      frame = 0;
+      const delta = target - progress;
+      progress = Math.abs(delta) < 0.0008 ? target : progress + delta * 0.22;
+
+      if (progress <= 0) {
+        surface.style.clipPath = "";
+        surface.style.visibility = "";
+        canvas.classList.remove("is-live");
+        root.classList.add("is-over-hero");
+        if (parallax) parallax.style.transform = "";
+        return;
+      }
+      if (progress >= 1) {
+        surface.style.visibility = "hidden";
+        canvas.classList.remove("is-live");
+        root.classList.remove("is-over-hero");
+        return;
+      }
+
+      const time = (performance.now() - origin) / 1000;
+      const highest = computeEdge(progress, time);
+      surface.style.visibility = "";
+      applyMask();
+      if (parallax) parallax.style.transform = `translate3d(0, ${(-progress * height * 0.12).toFixed(1)}px, 0)`;
+      root.classList.toggle("is-over-hero", highest > headerHeight * 0.5);
+
+      canvas.classList.add("is-live");
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RG32F, samples, 1, 0, gl.RG, gl.FLOAT, edge);
+      gl.uniform2f(uResolution, width, height);
+      gl.uniform1f(uDpr, dpr);
+      gl.uniform1f(uTime, time);
+      gl.uniform1f(uSamples, samples);
+      gl.uniform1f(uStep, STEP);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      // Keep the embers alive while the edge is on screen.
+      requestedAt = performance.now();
+      frame = requestAnimationFrame(render);
+    };
+
+    const schedule = () => {
+      measure();
+      if (!width || !height) return;
+      target = Math.min(1, Math.max(0, window.scrollY / distance));
+      // A frame requested while the tab was hidden may never arrive; replace it.
+      const now = performance.now();
+      if (frame && now - requestedAt > 400) { cancelAnimationFrame(frame); frame = 0; }
+      if (!frame) { requestedAt = now; frame = requestAnimationFrame(render); }
+    };
+
+    root.classList.add("burn-ready");
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", () => { measure(); schedule(); });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) schedule(); });
+    schedule();
+  }
+
+  if (surface) {
+    root.classList.add("is-over-hero");
+    const context = !reducedMotion && stage && canvas
+      ? canvas.getContext("webgl2", { alpha: true, premultipliedAlpha: true, antialias: false })
+      : null;
+    if (context) {
+      start(context);
+    }
+    if (!root.classList.contains("burn-ready")) {
+      // Static path: the opening scrolls away normally; only the header adapts.
+      const syncHeader = () => root.classList.toggle("is-over-hero", surface.getBoundingClientRect().bottom > 48);
+      window.addEventListener("scroll", syncHeader, { passive: true });
+      syncHeader();
+    }
+  }
+</script>

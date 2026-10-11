@@ -16,7 +16,6 @@ const scaleX = (metres: number) => scaleStartX + (metres / scaleMaxM) * (scaleEn
 const thresholdX = scaleX(officialThresholdM);
 const tenKilometresX = scaleX(10000);
 const signalX = scaleX(nearestSignalM);
-const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
 ---
 
 <section id="picachos" class="research-section case-section picachos-section" aria-labelledby="picachos-title">
@@ -40,7 +39,8 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
         </div>
         <div>
           <p class="section-label">{t(locale, "NEAREST DOCUMENTED CONTEMPORARY SIGNAL")}</p>
-          <p class="distance-reading__value">{formatExact(nearestSignalM)}<small> m</small></p>
+          <p class="distance-reading__value">{(nearestSignalM / 1000).toFixed(1)}<small> km</small></p>
+          <p class="distance-reading__exact">{t(locale, "Recorded value")} {formatExact(nearestSignalM)} m · {t(locale, "measured from an approximate anchor")}</p>
         </div>
       </div>
 
@@ -81,7 +81,6 @@ const nearestSignalKm = (nearestSignalM / 1000).toFixed(6);
           <line x1={signalX} y1="46" x2={signalX} y2="178"></line>
           <circle cx={signalX} cy="162" r="8"></circle>
           <text class="distance-scale__annotation distance-scale__annotation--signal" x={signalX} y="34">{t(locale, "CLOSEST SIGNAL")}</text>
-          <text class="distance-scale__signal-value" x={signalX} y="62">{nearestSignalKm} km</text>
           <text class="distance-scale__signal-sub" x={signalX} y="206">10,400.826 m</text>
         </g>
 

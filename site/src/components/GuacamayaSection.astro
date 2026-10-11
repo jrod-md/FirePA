@@ -7,6 +7,28 @@ interface Props { locale?: Locale; }
 const { locale = "en" } = Astro.props;
 const reference = externalReferences.features.find((feature) => feature.properties.reference_id === "REFERENCE-002");
 const sources = citations.external_sources.filter((source) => source.incident_id === "REFERENCE-002");
+
+// True-scale time axis: one hour is the same length everywhere on it.
+const HOUR_MS = 3600000;
+const LINK_WINDOW_HOURS = 6;
+const clusters = guacamayaTimeline.clusters;
+const axisStart = Date.parse(clusters[0].cluster_start_utc) - 5 * HOUR_MS;
+const axisEnd = Date.parse(clusters[clusters.length - 1].cluster_end_utc) + 9 * HOUR_MS;
+const AXIS_LEFT = 30;
+const AXIS_RIGHT = 1170;
+const AXIS_Y = 170;
+const axisX = (time: number) => AXIS_LEFT + ((time - axisStart) / (axisEnd - axisStart)) * (AXIS_RIGHT - AXIS_LEFT);
+const windowWidth = axisX(axisStart + LINK_WINDOW_HOURS * HOUR_MS) - AXIS_LEFT;
+const axisMarks = clusters.map((cluster, index) => {
+  const start = axisX(Date.parse(cluster.cluster_start_utc));
+  const end = axisX(Date.parse(cluster.cluster_end_utc));
+  const previousEnd = index > 0 ? axisX(Date.parse(clusters[index - 1].cluster_end_utc)) : null;
+  return { cluster, start, end, width: Math.max(end - start, 4), previousEnd };
+});
+const midnights: Array<{ x: number; label: string }> = [];
+for (let time = Math.ceil(axisStart / (24 * HOUR_MS)) * 24 * HOUR_MS; time < axisEnd; time += 24 * HOUR_MS) {
+  midnights.push({ x: axisX(time), label: new Date(time).toISOString().slice(0, 10) });
+}
 ---
 
 <section id="guacamaya" class="research-section case-section case-section--dark" aria-labelledby="guacamaya-title">
@@ -23,25 +45,39 @@ const sources = citations.external_sources.filter((source) => source.incident_id
     </div>
 
     <div class="fragmentation-field" aria-label={t(locale, "Six separate Guacamaya provisional clusters and the five gaps between them")} data-reveal>
-      <ol>
-        {guacamayaTimeline.clusters.map((cluster, index) => (
-          <Fragment>
-            <li class:list={{ "fragmentation-field__cluster": true, "fragmentation-field__cluster--possible": cluster.possible_chain_merge }}>
-              <span class="fragmentation-field__order">0{cluster.order}</span>
-              <strong>{cluster.public_event_id}</strong>
-              <span>{cluster.detection_count} {t(locale, cluster.detection_count === 1 ? "detection" : "detections")}</span>
-              <span>{t(locale, cluster.day_count > 0 ? "day" : "night")}</span>
-              {cluster.possible_chain_merge && <code>possible_chain_merge</code>}
-            </li>
-            {index < guacamayaTimeline.clusters.length - 1 && (
-              <li class="fragmentation-field__gap" aria-label={`${formatDecimal(guacamayaTimeline.clusters[index + 1].gap_from_previous_hours ?? 0)} ${t(locale, "hour gap")}`}>
-                <span>{formatDecimal(guacamayaTimeline.clusters[index + 1].gap_from_previous_hours ?? 0)} h</span>
-                <i aria-hidden="true"></i>
-              </li>
-            )}
-          </Fragment>
-        ))}
-      </ol>
+      <div class="time-axis">
+        <svg viewBox="0 0 1200 300" role="img" aria-labelledby="guacamaya-axis-title guacamaya-axis-description">
+          <title id="guacamaya-axis-title">{t(locale, "Six Guacamaya groups on a true time scale")}</title>
+          <desc id="guacamaya-axis-description">{t(locale, "Each group is placed at its real UTC time. The shaded band after each group is the six-hour link window; every following group begins after that window has closed.")}</desc>
+          {midnights.map((tick) => (
+            <g class="time-axis__day">
+              <line x1={tick.x} x2={tick.x} y1="34" y2="262"></line>
+              <text x={tick.x + 8} y="46">{tick.label}</text>
+            </g>
+          ))}
+          <line class="time-axis__base" x1={AXIS_LEFT} x2={AXIS_RIGHT} y1={AXIS_Y} y2={AXIS_Y}></line>
+          {axisMarks.map(({ cluster, start, end, width, previousEnd }) => (
+            <g class:list={{ "time-axis__group": true, "time-axis__group--possible": cluster.possible_chain_merge }}>
+              <rect class="time-axis__window" x={end} y={AXIS_Y - 15} width={windowWidth} height="30"></rect>
+              <line class="time-axis__window-end" x1={end + windowWidth} x2={end + windowWidth} y1={AXIS_Y - 15} y2={AXIS_Y + 15}></line>
+              <rect class="time-axis__mark" x={start} y={AXIS_Y - 26} width={width} height="52" rx="1"></rect>
+              <text class="time-axis__order" x={start} y="92">0{cluster.order}</text>
+              <text class="time-axis__id" x={start} y="112">{cluster.public_event_id}</text>
+              <text class="time-axis__meta" x={start} y="130">{cluster.detection_count} {t(locale, cluster.detection_count === 1 ? "detection" : "detections")} · {t(locale, cluster.day_count > 0 ? "day" : "night")}</text>
+              {cluster.possible_chain_merge && <text class="time-axis__flag" x={start} y="212">possible_chain_merge</text>}
+              {previousEnd !== null && (
+                <g class="time-axis__gap">
+                  <line x1={previousEnd} x2={start} y1="228" y2="228"></line>
+                  <line x1={previousEnd} x2={previousEnd} y1="221" y2="235"></line>
+                  <line x1={start} x2={start} y1="221" y2="235"></line>
+                  <text x={(previousEnd + start) / 2} y="254">{formatDecimal(cluster.gap_from_previous_hours ?? 0)} h</text>
+                </g>
+              )}
+            </g>
+          ))}
+        </svg>
+      </div>
+      <p class="time-axis__legend"><i aria-hidden="true"></i>{t(locale, "Shaded: the 6 h link window after each group's last detection. Every next group begins after it has closed. Times are UTC and to scale.")}</p>
       <div class="fragmentation-field__reading">
         <p class="section-label">{t(locale, "READING THE GAPS")}</p>
         <p>{t(locale, "The six matches are not animated into one incident. Five intervals exceed the six-hour clustering window, so the public result keeps six provisional units and preserves the fragmentation_possible caveat.")}</p>

@@ -1,0 +1,791 @@
+/* Opening, burn transition and data-drawn chapter graphics.
+   Loaded after global.css; every selector here is new, so nothing depends on
+   the order of the older layered passes. */
+
+:root {
+  --night: #151311;
+  --night-ink: #f0e9dc;
+  --night-muted: #b3ab9e;
+  --ember: #e2794f;
+  --ember-hot: #ffc48a;
+}
+
+/* ---------- Header over the dark opening ---------- */
+
+.site-header {
+  transition: background-color 260ms ease, border-color 260ms ease;
+}
+
+.site-brand,
+.site-nav__link,
+.language-switch {
+  transition: color 260ms ease;
+}
+
+html.is-over-hero .site-header {
+  border-bottom-color: transparent;
+  background: transparent;
+}
+
+html.is-over-hero .site-brand,
+html.is-over-hero .site-nav__link {
+  color: var(--night-ink);
+}
+
+html.is-over-hero .site-nav__link:hover,
+html.is-over-hero .language-switch a[aria-current="page"],
+html.is-over-hero .language-switch a:hover {
+  color: var(--ember-hot);
+}
+
+html.is-over-hero .language-switch {
+  color: var(--night-muted);
+}
+
+html.is-over-hero :focus-visible {
+  outline-color: var(--ember-hot);
+}
+
+/* ---------- Opening ---------- */
+
+.ember-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin-top: calc(-1 * var(--header-height));
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 58% 56% at 73% 54%, rgba(226, 83, 31, 0.17), transparent 72%),
+    radial-gradient(ellipse 80% 60% at 12% 112%, rgba(121, 54, 37, 0.3), transparent 62%),
+    var(--night);
+  color: var(--night-ink);
+}
+
+.ember-hero::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(90deg, var(--night) 0%, rgba(21, 19, 17, 0.86) 30%, rgba(21, 19, 17, 0) 60%);
+}
+
+.ember-hero__copy {
+  position: relative;
+  z-index: 2;
+  padding-block: calc(var(--header-height) + 1.5rem) 4.5rem;
+  will-change: transform;
+}
+
+.ember-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0 0 clamp(1.6rem, 3vh, 2.6rem);
+  color: var(--ember);
+  font: 500 0.72rem/1.2 var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ember-hero__eyebrow .eyebrow__rule {
+  width: 3.2rem;
+  background: currentColor;
+}
+
+.ember-hero__question {
+  margin: 0;
+  font: 400 clamp(2.9rem, 5.7vw, 6.4rem)/0.96 var(--serif);
+  letter-spacing: -0.045em;
+}
+
+.ember-hero__question span {
+  display: block;
+  white-space: nowrap;
+}
+
+.ember-hero__question em {
+  color: var(--ember);
+  font-style: italic;
+}
+
+.ember-hero__definition {
+  max-width: 34ch;
+  margin: clamp(1.6rem, 3.4vh, 2.6rem) 0 0;
+  color: var(--night-muted);
+  font: 400 clamp(1.05rem, 1.25vw, 1.3rem)/1.5 var(--sans);
+}
+
+.ember-hero__meta {
+  margin-top: clamp(1.6rem, 3.4vh, 2.6rem);
+  color: var(--night-ink);
+  font-size: 0.72rem;
+}
+
+.ember-hero__meta .hero-meta__mark,
+.ember-hero__meta .hero-meta__calendar {
+  border-color: var(--night-ink);
+}
+
+.ember-hero__meta .hero-meta__calendar::before {
+  background: var(--night-ink);
+}
+
+.ember-hero__meta .hero-meta__divider {
+  background: rgba(240, 233, 220, 0.28);
+}
+
+.ember-hero__meta .hero-meta__item time + span,
+.ember-hero__boundary {
+  color: var(--ember);
+}
+
+.ember-hero__scroll {
+  position: absolute;
+  z-index: 2;
+  bottom: 1.6rem;
+  left: 50%;
+  margin: 0;
+  color: var(--night-muted);
+  font: 500 0.66rem/1 var(--mono);
+  letter-spacing: 0.2em;
+  transform: translateX(-50%);
+  animation: ember-scroll 2.4s ease-in-out infinite;
+}
+
+@keyframes ember-scroll {
+  0%, 100% { opacity: 0.45; transform: translate(-50%, 0); }
+  50% { opacity: 1; transform: translate(-50%, 5px); }
+}
+
+.ember-territory {
+  position: absolute;
+  z-index: 0;
+  inset: 8% -3% 5% 43%;
+  margin: 0;
+}
+
+.ember-territory svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ember-territory__land {
+  fill: rgba(240, 233, 220, 0.028);
+  stroke: rgba(240, 233, 220, 0.3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ember-territory__label {
+  fill: rgba(240, 233, 220, 0.34);
+  font: 500 20px var(--mono);
+  letter-spacing: 0.34em;
+  text-anchor: middle;
+}
+
+.ember {
+  opacity: 0;
+  animation: ember-in 700ms ease-out var(--ember-delay, 0s) both;
+}
+
+.ember__core {
+  fill: var(--ember-hot);
+  animation: ember-cool 1800ms ease-out var(--ember-delay, 0s) both;
+}
+
+@keyframes ember-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ember-cool {
+  0% { fill: #ffffff; }
+  100% { fill: var(--ember-hot); }
+}
+
+.ember-territory__caption {
+  position: absolute;
+  right: 7%;
+  bottom: 1.2rem;
+  display: grid;
+  gap: 0.4rem;
+  max-width: 34ch;
+  color: var(--night-muted);
+  font: 400 0.66rem/1.45 var(--mono);
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+
+.ember-territory__date {
+  color: var(--ember-hot);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+/* ---------- Burn transition ---------- */
+
+.burn-canvas {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.burn-canvas.is-live {
+  display: block;
+}
+
+.burn-stage {
+  position: relative;
+}
+
+html.burn-ready .ember-hero {
+  position: sticky;
+  z-index: 30;
+  top: 0;
+  height: var(--burn-height, 100vh);
+  min-height: 0;
+  margin-bottom: calc(var(--header-height) - var(--burn-height, 100vh));
+  will-change: clip-path;
+}
+
+html.burn-ready .reduction-chapter {
+  position: sticky;
+  top: var(--header-height);
+}
+
+html.burn-ready .burn-under__spacer {
+  height: var(--burn-distance, 90vh);
+}
+
+/* ---------- Chapter 01: reduction ledger ---------- */
+
+.reduction-chapter {
+  position: relative;
+  min-height: calc(100vh - var(--header-height));
+  padding-block: clamp(3.2rem, 6vh, 5rem) clamp(2.4rem, 4vh, 3.6rem);
+  background: var(--paper);
+}
+
+.reduction-chapter__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.7fr);
+  align-items: end;
+  gap: 3rem;
+}
+
+.reduction-chapter__head .chapter-kicker {
+  margin-bottom: clamp(1.2rem, 2.4vh, 2rem);
+}
+
+.reduction-chapter__title {
+  margin: 0;
+  font: 400 clamp(2.8rem, 5vw, 5.6rem)/0.95 var(--serif);
+  letter-spacing: -0.05em;
+}
+
+.reduction-chapter__title em {
+  color: var(--clay);
+  font-style: italic;
+}
+
+.reduction-chapter__context {
+  max-width: 34ch;
+  color: var(--slate);
+  font: 400 0.92rem/1.55 var(--sans);
+}
+
+.reduction-chapter__context p {
+  margin: 0;
+}
+
+.reduction-chapter__context .section-label {
+  margin-bottom: 0.7rem;
+}
+
+.reduction-ledger {
+  margin-top: clamp(1.8rem, 3.6vh, 3rem);
+  border-bottom: 1px solid var(--hairline-dark);
+}
+
+.reduction-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 3fr) minmax(0, 9fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-block: clamp(1rem, 2.2vh, 1.7rem);
+  border-top: 1px solid var(--hairline-dark);
+}
+
+.reduction-row .stage-index {
+  margin-bottom: 0.7rem;
+}
+
+.reduction-row__number {
+  margin: 0;
+  font: 400 clamp(3.2rem, 5.4vw, 5.6rem)/0.84 var(--serif);
+  letter-spacing: -0.055em;
+  font-variant-numeric: lining-nums;
+}
+
+.reduction-row__label {
+  margin: 0.8rem 0 0;
+  color: var(--slate);
+  font: 500 0.72rem/1.35 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reduction-bar {
+  display: flex;
+  height: 2.1rem;
+}
+
+.reduction-bar__kept {
+  background: var(--clay-deep);
+}
+
+.reduction-bar__dropped {
+  flex: 1;
+  border: 1px solid rgba(121, 54, 37, 0.5);
+  border-left: 0;
+  background: repeating-linear-gradient(135deg, rgba(121, 54, 37, 0.55) 0 1px, transparent 1px 7px);
+}
+
+.reduction-row__note {
+  max-width: 62ch;
+  margin: 0.75rem 0 0;
+  color: var(--slate);
+  font: 400 0.86rem/1.5 var(--sans);
+}
+
+.reduction-row__note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.reduction-row__note--end {
+  margin-left: auto;
+  text-align: right;
+}
+
+.group-columns {
+  margin: 0;
+}
+
+.group-columns svg {
+  display: block;
+  width: 100%;
+  height: clamp(6.5rem, 17vh, 9.5rem);
+}
+
+.group-columns__multi {
+  fill: var(--clay-deep);
+}
+
+.group-columns__single {
+  fill: #b8694c;
+}
+
+.group-columns__unit {
+  stroke: var(--paper);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.group-columns__key {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.4rem;
+  color: var(--slate);
+  font: 500 0.68rem/1.35 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.group-columns__key span {
+  min-width: 0;
+  padding-top: 0.5rem;
+  border-top: 2px solid var(--clay-deep);
+}
+
+.group-columns__key span + span {
+  border-top-color: #b8694c;
+}
+
+.group-columns__key strong {
+  color: var(--ink);
+}
+
+.reduction-chapter__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2.4rem;
+  margin-top: 1.2rem;
+  color: var(--slate);
+  font: 400 0.68rem/1.5 var(--mono);
+  letter-spacing: 0.05em;
+}
+
+.reduction-chapter__footer p {
+  margin: 0;
+}
+
+/* ---------- Chapter 02: readable map and season strip ---------- */
+
+.event-map-wrap {
+  position: relative;
+}
+
+.event-map-tip {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--ink);
+  color: var(--paper);
+  font: 400 0.68rem/1.3 var(--mono);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(14px, calc(-100% - 12px));
+}
+
+.event-map-tip--flip {
+  transform: translate(calc(-100% - 14px), calc(-100% - 12px));
+}
+
+.event-map-tip strong {
+  color: var(--ember-hot);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.event-map .event-map__point.is-hover {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  opacity: 1;
+}
+
+.event-map.is-filtering .event-map__point {
+  opacity: 0.1;
+}
+
+.event-map.is-filtering .event-map__point.is-day {
+  fill: var(--clay);
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 1;
+}
+
+.event-map .event-map__boundary-label {
+  fill: rgba(63, 111, 96, 0.3);
+}
+
+.event-map .event-map__reference-label,
+.event-map .event-map__reference-note {
+  paint-order: stroke;
+  stroke: #f1ebe0;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.season-strip {
+  margin: 1.8rem 0 0;
+}
+
+.season-strip__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 2rem;
+  margin-bottom: 0.7rem;
+}
+
+.season-strip__readout {
+  color: var(--ink);
+  font: 500 0.72rem/1.3 var(--mono);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.season-strip svg {
+  display: block;
+  width: 100%;
+  height: 6rem;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.season-strip__base,
+.season-strip__month {
+  stroke: var(--hairline-dark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.season-strip__bar {
+  fill: var(--clay-deep);
+  opacity: 0.72;
+}
+
+.season-strip__hit {
+  fill: transparent;
+}
+
+.season-strip__day.is-active .season-strip__bar {
+  fill: var(--ink);
+  opacity: 1;
+}
+
+.season-strip__day.is-active .season-strip__hit {
+  fill: rgba(157, 76, 53, 0.12);
+}
+
+.season-strip__months {
+  position: relative;
+  height: 1.2rem;
+  color: var(--slate);
+  font: 500 0.64rem/1 var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.season-strip__months span {
+  position: absolute;
+  top: 0;
+  padding-left: 0.4rem;
+}
+
+/* ---------- Chapter 03: cohort unit marks ---------- */
+
+.cohort-units {
+  margin: clamp(2rem, 4vw, 3.4rem) 0 0;
+}
+
+.cohort-units__marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.cohort-units__mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--humid-green);
+}
+
+.cohort-units__mark--unobserved {
+  border: 1.5px dashed #8a6a1e;
+  background: transparent;
+}
+
+.cohort-units figcaption {
+  max-width: 64ch;
+  margin-top: 1rem;
+  color: var(--slate);
+  font: 400 0.88rem/1.55 var(--sans);
+}
+
+/* ---------- Chapter 04: true-scale time axis ---------- */
+
+.time-axis {
+  overflow-x: auto;
+  border-top: 1px solid rgba(240, 233, 220, 0.2);
+  border-bottom: 1px solid rgba(240, 233, 220, 0.2);
+}
+
+.time-axis svg {
+  display: block;
+  width: 100%;
+  min-width: 860px;
+  height: auto;
+}
+
+.time-axis__day line {
+  stroke: rgba(240, 233, 220, 0.13);
+  stroke-width: 1;
+}
+
+.time-axis__day text {
+  fill: var(--night-muted);
+  font: 500 11px var(--mono);
+  letter-spacing: 0.1em;
+}
+
+.time-axis__base {
+  stroke: rgba(240, 233, 220, 0.45);
+  stroke-width: 1;
+}
+
+.time-axis__window {
+  fill: rgba(226, 121, 79, 0.2);
+}
+
+.time-axis__window-end {
+  stroke: var(--ember);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+.time-axis__mark {
+  fill: var(--night-ink);
+}
+
+.time-axis__group--possible .time-axis__mark {
+  fill: var(--ember);
+}
+
+.time-axis__order {
+  fill: var(--ember);
+  font: 600 12px var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.time-axis__id {
+  fill: var(--night-ink);
+  font: 600 14px var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.time-axis__meta,
+.time-axis__flag {
+  fill: var(--night-muted);
+  font: 500 10.5px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.time-axis__flag {
+  fill: var(--ember);
+  text-transform: none;
+}
+
+.time-axis__gap line {
+  stroke: rgba(240, 233, 220, 0.5);
+  stroke-width: 1;
+}
+
+.time-axis__gap text {
+  fill: var(--ember);
+  font: 600 12px var(--mono);
+  letter-spacing: 0.04em;
+  text-anchor: middle;
+}
+
+.time-axis__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0.9rem 0 0;
+  color: var(--night-muted);
+  font: 400 0.72rem/1.5 var(--mono);
+  letter-spacing: 0.03em;
+}
+
+.time-axis__legend i {
+  flex: none;
+  width: 1.8rem;
+  height: 0.8rem;
+  border-right: 1px dashed var(--ember);
+  background: rgba(226, 121, 79, 0.28);
+}
+
+/* ---------- Chapter 05 ---------- */
+
+.distance-reading__exact {
+  margin: 0.8rem 0 0;
+  color: var(--slate);
+  font: 500 0.68rem/1.4 var(--mono);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 900px) {
+  .ember-hero {
+    align-items: flex-start;
+  }
+
+  .ember-hero::after {
+    background: linear-gradient(180deg, var(--night) 0%, rgba(21, 19, 17, 0.8) 38%, rgba(21, 19, 17, 0) 66%);
+  }
+
+  .ember-hero__copy {
+    padding-top: calc(var(--header-height) + 2.2rem);
+  }
+
+  .ember-hero__question {
+    font-size: clamp(2.5rem, 10.5vw, 4.6rem);
+  }
+
+  .ember-hero__question span {
+    white-space: normal;
+  }
+
+  .ember-hero__meta .hero-meta__divider {
+    display: none;
+  }
+
+  .ember-territory {
+    inset: auto -14% 3.2rem -14%;
+    height: 42%;
+  }
+
+  .ember-territory__caption {
+    right: 16%;
+    bottom: 0;
+    max-width: 30ch;
+    font-size: 0.6rem;
+  }
+
+  .reduction-chapter {
+    min-height: 0;
+  }
+
+  .reduction-chapter__head {
+    display: block;
+  }
+
+  .reduction-chapter__context {
+    margin-top: 1.4rem;
+  }
+
+  .reduction-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reduction-bar--solid,
+  .group-columns {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember,
+  .ember__core,
+  .ember-hero__scroll {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@media print {
+  .burn-canvas,
+  .ember-hero__scroll {
+    display: none;
+  }
+}
