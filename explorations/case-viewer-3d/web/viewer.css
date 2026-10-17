@@ -32,6 +32,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
 
 .masthead { position: absolute; top: 16px; left: 18px; z-index: 2; background: var(--panel); border: 1px solid var(--hairline); padding: 12px 16px 13px; max-width: 400px; backdrop-filter: blur(8px); }
+.home-link { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: .04em; color: var(--slate); text-decoration: none; margin-bottom: 8px; }
+.home-link:hover { color: var(--ink); }
 .cases { display: flex; gap: 0; margin: -2px 0 10px; border-bottom: 1px solid var(--hairline); }
 .cases a { font: 500 12px/1 var(--sans); color: var(--slate); text-decoration: none; padding: 4px 0 8px; margin-right: 16px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .cases a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ember); }
@@ -108,6 +110,11 @@ table.patches tr.hl td { background: rgba(242,180,92,.18); }
 #timeline text { font-family: var(--mono); }
 
 .maplibregl-ctrl-attrib { font-size: 10px; }
+.map-label { font: 600 12px/1 var(--sans); color: var(--ink); pointer-events: none; white-space: nowrap;
+  text-shadow: 0 0 2px var(--paper), 0 0 2px var(--paper), 0 0 4px var(--paper); }
+.map-label.anchor { color: #1f4660; }
+.map-label.summit { font-size: 11px; opacity: .85; }
+.map-label.hidden { display: none; }
 
 @media (min-width: 861px) and (max-width: 1180px) {
   .masthead { max-width: 290px; }

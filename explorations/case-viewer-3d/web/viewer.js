@@ -42,7 +42,7 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   const IMG = P.imagery;
 
   const sources = {
-    relief: { type: "raster", tiles: [BASE + "tiles/relief/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 8, maxzoom: 14, bounds: P.tileAoi,
+    relief: { type: "raster", tiles: [BASE + "tiles/relief/{z}/{x}/{y}.webp"], tileSize: 256, minzoom: 8, maxzoom: 14, bounds: P.tileAoi,
       attribution: "Relieve: Copernicus DEM GLO-30 © DLR e.V. 2010-2014 y © Airbus Defence and Space GmbH 2014-2018, Copernicus/UE/ESA · Imagen: contains modified Copernicus Sentinel data 2024-2025 · Datos: NASA FIRMS vía FirePA v1" },
     dem: { type: "raster-dem", tiles: [BASE + "tiles/dem/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 8, maxzoom: 12, encoding: "terrarium", bounds: P.tileAoi },
     demHs: { type: "raster-dem", tiles: [BASE + "tiles/dem/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 8, maxzoom: 12, encoding: "terrarium", bounds: P.tileAoi },
@@ -53,7 +53,6 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     cocle: { type: "geojson", data: "data/cocle.geojson" },
     matchRadius: { type: "geojson", data: circlePolygon(P.anchor.coordinates, P.anchor.official_matching_radius_m, 128) },
     anchor: { type: "geojson", data: { type: "Feature", geometry: { type: "Point", coordinates: P.anchor.coordinates }, properties: { label: "Ancla aproximada" } } },
-    summits: { type: "geojson", data: { type: "FeatureCollection", features: P.summits.map(s => ({ type: "Feature", geometry: { type: "Point", coordinates: s.coordinates }, properties: { label: s.label } })) } },
     clusters: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
     columns: { type: "geojson", data: { type: "FeatureCollection", features: [] } }
   };
@@ -76,8 +75,6 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     { id: "cocle-line", type: "line", source: "cocle", paint: { "line-color": "#f3eee4", "line-opacity": 0.75, "line-width": 1.3, "line-dasharray": [4, 2] } },
     { id: "radius-line", type: "line", source: "matchRadius", paint: { "line-color": "#d7e6f0", "line-width": 1.6, "line-dasharray": [2, 2], "line-opacity": 0.9 } },
     { id: "anchor-pt", type: "circle", source: "anchor", paint: { "circle-radius": 5, "circle-color": "#f3eee4", "circle-stroke-color": "#477797", "circle-stroke-width": 2.2, "circle-pitch-alignment": "map" } },
-    { id: "anchor-label", type: "symbol", source: "anchor", layout: { "text-field": ["get", "label"], "text-font": ["Open Sans Semibold"], "text-size": 12, "text-offset": [0, 1.3], "text-anchor": "top" }, paint: { "text-color": "#1f4660", "text-halo-color": "#f3eee4", "text-halo-width": 1.8 } },
-    { id: "summit-label", type: "symbol", source: "summits", layout: { "text-field": ["get", "label"], "text-font": ["Open Sans Semibold"], "text-size": 11, "text-offset": [0, -0.9], "text-anchor": "bottom" }, paint: { "text-color": "#1a1917", "text-halo-color": "#f3eee4", "text-halo-width": 1.6, "text-opacity": 0.85 } },
     { id: "cluster-halo", type: "circle", source: "clusters", filter: ["get", "current"], paint: { "circle-radius": 18, "circle-color": "#ff8a4c", "circle-opacity": 0.25, "circle-blur": 0.6, "circle-pitch-alignment": "map" } },
     { id: "columns", type: "fill-extrusion", source: "columns", paint: {
       "fill-extrusion-color": ["case", ["get", "current"], "#ffe2b0", "#f2b45c"],
@@ -89,7 +86,6 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
       "circle-stroke-color": ["case", ["get", "selected"], "#1a1917", "#fff4e6"],
       "circle-stroke-width": ["case", ["get", "selected"], 2.4, 1.4],
       "circle-pitch-alignment": "map" } },
-    { id: "cluster-label", type: "symbol", source: "clusters", layout: { "text-field": ["get", "label"], "text-font": ["Open Sans Semibold"], "text-size": 12, "text-offset": [0, -1.4], "text-allow-overlap": true }, paint: { "text-color": "#1a1917", "text-halo-color": "#f3eee4", "text-halo-width": 1.8 } }
   );
 
   const map = new maplibregl.Map({
@@ -100,7 +96,6 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     attributionControl: { compact: true },
     style: {
       version: 8,
-      glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
       sky: { "sky-color": "#dcd3c3", "horizon-color": "#efe8dc", "fog-color": "#e9e2d5", "sky-horizon-blend": 0.55, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.25 },
       sources, layers,
       terrain: { source: "dem", exaggeration: EXAGGERATION }
@@ -110,6 +105,16 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-right");
   const ready = new Promise(r => map.once("load", r));
+  // Text labels are HTML markers, so the style needs no glyph server.
+  function label(text, cls, lngLat, anchor = "bottom", offset = [0, -8]) {
+    const el = document.createElement("div");
+    el.className = `map-label ${cls}`;
+    el.textContent = text;
+    return new maplibregl.Marker({ element: el, anchor, offset }).setLngLat(lngLat).addTo(map);
+  }
+  label("Ancla aproximada", "anchor", P.anchor.coordinates, "top", [0, 8]);
+  P.summits.forEach(sm => label(sm.label, "summit", sm.coordinates));
+  const clusterLabels = new Map(P.clusters.map(c => [c.public_event_id, label(c.label, "cluster", c.centroid, "bottom", [0, -12])]));
   const whenReady = fn => map.isStyleLoaded() ? fn() : ready.then(fn);
 
   // ---------- State ----------
@@ -129,6 +134,7 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   }
   function pushClusters() {
     const visible = clusters.filter(c => c.start <= t), cur = currentCluster();
+    clusters.forEach(c => clusterLabels.get(c.public_event_id)?.getElement().classList.toggle("hidden", c.start > t));
     const props = c => ({ order: c.order, label: c.label, detection_count: c.detection_count, id: c.public_event_id, current: c === cur, selected: selected === c.public_event_id });
     map.getSource("clusters")?.setData({ type: "FeatureCollection", features: visible.map(c => ({ type: "Feature", geometry: { type: "Point", coordinates: c.centroid }, properties: props(c) })) });
     map.getSource("columns")?.setData({ type: "FeatureCollection", features: colsOn && is3D ? visible.map(c => ({ type: "Feature", geometry: { type: "Polygon", coordinates: [circleRing(c.centroid, 70, 24)] }, properties: { ...props(c), height: c.max_frp_mw * FRP_M_PER_MW } })) : [] });

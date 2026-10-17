@@ -7,7 +7,7 @@ Inputs
 
 Outputs (in ../web)
   - tiles/dem/{z}/{x}/{y}.png      Terrarium-encoded elevation for MapLibre terrain.
-  - tiles/relief/{z}/{x}/{y}.png   Shaded relief texture (neutral tint, not land cover).
+  - tiles/relief/{z}/{x}/{y}.webp  Shaded relief texture (neutral tint, not land cover).
   - data/case.json                 Clusters, anchor, timeline and provenance.
   - data/validation.json           Elevation sanity checks.
 """
@@ -160,7 +160,7 @@ def write_tiles(dem, relief, lon0, lat0, res) -> dict:
                         rgb = sample(relief, lon0, lat0, res, lon, lat)
                         alpha = np.where(inside_aoi(lon, lat), 255, 0)[..., None]
                         img = np.concatenate([rgb, alpha], axis=-1).astype(np.uint8)
-                        Image.fromarray(img, "RGBA").save(out / f"{y}.png", optimize=True)
+                        Image.fromarray(img, "RGBA").save(out / f"{y}.webp", quality=82, method=6)
                     counts[kind] += 1
     return counts
 

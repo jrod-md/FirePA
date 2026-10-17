@@ -2485,6 +2485,45 @@ code {
   margin: 1rem 0 0;
 }
 
+.case-explore {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  margin: 2.2rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.case-explore a {
+  color: var(--clay-deep);
+  font: 500 0.78rem/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.case-explore a:hover {
+  text-decoration: underline;
+}
+
+.case-explore span {
+  color: var(--slate);
+  font-size: 0.86rem;
+}
+
+.case-section--dark .case-explore {
+  border-top-color: rgba(240, 233, 220, 0.22);
+}
+
+.case-section--dark .case-explore a {
+  color: #d58a6d;
+}
+
+.case-section--dark .case-explore span {
+  color: var(--dark-muted);
+}
+
 .case-source-note a {
   color: #d58a6d;
 }

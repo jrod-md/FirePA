@@ -1,0 +1,26 @@
+{
+  "dem_shape": [
+    1369,
+    1802
+  ],
+  "dem_min_m": -0.4,
+  "dem_max_m": 1697.2,
+  "nodata_or_nan": 0,
+  "cluster_elevations_m": {
+    "evt-0557": 204.4,
+    "evt-0230": 348.3,
+    "evt-0078": 322.0,
+    "evt-0383": 455.8,
+    "evt-0320": 432.8,
+    "evt-0284": 332.3
+  },
+  "anchor_elevation_m": 27.5,
+  "notes": [
+    "Copernicus DEM is a surface model: values include canopy and buildings.",
+    "Cluster points are FirePA display centroids, not fire locations or perimeters."
+  ],
+  "tile_counts": {
+    "dem": 50,
+    "relief": 523
+  }
+}
