@@ -58,7 +58,7 @@
       "linked_patches": 45,
       "linked_touches_window_edge": false,
       "main_patch_ha": 753.8,
-      "main_patch_convex_hull_ha": 1236.2,
+      "main_patch_convex_hull_ha": 1253.8,
       "main_patch_median_dnbr": 0.632
     },
     {
@@ -68,7 +68,7 @@
       "linked_patches": 19,
       "linked_touches_window_edge": false,
       "main_patch_ha": 690.8,
-      "main_patch_convex_hull_ha": 1192.3,
+      "main_patch_convex_hull_ha": 1209.5,
       "main_patch_median_dnbr": 0.653
     },
     {
@@ -78,7 +78,7 @@
       "linked_patches": 17,
       "linked_touches_window_edge": false,
       "main_patch_ha": 645.2,
-      "main_patch_convex_hull_ha": 1167.2,
+      "main_patch_convex_hull_ha": 1184.0,
       "main_patch_median_dnbr": 0.667
     },
     {
@@ -88,7 +88,7 @@
       "linked_patches": 22,
       "linked_touches_window_edge": false,
       "main_patch_ha": 601.5,
-      "main_patch_convex_hull_ha": 1150.2,
+      "main_patch_convex_hull_ha": 1167.0,
       "main_patch_median_dnbr": 0.68
     }
   ],

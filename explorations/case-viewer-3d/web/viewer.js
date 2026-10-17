@@ -156,21 +156,25 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     document.getElementById("btn-cols").setAttribute("aria-pressed", colsOn);
   }
   document.querySelectorAll("[data-base]").forEach(b => b.onclick = () => { base = b.dataset.base; applyImagery(); });
-  document.getElementById("blend-input").oninput = e => { blend = e.target.value / 100; applyImagery(); };
+  document.getElementById("blend-input").oninput = e => { blendGen++; blend = e.target.value / 100; applyImagery(); };
   document.getElementById("btn-cols").onclick = () => { colsOn = !colsOn; applyImagery(); pushClusters(); };
+  let blendGen = 0, scarGen = 0, timeGen = 0;
   function animateBlend(to, ms) {
-    const from = blend, t0 = performance.now();
+    const from = blend, t0 = performance.now(), gen = ++blendGen;
     return new Promise(res => {
       if (REDUCED || !ms) { blend = to; applyImagery(); return res(); }
-      const step = now => { const k = Math.min(1, (now - t0) / ms); blend = from + (to - from) * ease(k); applyImagery(); k < 1 ? requestAnimationFrame(step) : res(); };
+      const step = now => {
+        if (gen !== blendGen) return res();
+        const k = Math.min(1, (now - t0) / ms); blend = from + (to - from) * ease(k); applyImagery(); k < 1 ? requestAnimationFrame(step) : res();
+      };
       requestAnimationFrame(step);
     });
   }
   function setScar(on, ms = 700) {
     scarOn = on;
-    const from = scarK, to = on ? 1 : 0, t0 = performance.now();
+    const from = scarK, to = on ? 1 : 0, t0 = performance.now(), gen = ++scarGen;
     if (REDUCED || !ms) { scarK = to; applyImagery(); return; }
-    const step = now => { const k = Math.min(1, (now - t0) / ms); scarK = from + (to - from) * ease(k); applyImagery(); if (k < 1 && scarOn === on) requestAnimationFrame(step); };
+    const step = now => { if (gen !== scarGen) return; const k = Math.min(1, (now - t0) / ms); scarK = from + (to - from) * ease(k); applyImagery(); if (k < 1) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
   document.getElementById("btn-scar").onclick = () => setScar(!scarOn);
@@ -270,10 +274,13 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   }
   playBtn.onclick = () => setPlaying(!playing);
   function animateTime(from, to, ms) {
-    const t0 = performance.now();
+    const t0 = performance.now(), gen = ++timeGen;
     return new Promise(res => {
       if (REDUCED) { setTime(to); return res(); }
-      const step = now => { const k = Math.min(1, (now - t0) / ms); setTime(from + (to - from) * k); k < 1 && touring ? requestAnimationFrame(step) : res(); };
+      const step = now => {
+        if (gen !== timeGen || !touring) return res();
+        const k = Math.min(1, (now - t0) / ms); setTime(from + (to - from) * k); k < 1 ? requestAnimationFrame(step) : res();
+      };
       requestAnimationFrame(step);
     });
   }
@@ -357,7 +364,12 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   // ---------- Guided tour ----------
   Object.assign(api, { setTime, animateTime, animateBlend, setScar, fly, views: P.views, clusters, totalDetections, get touring() { return touring; } });
   const story = document.getElementById("story");
-  let chapter = 0;
+  let chapter = 0, chapterGen = 0;
+  function chapterApi(gen) {
+    const live = () => gen === chapterGen && touring;
+    const guard = fn => (...args) => live() ? fn(...args) : Promise.resolve();
+    return { ...api, setTime: guard(setTime), animateTime: guard(animateTime), animateBlend: guard(animateBlend), setScar: guard(setScar), fly: guard(fly) };
+  }
   const CH = P.chapters;
   const dots = document.getElementById("story-dots");
   dots.innerHTML = CH.map(() => "<span></span>").join("");
@@ -370,11 +382,13 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     [...dots.children].forEach((d, k) => d.classList.toggle("on", k <= chapter));
     document.getElementById("story-prev").disabled = chapter === 0;
     document.getElementById("story-next").textContent = chapter === CH.length - 1 ? "Explorar" : "Siguiente";
+    const gen = ++chapterGen;
+    blendGen++; scarGen++; timeGen++;
     setOrbit(false); setPlaying(false); map.stop();
-    await ch.run(api);
+    await ch.run(chapterApi(gen));
   }
   function startTour() { touring = true; document.body.classList.add("touring"); story.hidden = false; selected = null; renderCase(); goto(0); }
-  function endTour() { touring = false; document.body.classList.remove("touring"); story.hidden = true; }
+  function endTour() { touring = false; chapterGen++; blendGen++; scarGen++; timeGen++; map.stop(); document.body.classList.remove("touring"); story.hidden = true; }
   document.getElementById("tour-start").onclick = startTour;
   document.getElementById("story-exit").onclick = endTour;
   document.getElementById("story-prev").onclick = () => goto(chapter - 1);

@@ -33,11 +33,16 @@ CENTER = ((ANCHOR[0] + SIGNAL[0]) / 2, (ANCHOR[1] + SIGNAL[1]) / 2)
 CLOUD_BUFFER_PX = 15  # 300 m at 20 m: SCL misses soft cloud/shadow edges that mimic burns
 
 
-def dilate(mask: np.ndarray, n: int) -> np.ndarray:
+def dilate(mask: np.ndarray, radius_px: int) -> np.ndarray:
+    """Euclidean (disk) dilation without edge wrapping."""
     out = mask.copy()
-    for _ in range(n):
-        out = out | np.roll(out, 1, 0) | np.roll(out, -1, 0) | np.roll(out, 1, 1) | np.roll(out, -1, 1)
+    for dy in range(-radius_px, radius_px + 1):
+        for dx in range(-radius_px, radius_px + 1):
+            if (dy or dx) and dy * dy + dx * dx <= radius_px * radius_px:
+                out |= g.shift(mask, dy, dx)
     return out
+
+
 # Pre: per-pixel most recent clear observation, newest first (01 Jan and 27 Dec are ~fully cloudy).
 PRE_IDS = ["S2A_17PNK_20250111_0_L2A", "S2B_17PNK_20250106_0_L2A", "S2A_17PNK_20241222_0_L2A"]
 # Post: first scene after the fire with >= 90 % clear window.
@@ -149,9 +154,8 @@ def main():
     for name, arr in (("pre", pre_rgb), ("post", post_rgb)):
         Image.fromarray(np.dstack([st(arr), al]), "RGBA").save(OUT / f"{name}_detail.webp", quality=88, method=6)
     g.dnbr_png(dnbr, valid, cand_mask, OUT / "dnbr.png")
-    border = link_mask & ~(np.roll(link_mask, 1, 0) & np.roll(link_mask, -1, 0) & np.roll(link_mask, 1, 1) & np.roll(link_mask, -1, 1))
     ol = np.zeros((H, W, 4), dtype=np.uint8)
-    ol[border] = (26, 25, 23, 230)
+    ol[g.border(link_mask)] = (26, 25, 23, 230)
     Image.fromarray(ol, "RGBA").resize((W * 2, H * 2), Image.NEAREST).save(OUT / "outline.png", optimize=True)
 
     corners = [g.to_ll.transform(x, y) for x, y in ((xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin))]

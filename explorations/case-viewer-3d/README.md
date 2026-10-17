@@ -8,8 +8,8 @@ Visor geoespacial en 3D de dos referencias externas de FirePA: Cerro Guacamaya y
 
 | Caso | Observado (v1) | Medido aquí (exploratorio) |
 |---|---|---|
-| Cerro Guacamaya | 6 grupos FIRMS, 19 detecciones VIIRS, 72.7 h | Cicatriz de ~691 ha (dNBR 0.20; 601–754 ha entre umbrales 0.40 y 0.10). Envolvente de ~1,192 ha frente a 1,035–1,500 ha reportadas |
-| Cerro Los Picachos | 0 coincidencias; señal más cercana a 10.4 km | Solo el 26 % de la zona de 5 km tiene dato válido: no se confirma ni se descarta el incendio. La señal del 15 ene coincide con una quema nueva de ~25 ha a 195 m |
+| Cerro Guacamaya | 6 grupos FIRMS, 19 detecciones VIIRS, 72.7 h | Cicatriz de ~691 ha (dNBR 0.20; 601–754 ha entre umbrales 0.40 y 0.10). Envolvente de ~1,210 ha (huella completa de los píxeles) frente a 1,035–1,500 ha reportadas |
+| Cerro Los Picachos | 0 coincidencias; señal más cercana a 10.4 km | Solo el 23 % de la zona de 5 km tiene dato válido: no se confirma ni se descarta el incendio. La señal del 15 ene coincide con una quema nueva de ~25 ha a 195 m |
 
 Reglas de presentación:
 
@@ -54,7 +54,7 @@ Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven 
   - No hay nubes a menos de 500 m de la cicatriz.
 - **Los Picachos:**
   - "Antes" es un mosaico píxel a píxel de la escena despejada más reciente: 11 ene, si no 6 ene, si no 22 dic. "Después" es el 21 ene.
-  - Se añade un margen de 300 m alrededor de nubes y sombras. Sin él aparecían falsas quemas junto al ancla.
+  - Se añade un margen circular de 300 m alrededor de nubes y sombras, sin envolver los bordes de la ventana. Sin él aparecían falsas quemas junto al ancla.
   - No hay detecciones FIRMS a las que conectar las manchas, así que se listan como candidatas, con su distancia al ancla y a la señal del 15 ene.
 - **Corrección de reflectancia:** los metadatos STAC anuncian un desplazamiento de −0.1, pero estos COG ya lo traen aplicado (azul p5 ≈ 190 DN). El script lo comprueba y no lo aplica dos veces.
 

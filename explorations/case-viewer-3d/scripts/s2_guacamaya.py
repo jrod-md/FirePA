@@ -126,8 +126,25 @@ def components(mask: np.ndarray) -> tuple[np.ndarray, int]:
     return lab, n
 
 
+def shift(mask: np.ndarray, dy: int, dx: int) -> np.ndarray:
+    """Shift a boolean mask without wrapping; cells shifted in from outside are False."""
+    out = np.zeros_like(mask)
+    h, w = mask.shape
+    out[max(dy, 0):h + min(dy, 0), max(dx, 0):w + min(dx, 0)] = mask[max(-dy, 0):h + min(-dy, 0), max(-dx, 0):w + min(-dx, 0)]
+    return out
+
+
+def border(mask: np.ndarray) -> np.ndarray:
+    """Cells of mask with at least one 4-neighbour outside it (the window edge counts as outside)."""
+    inner = shift(mask, 1, 0) & shift(mask, -1, 0) & shift(mask, 0, 1) & shift(mask, 0, -1)
+    return mask & ~inner
+
+
 def hull_area_px(mask: np.ndarray) -> float:
-    pts = sorted(map(tuple, np.argwhere(mask)[:, ::-1].tolist()))
+    """Convex-hull area, in pixel units, of the raster cells' full footprints (all cell corners)."""
+    rc = np.argwhere(mask)
+    corners = np.concatenate([rc[:, ::-1] + d for d in ((0, 0), (1, 0), (0, 1), (1, 1))])
+    pts = sorted(set(map(tuple, corners.tolist())))
     cross = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
     lo, up = [], []
     for p in pts:
@@ -227,9 +244,8 @@ def main():
     dnbr_png(dnbr, valid, linked_masks[0.20], OUT / "dnbr.png")
     # Outline of the linked area at 0.20 as a separate overlay for crisp display.
     edge = linked_masks[0.20]
-    border = edge & ~(np.roll(edge, 1, 0) & np.roll(edge, -1, 0) & np.roll(edge, 1, 1) & np.roll(edge, -1, 1))
     ol = np.zeros((H, W, 4), dtype=np.uint8)
-    ol[border] = (26, 25, 23, 230)
+    ol[border(edge)] = (26, 25, 23, 230)
     Image.fromarray(ol, "RGBA").resize((W * 2, H * 2), Image.NEAREST).save(OUT / "outline.png", optimize=True)
 
     corners = [to_ll.transform(x, y) for x, y in ((xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin))]
