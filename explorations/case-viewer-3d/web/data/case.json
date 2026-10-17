@@ -1,0 +1,196 @@
+{
+  "aoi": [
+    -80.62,
+    8.38,
+    -80.3,
+    8.66
+  ],
+  "tile_aoi": [
+    -80.76,
+    8.32,
+    -80.3,
+    8.66
+  ],
+  "clusters": [
+    {
+      "cluster_end_utc": "2025-01-24T06:33:00Z",
+      "cluster_start_utc": "2025-01-24T06:11:00Z",
+      "day_count": 0,
+      "detection_count": 2,
+      "gap_from_previous_hours": null,
+      "max_frp_mw": 7.69,
+      "mean_frp_mw": 5.85,
+      "night_count": 2,
+      "order": 1,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0557",
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "centroid": [
+        -80.47074,
+        8.49654
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 0.366667,
+      "dsm_elevation_m": 204.4
+    },
+    {
+      "cluster_end_utc": "2025-01-24T19:19:00Z",
+      "cluster_start_utc": "2025-01-24T18:56:00Z",
+      "day_count": 4,
+      "detection_count": 4,
+      "gap_from_previous_hours": 12.383333,
+      "max_frp_mw": 5.05,
+      "mean_frp_mw": 4.885,
+      "night_count": 0,
+      "order": 2,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0230",
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "centroid": [
+        -80.473957,
+        8.50136
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 0.383333,
+      "dsm_elevation_m": 348.3
+    },
+    {
+      "cluster_end_utc": "2025-01-25T19:00:00Z",
+      "cluster_start_utc": "2025-01-25T18:37:00Z",
+      "day_count": 3,
+      "detection_count": 3,
+      "gap_from_previous_hours": 23.3,
+      "max_frp_mw": 13.67,
+      "mean_frp_mw": 10.243333,
+      "night_count": 0,
+      "order": 3,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0078",
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "centroid": [
+        -80.460347,
+        8.50952
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 0.383333,
+      "dsm_elevation_m": 322.0
+    },
+    {
+      "cluster_end_utc": "2025-01-26T07:13:00Z",
+      "cluster_start_utc": "2025-01-26T05:56:00Z",
+      "day_count": 0,
+      "detection_count": 5,
+      "gap_from_previous_hours": 10.933333,
+      "max_frp_mw": 7.92,
+      "mean_frp_mw": 4.334,
+      "night_count": 5,
+      "order": 4,
+      "possible_chain_merge": true,
+      "public_event_id": "evt-0383",
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "centroid": [
+        -80.469262,
+        8.516286
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 1.283333,
+      "dsm_elevation_m": 455.8
+    },
+    {
+      "cluster_end_utc": "2025-01-26T18:18:00Z",
+      "cluster_start_utc": "2025-01-26T18:18:00Z",
+      "day_count": 1,
+      "detection_count": 1,
+      "gap_from_previous_hours": 11.083333,
+      "max_frp_mw": 4.49,
+      "mean_frp_mw": 4.49,
+      "night_count": 0,
+      "order": 5,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0320",
+      "satellites": [
+        "N"
+      ],
+      "centroid": [
+        -80.4689,
+        8.522
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 0.0,
+      "dsm_elevation_m": 432.8
+    },
+    {
+      "cluster_end_utc": "2025-01-27T06:55:00Z",
+      "cluster_start_utc": "2025-01-27T06:55:00Z",
+      "day_count": 0,
+      "detection_count": 4,
+      "gap_from_previous_hours": 12.616667,
+      "max_frp_mw": 2.91,
+      "mean_frp_mw": 1.2625,
+      "night_count": 4,
+      "order": 6,
+      "possible_chain_merge": false,
+      "public_event_id": "evt-0284",
+      "satellites": [
+        "N"
+      ],
+      "centroid": [
+        -80.46261,
+        8.524527
+      ],
+      "optical_cohort_status": "not_in_cohort",
+      "duration_hours": 0.0,
+      "dsm_elevation_m": 332.3
+    }
+  ],
+  "anchor": {
+    "coordinates": [
+      -80.433333,
+      8.516667
+    ],
+    "reference_name": "Cerro Guacamaya",
+    "anchor_status": "approximate",
+    "coordinate_claimed_by_source": false,
+    "official_window_start": "2025-01-23",
+    "official_window_end": "2025-01-27",
+    "official_matching_radius_m": 5000,
+    "official_match_count": 6,
+    "temporal_span_hours": 72.733,
+    "inter_cluster_gaps_gt_6h": 5,
+    "source_document_count": 6
+  },
+  "timeline_window": {
+    "end": "2025-01-27",
+    "inclusive": true,
+    "start": "2025-01-23",
+    "timezone": "UTC"
+  },
+  "temporal_span_hours": 72.733,
+  "provenance": {
+    "firepa_package": "firepa-public-release-v1",
+    "firepa_files": {
+      "events.geojson": "8b3a6ab835d0617ada766213b17d4f0c267aa720bf8a266d37fea7f1bf71bee0",
+      "guacamaya-timeline.json": "264b7ab19e5e86c61ee415eaf817d310ad37bf56ce73f8f77fc903a7adc84eca",
+      "external-references.geojson": "2a0f72ef60d453bce8d4f7c712468bb246d7faf3ddc30cd88ac147c71b1834e9"
+    },
+    "dem": {
+      "product": "Copernicus DEM GLO-30 (DSM)",
+      "file": "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif",
+      "sha256": "958e9cab3cd050981547841446073bb5401bd176bd25f7bfb20ff2476b68fb85",
+      "source": "https://copernicus-dem-30m.s3.amazonaws.com/",
+      "attribution": "© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved"
+    }
+  }
+}

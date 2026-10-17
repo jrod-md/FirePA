@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FirePA · Casos 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<link href="viewer.css?v=3" rel="stylesheet">
+</head>
+<body>
+<div id="map">
+  <div id="loading" aria-live="polite">
+    <div class="inner">
+      <div class="eyebrow">FirePA · Coclé, Panamá</div>
+      <div class="title" id="loading-title"></div>
+      <div class="bar"><span></span></div>
+    </div>
+  </div>
+  <div class="masthead">
+    <nav class="cases" aria-label="Caso">
+      <a href="?caso=guacamaya" data-case="guacamaya">Cerro Guacamaya</a>
+      <a href="?caso=picachos" data-case="picachos">Los Picachos</a>
+    </nav>
+    <div class="eyebrow" id="mh-eyebrow"></div>
+    <h1 id="mh-title"></h1>
+    <p id="mh-lede"></p>
+    <div class="foot">
+      <span class="badge">Prueba · no publicada</span>
+      <button class="tour-btn" id="tour-start">Recorrido</button>
+    </div>
+  </div>
+  <div class="controls" role="toolbar" aria-label="Vista">
+    <div class="row">
+      <button id="btn-3d" aria-pressed="true">3D</button>
+      <button id="btn-case">Encuadrar</button>
+      <button id="btn-orbit" aria-pressed="false">Órbita</button>
+    </div>
+    <div class="row">
+      <div class="seg" role="group" aria-label="Fondo">
+        <button data-base="relief" aria-pressed="false">Relieve</button>
+        <button data-base="sat" aria-pressed="true">Satélite</button>
+      </div>
+      <button id="btn-scar" aria-pressed="false">Cicatriz</button>
+      <button id="btn-cols" aria-pressed="true">Columnas FRP</button>
+    </div>
+    <label class="blend" id="blend">
+      <span id="blend-a"></span>
+      <input type="range" id="blend-input" min="0" max="100" value="0" aria-label="Fundido entre la imagen de antes y la de después">
+      <span id="blend-b"></span>
+    </label>
+  </div>
+  <div class="readout" id="readout" aria-live="polite">Pasa el cursor sobre el relieve</div>
+  <div class="legend" id="legend"></div>
+  <section class="story" id="story" hidden aria-live="polite">
+    <div class="eyebrow" id="story-eyebrow"></div>
+    <h2 id="story-title"></h2>
+    <div id="story-body"></div>
+    <div class="nav">
+      <div class="dots" id="story-dots"></div>
+      <button id="story-exit">Salir</button>
+      <button id="story-prev">Anterior</button>
+      <button id="story-next" class="primary">Siguiente</button>
+    </div>
+  </section>
+</div>
+
+<aside id="panel" aria-live="polite"></aside>
+
+<footer>
+  <div class="tl-head">
+    <span class="eyebrow">Línea temporal</span>
+    <span class="tl-now" id="tl-now"></span>
+    <span class="tl-sub" id="tl-sub"></span>
+  </div>
+  <div class="tl-row">
+    <button class="play" id="play" aria-label="Reproducir">▶</button>
+    <svg id="timeline" role="slider" tabindex="0" aria-label="Tiempo" aria-valuemin="0" aria-valuemax="100"></svg>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script src="cases.js?v=3"></script>
+<script src="viewer.js?v=3"></script>
+</body>
+</html>
