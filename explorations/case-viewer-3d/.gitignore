@@ -1,0 +1,12 @@
+# Downloaded inputs and local caches: rebuilt by the scripts (see README).
+data/raw/
+data/s2_cache/
+__pycache__/
+
+# Generated rasters for the viewer: rebuilt by the scripts.
+web/tiles/
+web/data/cocle.geojson
+web/data/s2/*.png
+web/data/s2/*.webp
+web/cases/*/s2/*.png
+web/cases/*/s2/*.webp

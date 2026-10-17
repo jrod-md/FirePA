@@ -1,0 +1,323 @@
+{
+  "status": "exploratory_v2_spike_not_firepa_v1",
+  "question": "Did a new burn scar appear near the approximate Los Picachos anchor between the last clear scene before and the first clear scene after 16 Jan 2025?",
+  "method": {
+    "index": "NBR=(B8-B12)/(B8+B12); dNBR=NBR_pre-NBR_post",
+    "grid": "EPSG:32617, 20 m",
+    "cloud_mask": "SCL classes 2,4,5,7 valid, minus a 300 m buffer around SCL cloud/shadow (3,8,9,10) in each date; water excluded. Pre side is a per-pixel latest-clear mosaic (11 Jan, then 6 Jan, then 22 Dec), so a scar may include burns from 22 Dec onward where older scenes fill in",
+    "window_m": [
+      531380,
+      923220,
+      553380,
+      945220
+    ],
+    "candidate_rule": "8-connected dNBR>0.20 patches >= 5.0 ha; no FIRMS linkage (none within 5 km)",
+    "offset_check": "same as s2_guacamaya.py"
+  },
+  "pre": {
+    "id": "S2A_17PNK_20250111_0_L2A",
+    "datetime": "2025-01-11T16:00:50.416000Z",
+    "mode": "per-pixel most recent clear of S2A_17PNK_20250111_0_L2A, S2B_17PNK_20250106_0_L2A, S2A_17PNK_20241222_0_L2A"
+  },
+  "post": {
+    "id": "S2C_17PNK_20250121_0_L2A",
+    "datetime": "2025-01-21T16:01:22.139000Z"
+  },
+  "candidates": {
+    "pre": [
+      {
+        "id": "S2A_17PNK_20250111_0_L2A",
+        "datetime": "2025-01-11T16:00:50.416000Z",
+        "window_clear_fraction": 0.4476,
+        "pixels_used_fraction": 0.4476
+      },
+      {
+        "id": "S2B_17PNK_20250106_0_L2A",
+        "datetime": "2025-01-06T16:00:53.862000Z",
+        "window_clear_fraction": 0.1235,
+        "pixels_used_fraction": 0.1017
+      },
+      {
+        "id": "S2A_17PNK_20241222_0_L2A",
+        "datetime": "2024-12-22T16:00:53.876000Z",
+        "window_clear_fraction": 0.034,
+        "pixels_used_fraction": 0.0052
+      }
+    ],
+    "post": [
+      {
+        "id": "S2C_17PNK_20250121_0_L2A",
+        "datetime": "2025-01-21T16:01:22.139000Z",
+        "window_clear_fraction": 0.9034
+      }
+    ]
+  },
+  "valid_overlap_fraction": 0.5189,
+  "valid_fraction_within_5km": 0.232,
+  "sensitivity": [
+    {
+      "threshold": 0.1,
+      "window_ha": 1781.9,
+      "within_5km_of_anchor_ha": 166.8
+    },
+    {
+      "threshold": 0.2,
+      "window_ha": 517.8,
+      "within_5km_of_anchor_ha": 15.0
+    },
+    {
+      "threshold": 0.3,
+      "window_ha": 282.0,
+      "within_5km_of_anchor_ha": 3.0
+    },
+    {
+      "threshold": 0.4,
+      "window_ha": 218.6,
+      "within_5km_of_anchor_ha": 1.4
+    }
+  ],
+  "patches": [
+    {
+      "rank": 1,
+      "area_ha": 24.9,
+      "convex_hull_ha": 33.9,
+      "median_dnbr": 0.579,
+      "centroid": [
+        -80.579998,
+        8.483225
+      ],
+      "min_distance_to_anchor_m": 10096,
+      "distance_centroid_to_firms_signal_m": 195,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 2,
+      "area_ha": 24.6,
+      "convex_hull_ha": 39.1,
+      "median_dnbr": 0.832,
+      "centroid": [
+        -80.693467,
+        8.359016
+      ],
+      "min_distance_to_anchor_m": 8025,
+      "distance_centroid_to_firms_signal_m": 18516,
+      "pre_date_fraction": {
+        "20250111": 0.0,
+        "20250106": 1.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 3,
+      "area_ha": 18.3,
+      "convex_hull_ha": 23.7,
+      "median_dnbr": 0.902,
+      "centroid": [
+        -80.686783,
+        8.364955
+      ],
+      "min_distance_to_anchor_m": 7005,
+      "distance_centroid_to_firms_signal_m": 17535,
+      "pre_date_fraction": {
+        "20250111": 0.0,
+        "20250106": 1.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 4,
+      "area_ha": 17.4,
+      "convex_hull_ha": 21.2,
+      "median_dnbr": 0.854,
+      "centroid": [
+        -80.580994,
+        8.353812
+      ],
+      "min_distance_to_anchor_m": 10405,
+      "distance_centroid_to_firms_signal_m": 14146,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": true
+    },
+    {
+      "rank": 5,
+      "area_ha": 10.5,
+      "convex_hull_ha": 13.0,
+      "median_dnbr": 0.962,
+      "centroid": [
+        -80.566251,
+        8.480417
+      ],
+      "min_distance_to_anchor_m": 11260,
+      "distance_centroid_to_firms_signal_m": 1413,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 6,
+      "area_ha": 10.4,
+      "convex_hull_ha": 11.4,
+      "median_dnbr": 0.524,
+      "centroid": [
+        -80.529807,
+        8.401688
+      ],
+      "min_distance_to_anchor_m": 13356,
+      "distance_centroid_to_firms_signal_m": 10378,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 7,
+      "area_ha": 10.4,
+      "convex_hull_ha": 17.6,
+      "median_dnbr": 0.797,
+      "centroid": [
+        -80.570304,
+        8.373432
+      ],
+      "min_distance_to_anchor_m": 10010,
+      "distance_centroid_to_firms_signal_m": 12014,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 8,
+      "area_ha": 9.2,
+      "convex_hull_ha": 12.8,
+      "median_dnbr": 0.799,
+      "centroid": [
+        -80.676595,
+        8.46482
+      ],
+      "min_distance_to_anchor_m": 5386,
+      "distance_centroid_to_firms_signal_m": 10902,
+      "pre_date_fraction": {
+        "20250111": 0.0,
+        "20250106": 1.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 9,
+      "area_ha": 8.4,
+      "convex_hull_ha": 11.5,
+      "median_dnbr": 0.259,
+      "centroid": [
+        -80.570079,
+        8.432055
+      ],
+      "min_distance_to_anchor_m": 8607,
+      "distance_centroid_to_firms_signal_m": 5582,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 10,
+      "area_ha": 8.4,
+      "convex_hull_ha": 10.3,
+      "median_dnbr": 0.763,
+      "centroid": [
+        -80.686784,
+        8.374049
+      ],
+      "min_distance_to_anchor_m": 6332,
+      "distance_centroid_to_firms_signal_m": 16808,
+      "pre_date_fraction": {
+        "20250111": 0.0,
+        "20250106": 1.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 11,
+      "area_ha": 8.0,
+      "convex_hull_ha": 9.3,
+      "median_dnbr": 1.172,
+      "centroid": [
+        -80.567953,
+        8.401911
+      ],
+      "min_distance_to_anchor_m": 9192,
+      "distance_centroid_to_firms_signal_m": 8910,
+      "pre_date_fraction": {
+        "20250111": 1.0,
+        "20250106": 0.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    },
+    {
+      "rank": 12,
+      "area_ha": 7.7,
+      "convex_hull_ha": 10.8,
+      "median_dnbr": 0.786,
+      "centroid": [
+        -80.692443,
+        8.367355
+      ],
+      "min_distance_to_anchor_m": 7264,
+      "distance_centroid_to_firms_signal_m": 17772,
+      "pre_date_fraction": {
+        "20250111": 0.0,
+        "20250106": 1.0,
+        "20241222": 0.0
+      },
+      "touches_window_edge": false
+    }
+  ],
+  "focus_patch_rank": null,
+  "firms_linked_patch_rank": 1,
+  "pre_mosaic_fraction": {
+    "20250111": 0.4476,
+    "20250106": 0.1017,
+    "20241222": 0.0052
+  },
+  "corners_lonlat": [
+    [
+      -80.714848,
+      8.550962
+    ],
+    [
+      -80.514937,
+      8.550763
+    ],
+    [
+      -80.515185,
+      8.351773
+    ],
+    [
+      -80.714994,
+      8.351967
+    ]
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2024-2025"
+}
