@@ -24,7 +24,7 @@ function sha256(path) {
 }
 
 const files = walk(distRoot).filter((path) => statSync(path).isFile());
-const textFiles = files.filter((path) => !/\.(png|pdf)$/i.test(path));
+const textFiles = files.filter((path) => !/\.(png|pdf|webp)$/i.test(path));
 const output = textFiles.map((path) => readFileSync(path, "utf8")).join("\n");
 const requiredPages = [
   "index.html",
@@ -32,7 +32,8 @@ const requiredPages = [
   "sources/index.html",
   "es/index.html",
   "es/metodologia/index.html",
-  "es/fuentes/index.html"
+  "es/fuentes/index.html",
+  "explorar/index.html"
 ];
 
 for (const page of requiredPages) {
@@ -95,6 +96,24 @@ for (const document of [englishHome, englishMethodology, englishSources]) {
   }
 }
 
+for (const document of [englishHome, englishMethodology, englishSources]) {
+  if (!document.includes('href="/explorar/"')) throw new Error("English route is missing the explorer link");
+}
+for (const document of [spanishHome, spanishMethodology, spanishSources]) {
+  if (!document.includes('href="/explorar/"')) throw new Error("Spanish route is missing the explorer link");
+}
+
+const explorer = readFileSync(resolve(distRoot, "explorar/index.html"), "utf8");
+for (const value of ["Exploratorio · fuera de v1", "cases.js", "viewer.js"]) {
+  if (!explorer.includes(value)) throw new Error(`Explorer page is missing required text: ${value}`);
+}
+const explorerManifest = JSON.parse(readFileSync(resolve(distRoot, "explorar/manifest.json"), "utf8"));
+for (const file of explorerManifest.files) {
+  const builtPath = resolve(distRoot, "explorar", file.path);
+  if (!existsSync(builtPath)) throw new Error(`Explorer asset is missing from build: ${file.path}`);
+  if (sha256(builtPath) !== file.sha256) throw new Error(`Explorer asset hash changed in build: ${file.path}`);
+}
+
 for (const document of [spanishHome, spanishMethodology, spanishSources]) {
   for (const value of ['href="/report.pdf"', ">Informe</a>", 'aria-label="Abrir informe científico (PDF)"']) {
     if (!document.includes(value)) throw new Error(`Spanish route is missing report navigation: ${value}`);
@@ -127,5 +146,6 @@ console.log(JSON.stringify({
   routes_checked: requiredPages,
   report_sha256: sha256(builtReport),
   frozen_figures_checked: figureChecks.length,
+  explorer_assets_checked: explorerManifest.files.length,
   public_contract: "English and Spanish Chapters 01–07 + methodology + sources + canonical report"
 }, null, 2));

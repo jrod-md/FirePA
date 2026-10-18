@@ -30,6 +30,8 @@ Requiere Python con `numpy`, `Pillow` y `pyproj`, y acceso a internet para los d
 3. **Los Picachos.** Ejecutar `build_picachos_case.py` y después `s2_picachos.py` (~206 MB de recortes con la ventana actual).
 4. **Ver.** Servir `web/` con cualquier servidor estático, por ejemplo `python -m http.server 8765 --directory explorations/case-viewer-3d/web`, y abrir `?caso=guacamaya` o `?caso=picachos`.
 
+5. **Publicar en el sitio.** Ejecutar `python explorations/case-viewer-3d/scripts/export_to_site.py`. Copia el visor generado a `site/public/explorar/` con un `manifest.json` de hashes. El sitio lo sirve en `/explorar/` y la prueba del contrato del sitio verifica cada archivo. Cualquier cambio en el visor requiere volver a exportar.
+
 Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven a descargar.
 
 ## Archivos
@@ -39,6 +41,7 @@ Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven 
 - `scripts/cog.py`: lector de Cloud-Optimized GeoTIFF por peticiones HTTP Range. Solo baja los bloques del recorte, incluidas las versiones reducidas internas.
 - `scripts/s2_guacamaya.py`, `scripts/s2_picachos.py`: análisis dNBR.
 - `scripts/s2_context.py`: imágenes de contexto (20 m) y de detalle con bordes difuminados.
+- `scripts/export_to_site.py`: copia el visor a `site/public/explorar/` para publicarlo.
 - `web/`: visor MapLibre GL JS 5.6.0. `viewer.js` es el motor y `cases.js` el contenido de cada caso. Se suben los JSON de resultados; las imágenes y teselas se regeneran.
 
 ## Método Sentinel-2 y diferencias con el diseño dNBR del repo

@@ -119,7 +119,7 @@ window.FIREPA_CASES = {
         <h3>Qué significa el punto</h3>
         <p>Es el centroide de ${c.detection_count === 1 ? "una detección" : `${c.detection_count} detecciones`} de ~375 m. No es el borde ni el centro del fuego.</p>
         <h3>Fuente</h3>
-        <p class="hash">site-data/guacamaya-timeline.json · orden ${c.order}<br>site-data/events.geojson · ${c.public_event_id}</p>`;
+        <p class="hash">Paquete público FirePA v1 · guacamaya-timeline.json · orden ${c.order}<br>events.geojson · ${c.public_event_id}</p>`;
       },
       chapters: [
         { eyebrow: "Coclé · estación seca 2025", title: "Un cerro aislado sobre la llanura",
@@ -248,7 +248,7 @@ window.FIREPA_CASES = {
         ${c.public_event_id === "evt-0418" ? `<div class="note">Sentinel-2 muestra una quema nueva de ~${fmtNum(linked.area_ha, 0)} ha a ${linked.distance_centroid_to_firms_signal_m} m de este punto, aparecida entre el 11 y el 21 de enero.</div>` : ""}
         ${c.start > s2Post ? `<div class="note">Es posterior a la imagen del 21 de enero, así que la comparación Sentinel-2 no puede verlo.</div>` : ""}
         <h3>Fuente</h3>
-        <p class="hash">site-data/events.geojson · ${c.public_event_id}</p>`,
+        <p class="hash">Paquete público FirePA v1 · events.geojson · ${c.public_event_id}</p>`,
       chapters: [
         { eyebrow: "Olá · 16 de enero de 2025", title: "Un incendio reportado",
           body: `<p>TVN informó un incendio en el Cerro Los Picachos de Olá, cerca de la comunidad de Loma Chata. No dio hectáreas ni coordenadas.</p><p>El punto azul es el ancla aproximada que usa FirePA: cae en el pueblo de Olá, a ${fmtNum(anchor.anchor_dsm_elevation_m, 0)} m.</p>`,

@@ -183,7 +183,7 @@ def main():
         "corners_lonlat": [[round(a, 6), round(b, 6)] for a, b in corners],
         "attribution": "Contains modified Copernicus Sentinel data 2024-2025",
     }
-    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
     print(json.dumps({k: summary[k] for k in ("pre", "post", "valid_overlap_fraction", "valid_fraction_within_5km", "sensitivity", "patches", "focus_patch_rank")}, indent=1))
     print("bytes fetched", cog.bytes_fetched)
 

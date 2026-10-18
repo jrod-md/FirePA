@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FirePA · Casos 3D</title>
+<title>FirePA · Explorar casos en 3D</title>
+<meta name="description" content="Visor exploratorio en 3D de dos referencias externas de FirePA en Coclé: detecciones FIRMS y comparaciones Sentinel-2 sobre relieve real. Fuera del piloto científico v1.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="viewer.css?v=4" rel="stylesheet">
+<link href="viewer.css?v=5" rel="stylesheet">
 </head>
 <body>
 <div id="map">
@@ -19,6 +20,7 @@
     </div>
   </div>
   <div class="masthead">
+    <a class="home-link" href="/es/">← FirePA</a>
     <nav class="cases" aria-label="Caso">
       <a href="?caso=guacamaya" data-case="guacamaya">Cerro Guacamaya</a>
       <a href="?caso=picachos" data-case="picachos">Los Picachos</a>
@@ -27,7 +29,7 @@
     <h1 id="mh-title"></h1>
     <p id="mh-lede"></p>
     <div class="foot">
-      <span class="badge">Prueba · no publicada</span>
+      <span class="badge">Exploratorio · fuera de v1</span>
       <button class="tour-btn" id="tour-start">Recorrido</button>
     </div>
   </div>
@@ -81,7 +83,7 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="cases.js?v=4"></script>
-<script src="viewer.js?v=4"></script>
+<script src="cases.js?v=5"></script>
+<script src="viewer.js?v=5"></script>
 </body>
 </html>

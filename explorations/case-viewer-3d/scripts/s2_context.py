@@ -75,7 +75,7 @@ def main():
         "utm_bbox": [float(v) for v in bbox],
         "corners_lonlat": corners["post"],
     }
-    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
     for f in sorted(OUT.glob("*.webp")):
         print(f.name, f.stat().st_size)
     print("bytes fetched", cog.bytes_fetched)

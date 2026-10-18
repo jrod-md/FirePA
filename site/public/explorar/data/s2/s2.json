@@ -1,0 +1,153 @@
+{
+  "status": "exploratory_v2_spike_not_firepa_v1",
+  "method": {
+    "index": "NBR=(B8-B12)/(B8+B12); dNBR=NBR_pre-NBR_post",
+    "grid": "EPSG:32617, 20 m (B8 averaged 2x2 from 10 m)",
+    "cloud_mask": "Sentinel-2 SCL classes 2,4,5,7 valid in both dates; water (6) excluded; differs from repo's Cloud Score+",
+    "window_m": [
+      552660,
+      935060,
+      564660,
+      947060
+    ],
+    "linked_rule": "8-connected dNBR patches with at least one pixel within 1000 m of a FirePA cluster centroid",
+    "thresholds_role": "descriptive sensitivity, not validated severity classes",
+    "offset_check": "STAC advertises offset -0.1 but DN percentiles show it is already removed; reflectance = DN * 1e-4",
+    "source": "Earth Search STAC (Element84), sentinel-2-l2a COGs on AWS; only intersecting COG tiles fetched"
+  },
+  "pre": {
+    "id": "S2C_17PNK_20250121_0_L2A",
+    "datetime": "2025-01-21T16:01:22.139000Z",
+    "processing_baseline": "05.11"
+  },
+  "post": {
+    "id": "S2C_17PNK_20250131_0_L2A",
+    "datetime": "2025-01-31T16:01:20.632000Z",
+    "processing_baseline": "05.11"
+  },
+  "candidates": {
+    "pre": [
+      {
+        "id": "S2C_17PNK_20250121_0_L2A",
+        "datetime": "2025-01-21T16:01:22.139000Z",
+        "window_clear_fraction": 0.969
+      }
+    ],
+    "post": [
+      {
+        "id": "S2C_17PNK_20250131_0_L2A",
+        "datetime": "2025-01-31T16:01:20.632000Z",
+        "window_clear_fraction": 0.9894
+      }
+    ]
+  },
+  "valid_overlap_fraction": 0.958,
+  "passes_overlap_gate_0_50": true,
+  "dnbr_stats": {
+    "p10": -0.05,
+    "p50": 0.0444,
+    "p90": 0.17,
+    "p95": 0.4961,
+    "max": 1.5746
+  },
+  "areas": [
+    {
+      "threshold": 0.1,
+      "window_ha": 2677.5,
+      "linked_ha": 915.8,
+      "linked_patches": 45,
+      "linked_touches_window_edge": false,
+      "main_patch_ha": 753.8,
+      "main_patch_convex_hull_ha": 1253.8,
+      "main_patch_median_dnbr": 0.632
+    },
+    {
+      "threshold": 0.2,
+      "window_ha": 1220.5,
+      "linked_ha": 746.3,
+      "linked_patches": 19,
+      "linked_touches_window_edge": false,
+      "main_patch_ha": 690.8,
+      "main_patch_convex_hull_ha": 1209.5,
+      "main_patch_median_dnbr": 0.653
+    },
+    {
+      "threshold": 0.3,
+      "window_ha": 971.1,
+      "linked_ha": 679.6,
+      "linked_patches": 17,
+      "linked_touches_window_edge": false,
+      "main_patch_ha": 645.2,
+      "main_patch_convex_hull_ha": 1184.0,
+      "main_patch_median_dnbr": 0.667
+    },
+    {
+      "threshold": 0.4,
+      "window_ha": 822.3,
+      "linked_ha": 622.0,
+      "linked_patches": 22,
+      "linked_touches_window_edge": false,
+      "main_patch_ha": 601.5,
+      "main_patch_convex_hull_ha": 1167.0,
+      "main_patch_median_dnbr": 0.68
+    }
+  ],
+  "reported_area_ha": [
+    1035,
+    1500
+  ],
+  "corners_lonlat": [
+    [
+      -80.521458,
+      8.567414
+    ],
+    [
+      -80.412413,
+      8.567264
+    ],
+    [
+      -80.412579,
+      8.458726
+    ],
+    [
+      -80.521593,
+      8.458874
+    ]
+  ],
+  "outputs": {
+    "dnbr.png": "7ea264120a9270196e90bbd4e88af6e49045529faf49e4362ad048c8406c0dd9",
+    "outline.png": "c4aa10d2cd7e433008dda7eae9528f1bbd50c0c9301a042743101ffe08f4bf96",
+    "post.png": "9c26a0b8bbcf14850769ff446f1b79ee617546738cab4870e95bac67474940b0",
+    "pre.png": "9db365651cfcbc9bfb2dc1eecb6373dc4b4c420504cd8da31f005f942b00f9b7"
+  },
+  "attribution": "Contains modified Copernicus Sentinel data 2025",
+  "context": {
+    "role": "presentation only; not used for any measurement",
+    "resolution_m": 20,
+    "source": "internal 20 m overview of the same Sentinel-2 L2A COGs",
+    "utm_bbox": [
+      541800.0,
+      926320.0,
+      577080.0,
+      957340.0
+    ],
+    "corners_lonlat": [
+      [
+        -80.620053,
+        8.660507
+      ],
+      [
+        -80.299383,
+        8.660054
+      ],
+      [
+        -80.299893,
+        8.379489
+      ],
+      [
+        -80.62033,
+        8.379928
+      ]
+    ]
+  }
+}
