@@ -1,6 +1,8 @@
 # Visor 3D de casos (exploratorio)
 
-Visor geoespacial en 3D de dos referencias externas de FirePA: Cerro Guacamaya y Cerro Los Picachos. Combina relieve real, detecciones FIRMS del paquete público y comparaciones Sentinel-2 antes/después.
+Visor geoespacial en 3D de incendios de la estación seca 2025 en Coclé. Combina relieve real, detecciones FIRMS del paquete público y comparaciones Sentinel-2 antes/después.
+
+Los Picachos se analizó y se retiró del visor: las nubes taparon el 77 % de la zona y no hay nada que mostrar sobre el incendio reportado. El resultado queda documentado en `results/picachos/` y abajo.
 
 > **Fuera de FirePA Scientific Pilot v1.** Nada de esta carpeta modifica el freeze, el paquete `site-data/` ni el sitio publicado. Las mediciones Sentinel-2 de aquí son exploratorias, no revisadas por expertos, y no son resultados del piloto.
 
@@ -9,7 +11,7 @@ Visor geoespacial en 3D de dos referencias externas de FirePA: Cerro Guacamaya y
 | Caso | Observado (v1) | Medido aquí (exploratorio) |
 |---|---|---|
 | Cerro Guacamaya | 6 grupos FIRMS, 19 detecciones VIIRS, 72.7 h | Cicatriz de ~691 ha (dNBR 0.20; 601–754 ha entre umbrales 0.40 y 0.10). Envolvente de ~1,210 ha (huella completa de los píxeles) frente a 1,035–1,500 ha reportadas |
-| Cerro Los Picachos | 0 coincidencias; señal más cercana a 10.4 km | Solo el 23 % de la zona de 5 km tiene dato válido: no se confirma ni se descarta el incendio. La señal del 15 ene coincide con una quema nueva de ~25 ha a 195 m |
+| Cerro Los Picachos (retirado del visor) | 0 coincidencias; señal más cercana a 10.4 km | Solo el 23 % de la zona de 5 km tiene dato válido: no se confirma ni se descarta el incendio. La señal del 15 ene coincide con una quema nueva de ~25 ha a 195 m |
 
 Reglas de presentación:
 
@@ -17,6 +19,9 @@ Reglas de presentación:
 - Los puntos son centroides de visualización, no ubicaciones del fuego.
 - Las columnas codifican el FRP máximo (35 m por MW), no llamas.
 - Lo que no se pudo observar se marca en gris como "sin dato".
+- La cicatriz se mide en celdas de 20 m. Para mostrarla se suaviza a 5 m (`scripts/scar_style.py`) y su borde se dibuja como vector; el área sale siempre de las celdas.
+- La cortina antes/después solo cambia qué foto se ve a cada lado de una línea norte-sur. No anima el fuego.
+- Las columnas suben en 90 min de la línea de tiempo como animación de aparición; su altura final es el dato.
 
 ## Cómo reconstruirlo
 
@@ -27,12 +32,12 @@ Requiere Python con `numpy`, `Pillow` y `pyproj`, y acceso a internet para los d
    python explorations/case-viewer-3d/scripts/build_tiles.py
    ```
 2. **Guacamaya Sentinel-2.** Ejecutar `s2_guacamaya.py` (descarga ~50 MB de recortes) y después `s2_context.py` (~37 MB; solo imagen de presentación).
-3. **Los Picachos.** Ejecutar `build_picachos_case.py` y después `s2_picachos.py` (~206 MB de recortes con la ventana actual).
-4. **Ver.** Servir `web/` con cualquier servidor estático, por ejemplo `python -m http.server 8765 --directory explorations/case-viewer-3d/web`, y abrir `?caso=guacamaya` o `?caso=picachos`.
+3. **Los Picachos (opcional, retirado del visor).** `build_picachos_case.py` y después `s2_picachos.py` (~206 MB de recortes) reescriben `results/picachos/`.
+4. **Ver.** Servir `web/` con cualquier servidor estático, por ejemplo `python -m http.server 8765 --directory explorations/case-viewer-3d/web`, y abrir `?caso=guacamaya`.
 
 5. **Publicar en el sitio.** Ejecutar `python explorations/case-viewer-3d/scripts/export_to_site.py`. Copia el visor generado a `site/public/explorar/` con un `manifest.json` de hashes. El sitio lo sirve en `/explorar/` y la prueba del contrato del sitio verifica cada archivo. Cualquier cambio en el visor requiere volver a exportar.
 
-Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven a descargar.
+Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven a descargar. Se pueden borrar cuando los resultados estén generados.
 
 ## Archivos
 
@@ -41,6 +46,8 @@ Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven 
 - `scripts/cog.py`: lector de Cloud-Optimized GeoTIFF por peticiones HTTP Range. Solo baja los bloques del recorte, incluidas las versiones reducidas internas.
 - `scripts/s2_guacamaya.py`, `scripts/s2_picachos.py`: análisis dNBR.
 - `scripts/s2_context.py`: imágenes de contexto (20 m) y de detalle con bordes difuminados.
+- `scripts/scar_style.py`: relleno suavizado y contorno vectorial de la cicatriz, solo para mostrarla.
+- `scripts/scar_search.py`: búsqueda de cicatrices en todo Coclé (ver abajo).
 - `scripts/export_to_site.py`: copia el visor a `site/public/explorar/` para publicarlo.
 - `web/`: visor MapLibre GL JS 5.6.0. `viewer.js` es el motor y `cases.js` el contenido de cada caso. Se suben los JSON de resultados; las imágenes y teselas se regeneran.
 
@@ -60,6 +67,17 @@ Los recortes quedan en `data/s2_cache/`. Las ejecuciones posteriores no vuelven 
   - Se añade un margen circular de 300 m alrededor de nubes y sombras, sin envolver los bordes de la ventana. Sin él aparecían falsas quemas junto al ancla.
   - No hay detecciones FIRMS a las que conectar las manchas, así que se listan como candidatas, con su distancia al ancla y a la señal del 15 ene.
 - **Corrección de reflectancia:** los metadatos STAC anuncian un desplazamiento de −0.1, pero estos COG ya lo traen aplicado (azul p5 ≈ 190 DN). El script lo comprueba y no lo aplica dos veces.
+
+## Búsqueda de casos por satélite
+
+Solo Guacamaya y Los Picachos tenían noticia con lugar y fecha. Para encontrar más casos se buscó al revés: primero la cicatriz, después la confirmación.
+
+1. **Escaneo (`scar_search.py`).** Todas las escenas de la tesela 17PNK (casi todo Coclé) entre el 10 de diciembre de 2024 y el 21 de mayo de 2025, leídas solo en la versión interna de ~80 m de los COG (~130 MB en total). Por periodo (dic–ene, ene–feb, feb–mar, mar–abr, abr–may) se calcula la mediana por píxel del NBR de los píxeles despejados (SCL 2, 4, 5, 7, a más de 160 m de nubes o sombras). Una mancha candidata cumple dNBR > 0.27 entre periodos consecutivos, NBR posterior < 0.10 y al menos 40 ha dentro de Coclé.
+2. **Corroboración.** Se cuentan los eventos FIRMS del paquete v1 a ≤ 1 km de la mancha y dentro de los dos periodos. Es una confirmación independiente: el escaneo no usa FIRMS.
+3. **Orden (`rank_candidates.py`).** Área, relieve del DSM alrededor (lo que luce en 3D) y FIRMS. Las manchas con forma de parcela en llano se marcan, porque suelen ser quemas de caña o arroz.
+4. **Medición (`build_scar_case.py`).** Los casos elegidos se miden de nuevo a 20 m con una sola pareja de escenas, como Guacamaya, más el margen de 300 m alrededor de nubes. El área del visor sale de ese paso, no del escaneo.
+
+Las medianas por periodo quedan en `data/s2_cache/` para no repetir la descarga; se pueden borrar.
 
 ## Hallazgos que merecen revisión
 

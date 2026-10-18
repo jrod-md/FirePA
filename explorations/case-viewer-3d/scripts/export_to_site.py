@@ -13,6 +13,8 @@ import json
 import shutil
 from pathlib import Path
 
+from case_registry import CASES
+
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 REPO = ROOT.parents[1]
@@ -21,16 +23,17 @@ DEST = REPO / "site" / "public" / "explorar"
 # Text assets are written with LF so their hashes match the committed bytes on
 # every OS (.gitattributes keeps git from converting them on checkout).
 TEXT = {".html", ".js", ".css", ".json", ".geojson"}
-# Intermediate crops used only to build the feathered WebP images.
-SKIP = {"data/s2/pre.png", "data/s2/post.png"}
+# Intermediate crops used only to build the feathered WebP images, and the
+# 20 m block overlays superseded by scar.webp and scar.geojson.
+SKIP_NAMES = {"pre.png", "post.png", "dnbr.png", "outline.png"}
 REQUIRED = [
     "index.html", "viewer.js", "viewer.css", "cases.js",
     "data/case.json", "data/validation.json", "data/cocle.geojson", "data/s2/s2.json",
     "data/s2/pre_context.webp", "data/s2/post_context.webp", "data/s2/pre_detail.webp", "data/s2/post_detail.webp",
-    "data/s2/dnbr.png", "data/s2/outline.png",
-    "cases/picachos/case.json", "cases/picachos/s2/s2.json",
-    "cases/picachos/s2/pre_detail.webp", "cases/picachos/s2/post_detail.webp",
-    "cases/picachos/s2/dnbr.png", "cases/picachos/s2/outline.png",
+    "data/s2/scar.webp", "data/s2/scar.geojson",
+    *(f"cases/{c}/{f}" for c in CASES for f in (
+        "case.json", "s2/s2.json", "s2/scar.webp", "s2/scar.geojson",
+        "s2/pre_detail.webp", "s2/post_detail.webp", "s2/pre_context.webp", "s2/post_context.webp")),
 ]
 
 
@@ -43,7 +46,7 @@ def main() -> None:
     files = []
     for src in sorted(WEB.rglob("*")):
         rel = src.relative_to(WEB).as_posix()
-        if not src.is_file() or rel in SKIP or "__pycache__" in rel:
+        if not src.is_file() or src.name in SKIP_NAMES or "__pycache__" in rel:
             continue
         out = DEST / rel
         out.parent.mkdir(parents=True, exist_ok=True)

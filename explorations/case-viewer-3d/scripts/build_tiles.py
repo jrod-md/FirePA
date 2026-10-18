@@ -1,7 +1,7 @@
-"""Build the Guacamaya 3D feasibility spike from real inputs only.
+"""Build the terrain tiles and the Guacamaya case from real inputs only.
 
 Inputs
-  - Copernicus DEM GLO-30 tile N08 W081 (DSM, EPSG:4326, pixel-is-point).
+  - Copernicus DEM GLO-30 tiles N08 W081 and N09 W081 (DSM, EPSG:4326, pixel-is-point).
   - FirePA public package (repo/site-data): six Guacamaya clusters and the
     approximate external-reference anchor. Nothing is recomputed.
 
@@ -17,23 +17,33 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import shutil
 import sys
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
+from case_registry import CASES
+
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]  # explorations/case-viewer-3d -> repository root
-RAW = ROOT / "data" / "raw" / "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif"
+RAW_DIR = ROOT / "data" / "raw"
+RAW = RAW_DIR / "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif"
+RAW_N = RAW_DIR / "Copernicus_DSM_COG_10_N09_00_W081_00_DEM.tif"
 WEB = ROOT / "web"
 
 # Area of interest around Cerro Guacamaya (lon/lat, WGS84).
 AOI = (-80.62, 8.38, -80.30, 8.66)
-# Terrain tiles cover both cases (Guacamaya and Los Picachos).
-TILE_AOI = (-80.76, 8.32, -80.30, 8.66)
+# Terrain covers all of Coclé and out to the edge of the downloaded DEM, so the
+# horizon shows real relief instead of the mesh smearing at the data edge.
+TILE_AOI = (-80.995, 8.005, -80.005, 9.30)
+# Detailed relief (z12-14) only around each case; elsewhere z8-11 is enough.
+# Each case's viewer camera stays inside its box.
+CASE_AOIS = {"guacamaya": AOI, **{k: tuple(v["view_aoi"]) for k, v in CASES.items()}}
 DEM_ZOOMS = range(8, 13)  # ~38 m/px at z12, close to the 30 m source.
-RELIEF_ZOOMS = range(8, 15)
+RELIEF_ZOOMS = range(8, 12)
+RELIEF_HI_ZOOMS = range(12, 15)
 TILE = 256
 GUACAMAYA_IDS = ["evt-0557", "evt-0230", "evt-0078", "evt-0383", "evt-0320", "evt-0284"]
 
@@ -46,8 +56,8 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def load_dem() -> tuple[np.ndarray, float, float, float]:
-    im = Image.open(RAW)
+def _read_dem(path: Path) -> tuple[np.ndarray, float, float, float]:
+    im = Image.open(path)
     scale = im.tag_v2[33550]
     tie = im.tag_v2[33922]
     geokeys = im.tag_v2[34735]
@@ -55,15 +65,24 @@ def load_dem() -> tuple[np.ndarray, float, float, float]:
     keys = {geokeys[i]: geokeys[i + 3] for i in range(4, len(geokeys), 4)}
     if keys.get(1025) != 2 or keys.get(2048) != 4326:
         sys.exit("Unexpected DEM georeferencing")
-    res = scale[0]
-    lon0, lat0 = tie[3], tie[4]  # centre of pixel (0, 0)
-    dem = np.asarray(im, dtype=np.float32)
+    return np.asarray(im, dtype=np.float32), tie[3], tie[4], scale[0]
+
+
+def load_dem() -> tuple[np.ndarray, float, float, float]:
+    south, lon0, lat0, res = _read_dem(RAW)
+    north, nlon0, nlat0, nres = _read_dem(RAW_N)
+    # N09 ends one row above N08's first row (pixel-is-point), so they stack exactly.
+    if (nlon0, nres) != (lon0, res) or abs(nlat0 - north.shape[0] * res - lat0) > 1e-9:
+        sys.exit("DEM tiles do not share a grid")
+    dem, lat0 = np.vstack([north, south]), nlat0
     # Crop with a margin so hillshade edges and tile sampling stay valid.
     m = 0.02
     c0 = int(math.floor((TILE_AOI[0] - m - lon0) / res))
     c1 = int(math.ceil((TILE_AOI[2] + m - lon0) / res)) + 1
     r0 = int(math.floor((lat0 - (TILE_AOI[3] + m)) / res))
     r1 = int(math.ceil((lat0 - (TILE_AOI[1] - m)) / res)) + 1
+    c0, r0 = max(c0, 0), max(r0, 0)
+    c1, r1 = min(c1, dem.shape[1]), min(r1, dem.shape[0])
     crop = dem[r0:r1, c0:c1].copy()
     return crop, lon0 + c0 * res, lat0 - r0 * res, res
 
@@ -123,7 +142,7 @@ def tile_lonlat(z: int, x: int, y: int):
     return np.meshgrid(lon, lat)
 
 
-def tile_range(z: int):
+def tile_range(z: int, aoi=TILE_AOI):
     def tx(lon):
         return int((lon + 180) / 360 * 2**z)
 
@@ -131,37 +150,51 @@ def tile_range(z: int):
         r = math.radians(lat)
         return int((1 - math.log(math.tan(r) + 1 / math.cos(r)) / math.pi) / 2 * 2**z)
 
-    return range(tx(TILE_AOI[0]), tx(TILE_AOI[2]) + 1), range(ty(TILE_AOI[3]), ty(TILE_AOI[1]) + 1)
+    return range(tx(aoi[0]), tx(aoi[2]) + 1), range(ty(aoi[3]), ty(aoi[1]) + 1)
 
 
 def inside_aoi(lon, lat):
     return (lon >= TILE_AOI[0]) & (lon <= TILE_AOI[2]) & (lat >= TILE_AOI[1]) & (lat <= TILE_AOI[3])
 
 
+def tile_jobs():
+    for z in DEM_ZOOMS:
+        xs, ys = tile_range(z)
+        yield from (("dem", z, x, y) for x in xs for y in ys)
+    for z in RELIEF_ZOOMS:
+        xs, ys = tile_range(z)
+        yield from (("relief", z, x, y) for x in xs for y in ys)
+    hi = set()
+    for aoi in CASE_AOIS.values():
+        for z in RELIEF_HI_ZOOMS:
+            xs, ys = tile_range(z, aoi)
+            hi.update((z, x, y) for x in xs for y in ys)
+    yield from (("relief", z, x, y) for z, x, y in sorted(hi))
+
+
 def write_tiles(dem, relief, lon0, lat0, res) -> dict:
     counts = {"dem": 0, "relief": 0}
-    for kind, zooms in (("dem", DEM_ZOOMS), ("relief", RELIEF_ZOOMS)):
-        for z in zooms:
-            xs, ys = tile_range(z)
-            for x in xs:
-                for y in ys:
-                    lon, lat = tile_lonlat(z, x, y)
-                    out = WEB / "tiles" / kind / str(z) / str(x)
-                    out.mkdir(parents=True, exist_ok=True)
-                    if kind == "dem":
-                        h = sample(dem, lon0, lat0, res, lon, lat).astype(np.float64)
-                        v = np.clip(h, -100, 9000) + 32768.0
-                        r = np.floor(v / 256)
-                        g = np.floor(v - r * 256)
-                        b = np.floor((v - np.floor(v)) * 256)
-                        img = np.stack([r, g, b], axis=-1).astype(np.uint8)
-                        Image.fromarray(img, "RGB").save(out / f"{y}.png", optimize=True)
-                    else:
-                        rgb = sample(relief, lon0, lat0, res, lon, lat)
-                        alpha = np.where(inside_aoi(lon, lat), 255, 0)[..., None]
-                        img = np.concatenate([rgb, alpha], axis=-1).astype(np.uint8)
-                        Image.fromarray(img, "RGBA").save(out / f"{y}.webp", quality=82, method=6)
-                    counts[kind] += 1
+    if (WEB / "tiles").exists():
+        shutil.rmtree(WEB / "tiles")  # no stale tiles from an earlier extent
+    for kind, z, x, y in tile_jobs():
+        lon, lat = tile_lonlat(z, x, y)
+        out = WEB / "tiles" / kind / str(z) / str(x)
+        out.mkdir(parents=True, exist_ok=True)
+        if kind == "dem":
+            h = sample(dem, lon0, lat0, res, lon, lat).astype(np.float64)
+            # Whole metres: sub-metre noise in a 30 m DSM is invisible but defeats PNG compression.
+            v = np.round(np.clip(h, -100, 9000)) + 32768.0
+            r = np.floor(v / 256)
+            g = np.floor(v - r * 256)
+            b = np.floor((v - np.floor(v)) * 256)
+            img = np.stack([r, g, b], axis=-1).astype(np.uint8)
+            Image.fromarray(img, "RGB").save(out / f"{y}.png", optimize=True)
+        else:
+            rgb = sample(relief, lon0, lat0, res, lon, lat)
+            alpha = np.where(inside_aoi(lon, lat), 255, 0)[..., None]
+            img = np.concatenate([rgb, alpha], axis=-1).astype(np.uint8)
+            Image.fromarray(img, "RGBA").save(out / f"{y}.webp", quality=82, method=6)
+        counts[kind] += 1
     return counts
 
 
@@ -190,6 +223,7 @@ def build_case(dem, lon0, lat0, res) -> tuple[dict, dict]:
     case = {
         "aoi": AOI,
         "tile_aoi": TILE_AOI,
+        "detail_aoi": CASE_AOIS["guacamaya"],
         "clusters": clusters,
         "anchor": {
             "coordinates": anchor["geometry"]["coordinates"],
@@ -212,6 +246,7 @@ def build_case(dem, lon0, lat0, res) -> tuple[dict, dict]:
                 "product": "Copernicus DEM GLO-30 (DSM)",
                 "file": RAW.name,
                 "sha256": sha256(RAW),
+                "files": {p.name: sha256(p) for p in (RAW, RAW_N)},
                 "source": "https://copernicus-dem-30m.s3.amazonaws.com/",
                 "attribution": "© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
             },

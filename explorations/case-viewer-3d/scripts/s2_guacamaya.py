@@ -23,6 +23,7 @@ from PIL import Image
 from pyproj import Transformer
 
 import cog
+import scar_style
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
@@ -218,7 +219,7 @@ def main():
         seeds |= np.hypot(px_x - x, px_y - y) <= LINK_RADIUS
 
     areas = []
-    linked_masks = {}
+    linked_masks, main_masks = {}, {}
     for t in THRESHOLDS:
         burned = valid & (np.nan_to_num(dnbr, nan=-9) > t)
         lab, n = components(burned)
@@ -227,6 +228,7 @@ def main():
         linked_masks[t] = linked
         ids, counts = np.unique(lab[linked], return_counts=True)
         main = lab == ids[np.argmax(counts)] if ids.size else np.zeros_like(linked)
+        main_masks[t] = main
         touches_edge = bool(linked[0].any() or linked[-1].any() or linked[:, 0].any() or linked[:, -1].any())
         areas.append({
             "threshold": t,
@@ -247,6 +249,9 @@ def main():
     ol = np.zeros((H, W, 4), dtype=np.uint8)
     ol[border(edge)] = (26, 25, 23, 230)
     Image.fromarray(ol, "RGBA").resize((W * 2, H * 2), Image.NEAREST).save(OUT / "outline.png", optimize=True)
+    # Display layers show the main patch only, matching the reported main_patch_ha.
+    scar_style.fill_webp(dnbr, valid, main_masks[0.20], OUT / "scar.webp")
+    scar_style.outline_geojson(main_masks[0.20], bbox, OUT / "scar.geojson")
 
     corners = [to_ll.transform(x, y) for x, y in ((xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin))]
     d = dnbr[valid]

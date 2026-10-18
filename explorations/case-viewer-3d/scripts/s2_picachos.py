@@ -23,7 +23,7 @@ import cog
 import s2_guacamaya as g
 
 WEB = g.WEB
-CASE_DIR = WEB / "cases" / "picachos"
+CASE_DIR = g.ROOT / "results" / "picachos"  # retired from the viewer; kept as a documented result
 OUT = CASE_DIR / "s2"
 ANCHOR = (-80.65114, 8.42097)
 SIGNAL = (-80.57902, 8.48175)  # evt-0418, 2025-01-15 18:47 UTC, 1 detection

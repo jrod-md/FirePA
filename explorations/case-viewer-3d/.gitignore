@@ -10,3 +10,6 @@ web/data/s2/*.png
 web/data/s2/*.webp
 web/cases/*/s2/*.png
 web/cases/*/s2/*.webp
+
+# Local review images from candidate_thumbs.py.
+results/scar_search/thumbs/

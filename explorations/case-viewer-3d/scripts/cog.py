@@ -8,22 +8,33 @@ uint8/uint16, chunky planar config.
 from __future__ import annotations
 
 import struct
+import threading
 import urllib.request
 import zlib
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 import numpy as np
 
 TYPES = {1: ("B", 1), 2: ("c", 1), 3: ("H", 2), 4: ("I", 4), 12: ("d", 8), 16: ("Q", 8)}
 bytes_fetched = 0
+_lock = threading.Lock()
+WORKERS = 12  # tile requests are latency-bound, so fetch several at once
 
 
 def fetch(url: str, start: int, length: int) -> bytes:
     global bytes_fetched
     req = urllib.request.Request(url, headers={"Range": f"bytes={start}-{start + length - 1}"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        data = r.read()
-    bytes_fetched += len(data)
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = r.read()
+            break
+        except OSError:
+            if attempt == 2:
+                raise
+    with _lock:
+        bytes_fetched += len(data)
     return data
 
 
@@ -97,22 +108,23 @@ class COG:
     def read(self, col0: int, row0: int, cols: int, rows: int) -> np.ndarray:
         out = np.zeros((rows, cols, self.samples), dtype=self.dtype.newbyteorder("="))
         tiles_x = (self.width + self.tile_w - 1) // self.tile_w
-        for ty in range(row0 // self.tile_h, (row0 + rows - 1) // self.tile_h + 1):
-            for tx in range(col0 // self.tile_w, (col0 + cols - 1) // self.tile_w + 1):
-                i = ty * tiles_x + tx
-                if not self.counts[i]:
-                    continue
-                buf = fetch(self.url, self.offsets[i], self.counts[i])
-                if self.compression != 1:
-                    buf = zlib.decompress(buf)
-                t = np.frombuffer(buf, dtype=self.dtype).reshape(self.tile_h, self.tile_w, self.samples)
-                if self.predictor == 2:
-                    t = np.cumsum(t, axis=1, dtype=self.dtype)
-                t = t.astype(self.dtype.newbyteorder("="))
-                y0, x0 = ty * self.tile_h, tx * self.tile_w
-                ys, ye = max(row0, y0), min(row0 + rows, y0 + self.tile_h)
-                xs, xe = max(col0, x0), min(col0 + cols, x0 + self.tile_w)
-                out[ys - row0 : ye - row0, xs - col0 : xe - col0] = t[ys - y0 : ye - y0, xs - x0 : xe - x0]
+        jobs = [(ty, tx) for ty in range(row0 // self.tile_h, (row0 + rows - 1) // self.tile_h + 1)
+                for tx in range(col0 // self.tile_w, (col0 + cols - 1) // self.tile_w + 1)
+                if self.counts[ty * tiles_x + tx]]
+        with ThreadPoolExecutor(WORKERS) as pool:
+            bufs = pool.map(lambda j: fetch(self.url, self.offsets[j[0] * tiles_x + j[1]], self.counts[j[0] * tiles_x + j[1]]), jobs)
+            fetched = list(zip(jobs, bufs))
+        for (ty, tx), buf in fetched:
+            if self.compression != 1:
+                buf = zlib.decompress(buf)
+            t = np.frombuffer(buf, dtype=self.dtype).reshape(self.tile_h, self.tile_w, self.samples)
+            if self.predictor == 2:
+                t = np.cumsum(t, axis=1, dtype=self.dtype)
+            t = t.astype(self.dtype.newbyteorder("="))
+            y0, x0 = ty * self.tile_h, tx * self.tile_w
+            ys, ye = max(row0, y0), min(row0 + rows, y0 + self.tile_h)
+            xs, xe = max(col0, x0), min(col0 + cols, x0 + self.tile_w)
+            out[ys - row0 : ye - row0, xs - col0 : xe - col0] = t[ys - y0 : ye - y0, xs - x0 : xe - x0]
         return out[..., 0] if self.samples == 1 else out
 
     def read_bbox(self, xmin: float, ymin: float, xmax: float, ymax: float) -> np.ndarray:

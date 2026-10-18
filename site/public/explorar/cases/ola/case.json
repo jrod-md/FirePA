@@ -1,0 +1,125 @@
+{
+  "id": "ola",
+  "title": "Cerros al sur de Olá",
+  "place": "Olá, Coclé",
+  "view_aoi": [
+    -80.79,
+    8.28,
+    -80.53,
+    8.5
+  ],
+  "firms_window": [
+    "2025-02-25",
+    "2025-03-07"
+  ],
+  "views": {
+    "overview": {
+      "center": [
+        -80.662,
+        8.385
+      ],
+      "zoom": 11.9,
+      "pitch": 40,
+      "bearing": 0
+    },
+    "scar": {
+      "center": [
+        -80.662,
+        8.385
+      ],
+      "zoom": 13.4,
+      "pitch": 62,
+      "bearing": -20
+    },
+    "close": {
+      "center": [
+        -80.662,
+        8.385
+      ],
+      "zoom": 13.9,
+      "pitch": 68,
+      "bearing": 15
+    }
+  },
+  "story": {
+    "when": "febrero–marzo de 2025",
+    "lede": "Un fuego sobre las crestas al sur de Olá que ninguna noticia registró. Lo encontramos buscando cicatrices desde el satélite.",
+    "headline": "Un incendio que nadie reportó",
+    "intro": "A finales de febrero de 2025 ardieron las laderas de unos cerros al sur de Olá. No encontramos noticias sobre él: apareció al revisar todo Coclé con fotos del satélite, y el sensor de calor VIIRS lo había detectado esos mismos días.",
+    "chapter_title": "Cerros al sur de Olá",
+    "chapter_intro": "Crestas y quebradas al sur de Olá, en el norte de Coclé. A unos kilómetros queda el Cerro Los Picachos, pero este fuego es de seis semanas después.",
+    "unknowns": [
+      "Si tiene relación con otras quemas de la zona en enero: las fechas no coinciden."
+    ]
+  },
+  "tile_aoi": [
+    -80.995,
+    8.005,
+    -80.005,
+    9.3
+  ],
+  "summit": {
+    "coordinates": [
+      -80.66728,
+      8.39272
+    ],
+    "elevation_m": 495
+  },
+  "scar_low_elevation_m": 121,
+  "clusters": [
+    {
+      "order": 1,
+      "public_event_id": "evt-0116",
+      "cluster_start_utc": "2025-02-28T18:22:00Z",
+      "cluster_end_utc": "2025-02-28T18:22:00Z",
+      "detection_count": 2,
+      "max_frp_mw": 5.05,
+      "mean_frp_mw": 3.215,
+      "satellites": [
+        "N20"
+      ],
+      "day_count": 2,
+      "night_count": 0,
+      "gap_from_previous_hours": null,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.65544,
+        8.380585
+      ],
+      "dsm_elevation_m": 149.2,
+      "distance_to_main_scar_m": 25
+    },
+    {
+      "order": 2,
+      "public_event_id": "evt-0365",
+      "cluster_start_utc": "2025-03-01T06:36:00Z",
+      "cluster_end_utc": "2025-03-01T06:58:00Z",
+      "detection_count": 3,
+      "max_frp_mw": 3.09,
+      "mean_frp_mw": 1.576667,
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "day_count": 0,
+      "night_count": 3,
+      "gap_from_previous_hours": 12.23,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.663487,
+        8.387987
+      ],
+      "dsm_elevation_m": 348.5,
+      "distance_to_main_scar_m": 4
+    }
+  ],
+  "provenance": {
+    "firepa_files": {
+      "events.geojson": "8b3a6ab835d0617ada766213b17d4f0c267aa720bf8a266d37fea7f1bf71bee0"
+    },
+    "dem": {
+      "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif": "958e9cab3cd050981547841446073bb5401bd176bd25f7bfb20ff2476b68fb85",
+      "Copernicus_DSM_COG_10_N09_00_W081_00_DEM.tif": "6c59289a8c5b8181203d2cc02e9343fff7bdad99043929cd322ab531f8a568da"
+    }
+  }
+}

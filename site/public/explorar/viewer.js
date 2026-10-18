@@ -23,9 +23,33 @@ function circleRing([lon, lat], radiusM, steps = 48) {
 const circlePolygon = (c, r, steps) => ({ type: "Feature", geometry: { type: "Polygon", coordinates: [circleRing(c, r, steps)] }, properties: {} });
 const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
 
+// "After" images are drawn into canvases so a curtain can reveal them west to east.
+async function curtainCanvas(url, corners) {
+  const img = new Image();
+  await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error(`no se pudo cargar ${url}`)); img.src = url; });
+  const c = document.createElement("canvas"); c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const west = (corners[0][0] + corners[3][0]) / 2, east = (corners[1][0] + corners[2][0]) / 2;
+  return { img, c, ctx: c.getContext("2d"), west, east, lastPx: -1 };
+}
+function drawCurtain(cv, lon) {
+  const px = Math.round(Math.min(1, Math.max(0, (lon - cv.west) / (cv.east - cv.west))) * cv.c.width);
+  if (px === cv.lastPx) return false;
+  cv.lastPx = px;
+  cv.ctx.clearRect(0, 0, cv.c.width, cv.c.height);
+  if (px > 0) cv.ctx.drawImage(cv.img, 0, 0, px, cv.c.height, 0, 0, px, cv.c.height);
+  return true;
+}
+
 (async function main() {
-  const caseId = new URLSearchParams(location.search).get("caso") in window.FIREPA_CASES ? new URLSearchParams(location.search).get("caso") : "guacamaya";
-  document.querySelectorAll(".cases a").forEach(a => a.dataset.case === caseId ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  const asked = new URLSearchParams(location.search).get("caso");
+  const caseId = window.FIREPA_CASE_LIST.some(c => c.id === asked) ? asked : window.FIREPA_CASE_LIST[0].id;
+  const nav = document.getElementById("case-nav");
+  for (const c of window.FIREPA_CASE_LIST) {
+    const a = document.createElement("a");
+    a.href = `?caso=${c.id}`; a.textContent = c.label;
+    if (c.id === caseId) a.setAttribute("aria-current", "page");
+    nav.appendChild(a);
+  }
   const P = await window.FIREPA_CASES[caseId](H);
   document.title = `FirePA · ${P.meta.title}`;
   document.getElementById("loading-title").textContent = P.meta.title;
@@ -40,45 +64,62 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   const totalDetections = clusters.reduce((s, c) => s + c.detection_count, 0);
   const [aoiW, aoiS, aoiE, aoiN] = P.tileAoi;
   const IMG = P.imagery;
+  const curtainCorners = IMG.ctxCorners || IMG.detCorners;
+  const cWest = (curtainCorners[0][0] + curtainCorners[3][0]) / 2, cEast = (curtainCorners[1][0] + curtainCorners[2][0]) / 2;
+  const cSouth = Math.min(curtainCorners[2][1], curtainCorners[3][1]), cNorth = Math.max(curtainCorners[0][1], curtainCorners[1][1]);
+  const curtains = { detPost: await curtainCanvas(IMG.detPost, IMG.detCorners) };
+  if (IMG.ctxPost) curtains.ctxPost = await curtainCanvas(IMG.ctxPost, IMG.ctxCorners);
 
   const sources = {
-    relief: { type: "raster", tiles: [BASE + "tiles/relief/{z}/{x}/{y}.webp"], tileSize: 256, minzoom: 8, maxzoom: 14, bounds: P.tileAoi,
+    relief: { type: "raster", tiles: [BASE + "tiles/relief/{z}/{x}/{y}.webp"], tileSize: 256, minzoom: 8, maxzoom: 11, bounds: P.tileAoi,
       attribution: "Relieve: Copernicus DEM GLO-30 © DLR e.V. 2010-2014 y © Airbus Defence and Space GmbH 2014-2018, Copernicus/UE/ESA · Imagen: contains modified Copernicus Sentinel data 2024-2025 · Datos: NASA FIRMS vía FirePA v1" },
+    reliefHi: { type: "raster", tiles: [BASE + "tiles/relief/{z}/{x}/{y}.webp"], tileSize: 256, minzoom: 12, maxzoom: 14, bounds: P.viewBounds },
     dem: { type: "raster-dem", tiles: [BASE + "tiles/dem/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 8, maxzoom: 12, encoding: "terrarium", bounds: P.tileAoi },
     demHs: { type: "raster-dem", tiles: [BASE + "tiles/dem/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 8, maxzoom: 12, encoding: "terrarium", bounds: P.tileAoi },
     detPre: { type: "image", url: IMG.detPre, coordinates: IMG.detCorners },
-    detPost: { type: "image", url: IMG.detPost, coordinates: IMG.detCorners },
-    dnbr: { type: "image", url: IMG.dnbr, coordinates: IMG.detCorners },
-    outline: { type: "image", url: IMG.outline, coordinates: IMG.detCorners },
+    detPost: { type: "canvas", canvas: curtains.detPost.c, coordinates: IMG.detCorners, animate: false },
+    scar: { type: "image", url: IMG.scar, coordinates: IMG.scarCorners || IMG.detCorners },
+    scarLine: { type: "geojson", data: IMG.scarLine },
+    curtain: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
     cocle: { type: "geojson", data: "data/cocle.geojson" },
-    matchRadius: { type: "geojson", data: circlePolygon(P.anchor.coordinates, P.anchor.official_matching_radius_m, 128) },
-    anchor: { type: "geojson", data: { type: "Feature", geometry: { type: "Point", coordinates: P.anchor.coordinates }, properties: { label: "Ancla aproximada" } } },
+    // Cases found by satellite have no news anchor; the layers are then empty.
+    matchRadius: { type: "geojson", data: P.anchor ? circlePolygon(P.anchor.coordinates, P.anchor.official_matching_radius_m, 128) : { type: "FeatureCollection", features: [] } },
+    anchor: { type: "geojson", data: P.anchor ? { type: "Feature", geometry: { type: "Point", coordinates: P.anchor.coordinates }, properties: {} } : { type: "FeatureCollection", features: [] } },
     clusters: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
-    columns: { type: "geojson", data: { type: "FeatureCollection", features: [] } }
+    columns: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+    "columns-base": { type: "geojson", data: { type: "FeatureCollection", features: [] } }
   };
   const imgPaint = { "raster-opacity": 0, "raster-fade-duration": 0, "raster-opacity-transition": { duration: 0 } };
   const layers = [
     { id: "bg", type: "background", paint: { "background-color": "#ddd5c6" } },
-    { id: "relief", type: "raster", source: "relief", paint: { "raster-fade-duration": 200 } }
+    { id: "relief", type: "raster", source: "relief", paint: { "raster-fade-duration": 200 } },
+    { id: "reliefHi", type: "raster", source: "reliefHi", minzoom: 11.5, paint: { "raster-fade-duration": 200 } }
   ];
   if (IMG.ctxPre) {
     sources.ctxPre = { type: "image", url: IMG.ctxPre, coordinates: IMG.ctxCorners };
-    sources.ctxPost = { type: "image", url: IMG.ctxPost, coordinates: IMG.ctxCorners };
+    sources.ctxPost = { type: "canvas", canvas: curtains.ctxPost.c, coordinates: IMG.ctxCorners, animate: false };
     layers.push({ id: "ctxPre", type: "raster", source: "ctxPre", paint: { ...imgPaint } }, { id: "ctxPost", type: "raster", source: "ctxPost", paint: { ...imgPaint } });
   }
   layers.push(
     { id: "detPre", type: "raster", source: "detPre", paint: { ...imgPaint } },
     { id: "detPost", type: "raster", source: "detPost", paint: { ...imgPaint } },
     { id: "hillshade", type: "hillshade", source: "demHs", paint: { "hillshade-exaggeration": 0.28, "hillshade-shadow-color": "#2a2620", "hillshade-highlight-color": "#fff8ea", "hillshade-accent-color": "#2a2620", "hillshade-illumination-direction": 315 } },
-    { id: "dnbr", type: "raster", source: "dnbr", paint: { ...imgPaint, "raster-resampling": "nearest" } },
-    { id: "outline", type: "raster", source: "outline", paint: { ...imgPaint, "raster-resampling": "nearest" } },
+    { id: "scar", type: "raster", source: "scar", paint: { ...imgPaint, "raster-resampling": "linear" } },
+    { id: "scar-glow", type: "line", source: "scarLine", layout: { "line-join": "round" }, paint: { "line-color": "#ff6a1f", "line-width": 9, "line-blur": 7, "line-opacity": 0 } },
+    { id: "scar-edge", type: "line", source: "scarLine", layout: { "line-join": "round" }, paint: { "line-color": "#fff0d8", "line-width": 1.5, "line-opacity": 0 } },
+    { id: "curtain-glow", type: "line", source: "curtain", paint: { "line-color": "#fff4e0", "line-width": 12, "line-blur": 9, "line-opacity": 0.7 } },
+    { id: "curtain-line", type: "line", source: "curtain", paint: { "line-color": "#ffffff", "line-width": 2 } },
     { id: "cocle-line", type: "line", source: "cocle", paint: { "line-color": "#f3eee4", "line-opacity": 0.75, "line-width": 1.3, "line-dasharray": [4, 2] } },
     { id: "radius-line", type: "line", source: "matchRadius", paint: { "line-color": "#d7e6f0", "line-width": 1.6, "line-dasharray": [2, 2], "line-opacity": 0.9 } },
     { id: "anchor-pt", type: "circle", source: "anchor", paint: { "circle-radius": 5, "circle-color": "#f3eee4", "circle-stroke-color": "#477797", "circle-stroke-width": 2.2, "circle-pitch-alignment": "map" } },
+    { id: "col-glow", type: "circle", source: "columns-base", paint: {
+      "circle-radius": ["interpolate", ["exponential", 2], ["zoom"], 10, 4, 16, 260],
+      "circle-color": "#ff8a3d", "circle-blur": 1, "circle-opacity": ["case", ["get", "current"], 0.55, 0.22], "circle-pitch-alignment": "map" } },
     { id: "cluster-halo", type: "circle", source: "clusters", filter: ["get", "current"], paint: { "circle-radius": 18, "circle-color": "#ff8a4c", "circle-opacity": 0.25, "circle-blur": 0.6, "circle-pitch-alignment": "map" } },
     { id: "columns", type: "fill-extrusion", source: "columns", paint: {
-      "fill-extrusion-color": ["case", ["get", "current"], "#ffe2b0", "#f2b45c"],
-      "fill-extrusion-height": ["get", "height"], "fill-extrusion-base": 0, "fill-extrusion-opacity": 0.88, "fill-extrusion-vertical-gradient": true } },
+      "fill-extrusion-color": ["case", ["get", "current"], "#ffe6b8",
+        ["interpolate", ["linear"], ["get", "frp"], 3, "#f6c66e", 8, "#f29a45", 14, "#e2683a"]],
+      "fill-extrusion-height": ["get", "height"], "fill-extrusion-base": 0, "fill-extrusion-opacity": 0.92, "fill-extrusion-vertical-gradient": true } },
     { id: "cluster-pt", type: "circle", source: "clusters", paint: {
       "circle-radius": ["+", 3.5, ["*", 1.3, ["get", "detection_count"]]],
       "circle-color": ["case", ["get", "current"], "#ff7a3d", "#c4572f"],
@@ -90,13 +131,16 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
 
   const map = new maplibregl.Map({
     container: "map",
-    maxBounds: [[aoiW - 0.1, aoiS - 0.1], [aoiE + 0.1, aoiN + 0.1]],
+    // Outside the DEM the terrain mesh smears its edge; keep the camera over real data.
+    maxBounds: [[P.viewBounds[0], P.viewBounds[1]], [P.viewBounds[2], P.viewBounds[3]]], minZoom: P.minZoom ?? 10.4,
     center: P.views[P.startView].center, zoom: P.views[P.startView].zoom - 2.2, pitch: 0, bearing: 0,
     maxPitch: 80,
     attributionControl: { compact: true },
     style: {
       version: 8,
-      sky: { "sky-color": "#dcd3c3", "horizon-color": "#efe8dc", "fog-color": "#e9e2d5", "sky-horizon-blend": 0.55, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.25 },
+      sky: { "sky-color": "#c9d6df", "horizon-color": "#efe8dc", "fog-color": "#e9e2d5", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7, "fog-ground-blend": 0.45 },
+      // Paint changes are animated here; style transitions would leave stale frames in the terrain cache.
+      transition: { duration: 0, delay: 0 },
       sources, layers,
       terrain: { source: "dem", exaggeration: EXAGGERATION }
     }
@@ -112,7 +156,7 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     el.textContent = text;
     return new maplibregl.Marker({ element: el, anchor, offset }).setLngLat(lngLat).addTo(map);
   }
-  label("Ancla aproximada", "anchor", P.anchor.coordinates, "top", [0, 8]);
+  if (P.anchor) label("Ancla aproximada", "anchor", P.anchor.coordinates, "top", [0, 8]);
   P.summits.forEach(sm => label(sm.label, "summit", sm.coordinates));
   const clusterLabels = new Map(P.clusters.map(c => [c.public_event_id, label(c.label, "cluster", c.centroid, "bottom", [0, -12])]));
   const whenReady = fn => map.isStyleLoaded() ? fn() : ready.then(fn);
@@ -135,24 +179,33 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
   function pushClusters() {
     const visible = clusters.filter(c => c.start <= t), cur = currentCluster();
     clusters.forEach(c => clusterLabels.get(c.public_event_id)?.getElement().classList.toggle("hidden", c.start > t));
-    const props = c => ({ order: c.order, label: c.label, detection_count: c.detection_count, id: c.public_event_id, current: c === cur, selected: selected === c.public_event_id });
+    const props = c => ({ order: c.order, label: c.label, detection_count: c.detection_count, id: c.public_event_id, current: c === cur, selected: selected === c.public_event_id, frp: c.max_frp_mw });
+    // Columns rise over 90 min of timeline time after a group's first detection (display only).
+    const rise = c => REDUCED ? 1 : ease(Math.min(1, Math.max(0, (t - c.start) / (1.5 * 3600e3))));
     map.getSource("clusters")?.setData({ type: "FeatureCollection", features: visible.map(c => ({ type: "Feature", geometry: { type: "Point", coordinates: c.centroid }, properties: props(c) })) });
-    map.getSource("columns")?.setData({ type: "FeatureCollection", features: colsOn && is3D ? visible.map(c => ({ type: "Feature", geometry: { type: "Polygon", coordinates: [circleRing(c.centroid, 70, 24)] }, properties: { ...props(c), height: c.max_frp_mw * FRP_M_PER_MW } })) : [] });
+    const cols = colsOn && is3D ? visible : [];
+    map.getSource("columns")?.setData({ type: "FeatureCollection", features: cols.map(c => ({ type: "Feature", geometry: { type: "Polygon", coordinates: [circleRing(c.centroid, 55, 48)] }, properties: { ...props(c), height: c.max_frp_mw * FRP_M_PER_MW * rise(c) } })) });
+    map.getSource("columns-base")?.setData({ type: "FeatureCollection", features: cols.map(c => ({ type: "Feature", geometry: { type: "Point", coordinates: c.centroid }, properties: props(c) })) });
   }
 
   // ---------- Imagery ----------
   function applyImagery() {
     whenReady(() => {
       const sat = base === "sat";
-      if (IMG.ctxPre) {
-        map.setPaintProperty("ctxPre", "raster-opacity", sat ? 1 : 0);
-        map.setPaintProperty("ctxPost", "raster-opacity", sat ? blend : 0);
+      const lon = cWest + blend * (cEast - cWest);
+      for (const [id, cv] of Object.entries(curtains)) {
+        map.setPaintProperty(id, "raster-opacity", sat ? 1 : 0);
+        if (drawCurtain(cv, lon)) { const src = map.getSource(id); src.play(); requestAnimationFrame(() => requestAnimationFrame(() => src.pause())); }
       }
+      if (IMG.ctxPre) map.setPaintProperty("ctxPre", "raster-opacity", sat ? 1 : 0);
       map.setPaintProperty("detPre", "raster-opacity", sat ? 1 : 0);
-      map.setPaintProperty("detPost", "raster-opacity", sat ? blend : 0);
+      const showLine = sat && blend > 0.002 && blend < 0.998;
+      const steps = 40, line = Array.from({ length: steps + 1 }, (_, i) => [lon, cSouth + (cNorth - cSouth) * i / steps]);
+      map.getSource("curtain").setData(showLine ? { type: "Feature", geometry: { type: "LineString", coordinates: line }, properties: {} } : { type: "FeatureCollection", features: [] });
       map.setPaintProperty("hillshade", "hillshade-exaggeration", sat ? 0.28 : 0.12);
-      map.setPaintProperty("dnbr", "raster-opacity", 0.82 * scarK);
-      map.setPaintProperty("outline", "raster-opacity", 0.95 * scarK);
+      map.setPaintProperty("scar", "raster-opacity", 0.86 * scarK);
+      map.setPaintProperty("scar-glow", "line-opacity", 0.8 * scarK);
+      map.setPaintProperty("scar-edge", "line-opacity", 0.95 * scarK);
       refreshTerrain();
     });
     document.querySelectorAll("[data-base]").forEach(b => b.setAttribute("aria-pressed", b.dataset.base === base));
@@ -344,7 +397,7 @@ const H = { fmtNum, fmtUTC, fmtLocal, fmtDay, sleep };
     const slope = Math.atan(Math.hypot(dzdx, dzdy)) * 180 / Math.PI;
     const asp = (Math.atan2(-dzdx, -dzdy) * 180 / Math.PI + 360) % 360;
     const dirs = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"];
-    readout.innerHTML = `<b>${fmtNum(h, 0)} m</b> DSM · pendiente <b>${fmtNum(slope, 0)}°</b> · orientada al ${dirs[Math.round(asp / 45) % 8]}<br>${lat.toFixed(5)}°, ${lng.toFixed(5)}°`;
+    readout.innerHTML = `Altura <b>${fmtNum(h, 0)} m</b> · pendiente <b>${fmtNum(slope, 0)}°</b> · ladera mirando al ${dirs[Math.round(asp / 45) % 8]}`;
   });
 
   // ---------- Camera ----------

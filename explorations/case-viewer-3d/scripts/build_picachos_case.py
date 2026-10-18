@@ -16,7 +16,7 @@ from pathlib import Path
 import build_tiles as bt
 
 WEB = bt.WEB
-OUT = WEB / "cases" / "picachos"
+OUT = bt.ROOT / "results" / "picachos"
 SITE = bt.REPO / "site-data"
 RADIUS_M = 15000
 WINDOW = ("2025-01-05", "2025-01-31")
