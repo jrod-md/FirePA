@@ -1,0 +1,122 @@
+{
+  "status": "exploratory; outside FirePA Scientific Pilot v1",
+  "method": {
+    "index": "NBR=(B8-B12)/(B8+B12); dNBR=NBR_pre-NBR_post",
+    "grid": "EPSG:32617, 20 m",
+    "cloud_mask": "SCL 2,4,5,7 valid in both dates, water excluded, 300 m disk buffer around SCL 3,8,9,10",
+    "linked_rule": "8-connected dNBR patches with a pixel within 1000 m of a FIRMS event centroid in the case window",
+    "window_m": [
+      556660,
+      912840,
+      568660,
+      924840
+    ],
+    "found_by": "scar_search.py (80 m screening)"
+  },
+  "pre": {
+    "id": "S2B_17PNK_20250416_0_L2A",
+    "datetime": "2025-04-16T16:00:56.147000Z"
+  },
+  "post": {
+    "id": "S2C_17PNK_20250501_0_L2A",
+    "datetime": "2025-05-01T16:01:15.229000Z"
+  },
+  "valid_overlap_fraction": 0.2076,
+  "valid_fraction_basis": "land pixels (water excluded from the denominator)",
+  "areas": [
+    {
+      "threshold": 0.1,
+      "linked_ha": 385.4,
+      "linked_patches": 19,
+      "main_patch_ha": 356.5,
+      "main_patch_convex_hull_ha": 576.8,
+      "main_patch_median_dnbr": 0.431,
+      "main_touches_window_edge": false,
+      "no_data_within_500m_ha": 235.6
+    },
+    {
+      "threshold": 0.2,
+      "linked_ha": 357.2,
+      "linked_patches": 6,
+      "main_patch_ha": 331.6,
+      "main_patch_convex_hull_ha": 525.5,
+      "main_patch_median_dnbr": 0.441,
+      "main_touches_window_edge": false,
+      "no_data_within_500m_ha": 228.6
+    },
+    {
+      "threshold": 0.3,
+      "linked_ha": 311.0,
+      "linked_patches": 3,
+      "main_patch_ha": 286.3,
+      "main_patch_convex_hull_ha": 406.9,
+      "main_patch_median_dnbr": 0.461,
+      "main_touches_window_edge": false,
+      "no_data_within_500m_ha": 186.1
+    },
+    {
+      "threshold": 0.4,
+      "linked_ha": 231.8,
+      "linked_patches": 34,
+      "main_patch_ha": 180.6,
+      "main_patch_convex_hull_ha": 304.0,
+      "main_patch_median_dnbr": 0.512,
+      "main_touches_window_edge": false,
+      "no_data_within_500m_ha": 93.6
+    }
+  ],
+  "corners_lonlat": [
+    [
+      -80.485377,
+      8.366388
+    ],
+    [
+      -80.376389,
+      8.366231
+    ],
+    [
+      -80.376561,
+      8.257693
+    ],
+    [
+      -80.485518,
+      8.257847
+    ]
+  ],
+  "context": {
+    "role": "presentation only",
+    "resolution_m": 20,
+    "utm_bbox": [
+      548420.0,
+      907540.0,
+      577120.0,
+      931920.0
+    ],
+    "corners_lonlat": [
+      [
+        -80.560144,
+        8.430518
+      ],
+      [
+        -80.299439,
+        8.430139
+      ],
+      [
+        -80.299831,
+        8.209628
+      ],
+      [
+        -80.56039,
+        8.209997
+      ]
+    ]
+  },
+  "outputs": {
+    "post_context.webp": "2f90044732ca67ddafbbde9d1ca3f4257f77450f7ab10c2c4858214fe32874e7",
+    "post_detail.webp": "bc1a56ef676d3274a6ffbff6a8e0c08d5ad2b56c1bbe2a3f537028f6d5b75c4f",
+    "pre_context.webp": "cffb13256845cb63566c8865be241671a0796fe404a88e2fd2359e966e83962a",
+    "pre_detail.webp": "f3dc1d37ba4da8ca1056f9dd1fdbc1d3c624d64fb473df61a098ab71b7cd32e5",
+    "scar.webp": "101755714dbeba6012037ad10a6901507312cd98c77df34345837d24767a3231"
+  },
+  "attribution": "Contains modified Copernicus Sentinel data 2025"
+}

@@ -1,10 +1,10 @@
 {
   "dem_shape": [
-    1369,
-    1802
+    4753,
+    3600
   ],
-  "dem_min_m": -0.4,
-  "dem_max_m": 1697.2,
+  "dem_min_m": -3.4,
+  "dem_max_m": 1911.2,
   "nodata_or_nan": 0,
   "cluster_elevations_m": {
     "evt-0557": 204.4,
@@ -20,7 +20,7 @@
     "Cluster points are FirePA display centroids, not fire locations or perimeters."
   ],
   "tile_counts": {
-    "dem": 50,
-    "relief": 523
+    "dem": 279,
+    "relief": 651
   }
 }

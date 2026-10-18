@@ -23,6 +23,7 @@ from PIL import Image
 from pyproj import Transformer
 
 import cog
+import scar_style
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
@@ -247,6 +248,8 @@ def main():
     ol = np.zeros((H, W, 4), dtype=np.uint8)
     ol[border(edge)] = (26, 25, 23, 230)
     Image.fromarray(ol, "RGBA").resize((W * 2, H * 2), Image.NEAREST).save(OUT / "outline.png", optimize=True)
+    scar_style.fill_webp(dnbr, valid, linked_masks[0.20], OUT / "scar.webp")
+    scar_style.outline_geojson(linked_masks[0.20], bbox, OUT / "scar.geojson")
 
     corners = [to_ll.transform(x, y) for x, y in ((xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin))]
     d = dnbr[valid]

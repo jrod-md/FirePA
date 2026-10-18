@@ -1,0 +1,169 @@
+{
+  "id": "costa",
+  "title": "Llanura costera de Natá",
+  "place": "Natá, Coclé",
+  "view_aoi": [
+    -80.56,
+    8.21,
+    -80.3,
+    8.43
+  ],
+  "firms_window": [
+    "2025-04-16",
+    "2025-05-01"
+  ],
+  "views": {
+    "overview": {
+      "center": [
+        -80.431,
+        8.312
+      ],
+      "zoom": 11.9,
+      "pitch": 40,
+      "bearing": 0
+    },
+    "scar": {
+      "center": [
+        -80.431,
+        8.312
+      ],
+      "zoom": 13.4,
+      "pitch": 55,
+      "bearing": 15
+    },
+    "close": {
+      "center": [
+        -80.431,
+        8.312
+      ],
+      "zoom": 13.9,
+      "pitch": 61,
+      "bearing": 50
+    }
+  },
+  "story": {
+    "when": "abril de 2025",
+    "lede": "La quema más grande que encontramos en Coclé fuera de los cerros: una mancha negra que cruza potreros y linderos cerca de la costa.",
+    "headline": "La mancha negra de la costa",
+    "intro": "En la segunda mitad de abril de 2025 se quemó una gran extensión de sabana y pastizal en la llanura costera al este de Natá. Las fotos muestran el suelo negro cruzando cercas y caminos, algo distinto de la quema ordenada de una parcela.",
+    "chapter_title": "La llanura costera",
+    "chapter_intro": "Terreno plano, a pocos metros sobre el mar, entre potreros y estanques de camarón. Aquí el relieve no ayuda a ver el fuego: lo cuenta la foto.",
+    "unknowns": [
+      "Si empezó como una quema agrícola que se salió de control: la imagen no lo dice."
+    ]
+  },
+  "tile_aoi": [
+    -80.995,
+    8.005,
+    -80.005,
+    9.3
+  ],
+  "summit": {
+    "coordinates": [
+      -80.43031,
+      8.32389
+    ],
+    "elevation_m": 7
+  },
+  "scar_low_elevation_m": 1,
+  "clusters": [
+    {
+      "order": 1,
+      "public_event_id": "evt-0080",
+      "cluster_start_utc": "2025-04-25T06:04:00Z",
+      "cluster_end_utc": "2025-04-25T06:27:00Z",
+      "detection_count": 3,
+      "max_frp_mw": 10.56,
+      "mean_frp_mw": 5.486667,
+      "satellites": [
+        "N",
+        "N20"
+      ],
+      "day_count": 0,
+      "night_count": 3,
+      "gap_from_previous_hours": null,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.45602,
+        8.31486
+      ],
+      "dsm_elevation_m": 3.6,
+      "distance_to_main_scar_m": 1370
+    },
+    {
+      "order": 2,
+      "public_event_id": "evt-0364",
+      "cluster_start_utc": "2025-04-26T06:08:00Z",
+      "cluster_end_utc": "2025-04-26T06:08:00Z",
+      "detection_count": 3,
+      "max_frp_mw": 1.85,
+      "mean_frp_mw": 1.51,
+      "satellites": [
+        "N20"
+      ],
+      "day_count": 0,
+      "night_count": 3,
+      "gap_from_previous_hours": 23.68,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.452793,
+        8.315657
+      ],
+      "dsm_elevation_m": 4.5,
+      "distance_to_main_scar_m": 1015
+    },
+    {
+      "order": 3,
+      "public_event_id": "evt-0370",
+      "cluster_start_utc": "2025-04-30T18:56:00Z",
+      "cluster_end_utc": "2025-04-30T18:56:00Z",
+      "detection_count": 2,
+      "max_frp_mw": 5.25,
+      "mean_frp_mw": 5.235,
+      "satellites": [
+        "N"
+      ],
+      "day_count": 2,
+      "night_count": 0,
+      "gap_from_previous_hours": 108.8,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.452935,
+        8.321595
+      ],
+      "dsm_elevation_m": 4.0,
+      "distance_to_main_scar_m": 1112
+    },
+    {
+      "order": 4,
+      "public_event_id": "evt-0148",
+      "cluster_start_utc": "2025-04-30T19:19:00Z",
+      "cluster_end_utc": "2025-04-30T19:19:00Z",
+      "detection_count": 4,
+      "max_frp_mw": 45.78,
+      "mean_frp_mw": 22.455,
+      "satellites": [
+        "N20"
+      ],
+      "day_count": 4,
+      "night_count": 0,
+      "gap_from_previous_hours": 0.38,
+      "possible_chain_merge": false,
+      "centroid": [
+        -80.423815,
+        8.31932
+      ],
+      "dsm_elevation_m": 2.5,
+      "distance_to_main_scar_m": 6
+    }
+  ],
+  "provenance": {
+    "firepa_files": {
+      "events.geojson": "8b3a6ab835d0617ada766213b17d4f0c267aa720bf8a266d37fea7f1bf71bee0"
+    },
+    "dem": {
+      "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif": "958e9cab3cd050981547841446073bb5401bd176bd25f7bfb20ff2476b68fb85",
+      "Copernicus_DSM_COG_10_N09_00_W081_00_DEM.tif": "6c59289a8c5b8181203d2cc02e9343fff7bdad99043929cd322ab531f8a568da"
+    }
+  }
+}

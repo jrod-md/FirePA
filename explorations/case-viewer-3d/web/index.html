@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FirePA · Explorar casos en 3D</title>
-<meta name="description" content="Visor exploratorio en 3D de dos referencias externas de FirePA en Coclé: detecciones FIRMS y comparaciones Sentinel-2 sobre relieve real. Fuera del piloto científico v1.">
+<meta name="description" content="Visor exploratorio en 3D de incendios en Coclé: detecciones de calor FIRMS y fotos Sentinel-2 de antes y después sobre relieve real. Fuera del piloto científico v1.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link href="viewer.css?v=5" rel="stylesheet">
+<link href="viewer.css?v=7" rel="stylesheet">
 </head>
 <body>
 <div id="map">
@@ -21,10 +21,7 @@
   </div>
   <div class="masthead">
     <a class="home-link" href="/es/">← FirePA</a>
-    <nav class="cases" aria-label="Caso">
-      <a href="?caso=guacamaya" data-case="guacamaya">Cerro Guacamaya</a>
-      <a href="?caso=picachos" data-case="picachos">Los Picachos</a>
-    </nav>
+    <nav class="cases" aria-label="Caso" id="case-nav"></nav>
     <div class="eyebrow" id="mh-eyebrow"></div>
     <h1 id="mh-title"></h1>
     <p id="mh-lede"></p>
@@ -49,7 +46,7 @@
     </div>
     <label class="blend" id="blend">
       <span id="blend-a"></span>
-      <input type="range" id="blend-input" min="0" max="100" value="0" aria-label="Fundido entre la imagen de antes y la de después">
+      <input type="range" id="blend-input" min="0" max="100" value="0" aria-label="Cortina entre la foto de antes y la de después">
       <span id="blend-b"></span>
     </label>
   </div>
@@ -83,7 +80,7 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="cases.js?v=5"></script>
-<script src="viewer.js?v=5"></script>
+<script src="cases.js?v=7"></script>
+<script src="viewer.js?v=7"></script>
 </body>
 </html>

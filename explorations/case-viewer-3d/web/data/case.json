@@ -6,8 +6,14 @@
     8.66
   ],
   "tile_aoi": [
-    -80.76,
-    8.32,
+    -80.995,
+    8.005,
+    -80.005,
+    9.3
+  ],
+  "detail_aoi": [
+    -80.62,
+    8.38,
     -80.3,
     8.66
   ],
@@ -189,6 +195,10 @@
       "product": "Copernicus DEM GLO-30 (DSM)",
       "file": "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif",
       "sha256": "958e9cab3cd050981547841446073bb5401bd176bd25f7bfb20ff2476b68fb85",
+      "files": {
+        "Copernicus_DSM_COG_10_N08_00_W081_00_DEM.tif": "958e9cab3cd050981547841446073bb5401bd176bd25f7bfb20ff2476b68fb85",
+        "Copernicus_DSM_COG_10_N09_00_W081_00_DEM.tif": "6c59289a8c5b8181203d2cc02e9343fff7bdad99043929cd322ab531f8a568da"
+      },
       "source": "https://copernicus-dem-30m.s3.amazonaws.com/",
       "attribution": "© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved"
     }
