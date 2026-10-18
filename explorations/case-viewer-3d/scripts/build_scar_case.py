@@ -126,8 +126,10 @@ def main(case_id: str) -> None:
 
     g.rgb_png(pre, bbox, s2dir / "pre.png")
     g.rgb_png(post, bbox, s2dir / "post.png")
-    scar_style.fill_webp(dnbr, valid, linked_masks[0.20], s2dir / "scar.webp", water)
-    scar_style.outline_geojson(linked_masks[0.20], bbox, s2dir / "scar.geojson")
+    # Draw the main patch only, so the map matches the area the viewer reports;
+    # other linked patches fall into the faint "other change" layer.
+    scar_style.fill_webp(dnbr, valid, main20, s2dir / "scar.webp", water)
+    scar_style.outline_geojson(main20, bbox, s2dir / "scar.geojson")
 
     # Presentation imagery: feathered 10 m detail and a 20 m context mosaic.
     ctx.OUT = s2dir

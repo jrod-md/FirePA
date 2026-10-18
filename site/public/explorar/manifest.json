@@ -2,7 +2,7 @@
   "generator": "explorations/case-viewer-3d/scripts/export_to_site.py",
   "status": "exploratory; outside FirePA Scientific Pilot v1",
   "file_count": 960,
-  "total_bytes": 16275069,
+  "total_bytes": 16196830,
   "files": [
     {
       "path": "cases/costa/case.json",
@@ -32,17 +32,17 @@
     {
       "path": "cases/costa/s2/s2.json",
       "bytes": 3148,
-      "sha256": "91580e7937ea8e55c0d530b82045fbc0c1cc09c6f404ee8ace28875772cebf8d"
+      "sha256": "e05c3cd34f7dd7b98347212fececd9d466795794d02fb89418f6140b0605a45c"
     },
     {
       "path": "cases/costa/s2/scar.geojson",
-      "bytes": 74969,
-      "sha256": "fb036e84d4a48c8e2149f6bb2cbb9e08a6c3e99c9db63b0c0de632c900f1647c"
+      "bytes": 66809,
+      "sha256": "897293163fb08fef67fb3b9dd517d1588588befded72b702d3637d5fa87153ba"
     },
     {
       "path": "cases/costa/s2/scar.webp",
-      "bytes": 170320,
-      "sha256": "101755714dbeba6012037ad10a6901507312cd98c77df34345837d24767a3231"
+      "bytes": 165732,
+      "sha256": "da6bc1e15ba412f27e9d7ee47eb853221b56d2f682300634be01e33bac8d1f21"
     },
     {
       "path": "cases/ola/case.json",
@@ -72,17 +72,17 @@
     {
       "path": "cases/ola/s2/s2.json",
       "bytes": 3140,
-      "sha256": "99d812cef6fad2e3a2bc69edb4a6ba562c2fe2576b9052715b8905b32161b5c0"
+      "sha256": "285a4d8321ee0d429cc537d5e8555779a083ecb8da776f85d06a4f3ad6d76e99"
     },
     {
       "path": "cases/ola/s2/scar.geojson",
-      "bytes": 74698,
-      "sha256": "4696a9aa77fbc4344c709d5f1b20af5ea12fc566ea1ecd8ffcd8899b8256e2f8"
+      "bytes": 59503,
+      "sha256": "4c3f8f82ccb40d1da568d3deb86e2da7043f7fa633e10a4e2776a065c0b55c8c"
     },
     {
       "path": "cases/ola/s2/scar.webp",
-      "bytes": 90226,
-      "sha256": "7b1febd5685558f964322f22627cccb1b92bc99176bc6c0f3fcb85178313bf25"
+      "bytes": 86798,
+      "sha256": "285adc7e1961626366f53410dacaafecfd961048a5ac35fb18555d2c1aac44bc"
     },
     {
       "path": "cases.js",
@@ -126,13 +126,13 @@
     },
     {
       "path": "data/s2/scar.geojson",
-      "bytes": 198978,
-      "sha256": "8cabf5794d7145b7afdb8ea4e3b96711d330cd8b9918d206c30cba8a2ad292f5"
+      "bytes": 160836,
+      "sha256": "f9b316bf513f0553eec8deebff9cea085ef28991b9a61079095c46244477db6e"
     },
     {
       "path": "data/s2/scar.webp",
-      "bytes": 340730,
-      "sha256": "99dfcbf7cc009860e3c1abd5a7b9d4b709942068c5edce33d45d5870c35c8e5b"
+      "bytes": 332004,
+      "sha256": "cba88ee74cb3051c4af1e03f699d9f4e4b3b848c2b420651e8ee6400a4317f56"
     },
     {
       "path": "data/validation.json",
