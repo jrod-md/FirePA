@@ -274,7 +274,7 @@ def main():
         "outputs": {p.name: sha(p) for p in sorted(OUT.glob("*.png"))},
         "attribution": "Contains modified Copernicus Sentinel data 2025",
     }
-    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (OUT / "s2.json").write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
     print("bytes fetched", cog.bytes_fetched)
     print(json.dumps({k: summary[k] for k in ("pre", "post", "valid_overlap_fraction", "areas")}, indent=2))
 

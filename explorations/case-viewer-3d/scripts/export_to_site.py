@@ -18,6 +18,9 @@ WEB = ROOT / "web"
 REPO = ROOT.parents[1]
 DEST = REPO / "site" / "public" / "explorar"
 
+# Text assets are written with LF so their hashes match the committed bytes on
+# every OS (.gitattributes keeps git from converting them on checkout).
+TEXT = {".html", ".js", ".css", ".json", ".geojson"}
 # Intermediate crops used only to build the feathered WebP images.
 SKIP = {"data/s2/pre.png", "data/s2/post.png"}
 REQUIRED = [
@@ -44,8 +47,11 @@ def main() -> None:
             continue
         out = DEST / rel
         out.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src, out)
-        files.append({"path": rel, "bytes": src.stat().st_size, "sha256": hashlib.sha256(src.read_bytes()).hexdigest()})
+        data = src.read_bytes()
+        if src.suffix in TEXT:
+            data = data.replace(b"\r\n", b"\n")
+        out.write_bytes(data)
+        files.append({"path": rel, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
     manifest = {
         "generator": "explorations/case-viewer-3d/scripts/export_to_site.py",
         "status": "exploratory; outside FirePA Scientific Pilot v1",
@@ -53,7 +59,7 @@ def main() -> None:
         "total_bytes": sum(f["bytes"] for f in files),
         "files": files,
     }
-    (DEST / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (DEST / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"{len(files)} files, {manifest['total_bytes'] / 1e6:.1f} MB -> {DEST.relative_to(REPO).as_posix()}")
 
 

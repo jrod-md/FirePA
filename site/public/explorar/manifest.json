@@ -2,12 +2,12 @@
   "generator": "explorations/case-viewer-3d/scripts/export_to_site.py",
   "status": "exploratory; outside FirePA Scientific Pilot v1",
   "file_count": 593,
-  "total_bytes": 10112331,
+  "total_bytes": 10099636,
   "files": [
     {
       "path": "cases/picachos/case.json",
-      "bytes": 4322,
-      "sha256": "17ac4b6ba2d31d643eade929ae706b7006a96d634a5fb7ffbd4a1f7651b91cb3"
+      "bytes": 4154,
+      "sha256": "bbf2116b825364703613778958ef6252f9f1eaf2f4442ed7a3cd83ec7f1f2d23"
     },
     {
       "path": "cases/picachos/s2/dnbr.png",
@@ -31,23 +31,23 @@
     },
     {
       "path": "cases/picachos/s2/s2.json",
-      "bytes": 8224,
-      "sha256": "e87a8c64c21591d4b6893aa16c3a7922896243e696b07cc098786924724443bb"
+      "bytes": 7902,
+      "sha256": "3f9411634280cf2af4528cf9194fbc3487005e2df01740f4a9215fe2a74974ce"
     },
     {
       "path": "cases.js",
-      "bytes": 26521,
-      "sha256": "1d717da84a80dde218483e62f31024b9aa96b81fd22ff29fe7738b48c6bbd833"
+      "bytes": 26244,
+      "sha256": "01aa97372088f1748273baddcc440d028ba2f58bee352fdb3e64fb16bd718238"
     },
     {
       "path": "data/case.json",
-      "bytes": 5424,
-      "sha256": "65ad4bc63ac75d10d87945d34957b6469ab8666e966ed230d0fae8be317aadfc"
+      "bytes": 5229,
+      "sha256": "713e45dd02627f58354989bc6a40b7831717f4759a1377325bf58501d297da7c"
     },
     {
       "path": "data/cocle.geojson",
-      "bytes": 290268,
-      "sha256": "81a19b9d4c265380ae998b2a97d29b2d757716d8a9ec72c2574f6c7a4801d1a8"
+      "bytes": 279370,
+      "sha256": "b135d5583fc4cce4e207d46a19035da9b93cc78482e503bf4a700feddf9af8ab"
     },
     {
       "path": "data/s2/dnbr.png",
@@ -81,18 +81,18 @@
     },
     {
       "path": "data/s2/s2.json",
-      "bytes": 4093,
-      "sha256": "c2704590c13a5eb57ae820f8648f7c901b13b24c4fb9e96c8a0de07328a51964"
+      "bytes": 3941,
+      "sha256": "e6155bf9cfe3919190fd183bf7d133cb8072d3f862cb6d3defd44d6e2d2c4f73"
     },
     {
       "path": "data/validation.json",
-      "bytes": 573,
-      "sha256": "eef5b16c43055fe28a240fa2c810170388dc730996e33949e1a7208db943349b"
+      "bytes": 548,
+      "sha256": "152b8078e236e80e36179770ea046480624f9cc7804a0b6074e7047ebd8d7b90"
     },
     {
       "path": "index.html",
-      "bytes": 3788,
-      "sha256": "50f4000bc7f02416858da016e182cd2db1f6e8411682c96a6bc01c308a7831af"
+      "bytes": 3699,
+      "sha256": "84abb46b1e4523a666a869478c65af9ab8bed225f4060b1f5611d5fe66ab1e1f"
     },
     {
       "path": "tiles/dem/10/282/487.png",
@@ -2961,13 +2961,13 @@
     },
     {
       "path": "viewer.css",
-      "bytes": 11125,
-      "sha256": "ed442e733d1290bd710cb65454979ab19b57f3beb714e5b1ff08185ea2c52a04"
+      "bytes": 10977,
+      "sha256": "c36eef198812f095ff00664cec6b68a37098a5170c7c91468850e7bb76990c72"
     },
     {
       "path": "viewer.js",
-      "bytes": 27393,
-      "sha256": "b9d90f0f2b4b80c636103ce03132f278ca4a153550c203429a2227720f200e8d"
+      "bytes": 26972,
+      "sha256": "591cd39624eaec6749be287bfc574a77b0702e2c6bba7889ef339f3d6b6a59b1"
     }
   ]
 }

@@ -4,3 +4,7 @@ site-data/*.geojson text eol=lf
 references/*.json text eol=lf
 docs/*.md text eol=lf
 docs/*.pdf binary
+
+# Generated viewer assets are hashed in site/public/explorar/manifest.json and
+# verified by the site contract: keep their bytes exact on every checkout.
+site/public/explorar/** -text

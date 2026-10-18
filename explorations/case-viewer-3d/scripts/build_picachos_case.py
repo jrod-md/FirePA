@@ -74,7 +74,7 @@ def main():
             "firepa_files": {n: hashlib.sha256((SITE / n).read_bytes()).hexdigest() for n in ("events.geojson", "external-references.geojson", "citations.json")},
         },
     }
-    (OUT / "case.json").write_text(json.dumps(case, indent=2, ensure_ascii=False), encoding="utf-8")
+    (OUT / "case.json").write_text(json.dumps(case, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n")
     for e in near:
         print(e["order"], e["public_event_id"], e["cluster_start_utc"], e["detection_count"], e["distance_to_anchor_m"])
 

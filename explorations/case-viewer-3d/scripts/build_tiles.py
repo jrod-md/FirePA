@@ -245,8 +245,8 @@ def main() -> None:
     (WEB / "data").mkdir(parents=True, exist_ok=True)
     # Presentation-only Coclé outline, the same one the publication site uses.
     (WEB / "data" / "cocle.geojson").write_bytes((REPO / "site" / "src" / "data" / "cocle-presentation.geojson").read_bytes())
-    (WEB / "data" / "case.json").write_text(json.dumps(case, indent=2, ensure_ascii=False), encoding="utf-8")
-    (WEB / "data" / "validation.json").write_text(json.dumps(validation, indent=2), encoding="utf-8")
+    (WEB / "data" / "case.json").write_text(json.dumps(case, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n")
+    (WEB / "data" / "validation.json").write_text(json.dumps(validation, indent=2), encoding="utf-8", newline="\n")
     print(json.dumps(validation, indent=2))
 
 
